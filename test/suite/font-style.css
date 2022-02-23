@@ -1,0 +1,12 @@
+
+.arena span {font-style: italic; border-bottom: 1px solid rgba(0,0,0,0.2);}
+.arena span + span {font-style: oblique;}
+
+#p00 {font-family: CSSType, fantasy;}
+#p01 {font-family: Verdana, fantasy;}
+#p02 {font-family: Arial, fantasy;}
+#p03 {font-family: Helvetica, fantasy;}
+#p04 {font-family: Times, fantasy;}
+#p05 {font-family: Times New Roman, fantasy;}
+#p06 {font-family: Courier, fantasy;}
+#p07 {font-family: Impact, fantasy;}

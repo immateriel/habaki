@@ -1,0 +1,4 @@
+
+body * {bookmark-label: content();}
+h2 {bookmark-label: attr(id);}
+p {bookmark-label: "Para";}

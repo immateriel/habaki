@@ -1,0 +1,14 @@
+
+#p01 {font-size: 20px; line-height: 40px;}
+#i01 {alignment-baseline: baseline;}
+#i02 {alignment-baseline: use-script;}
+#i03 {alignment-baseline: before-edge;}
+#i04 {alignment-baseline: text-before-edge;}
+#i05 {alignment-baseline: after-edge;}
+#i06 {alignment-baseline: text-after-edge;}
+#i07 {alignment-baseline: central;}
+#i08 {alignment-baseline: middle;}
+#i09 {alignment-baseline: ideographic;}
+#i10 {alignment-baseline: alphabetic;}
+#i11 {alignment-baseline: hanging;}
+#i12 {alignment-baseline: mathematical;}

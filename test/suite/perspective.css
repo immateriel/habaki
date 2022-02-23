@@ -1,0 +1,8 @@
+
+div[id^="d"] {margin-top: 2em;}
+div[id^="d"] div {border: 1px solid silver; background: #DDD;
+	height: 50px; width: 100px;
+	transform: rotateY(45deg);}
+#d01 {perspective: 1000;}
+#d02 {perspective: 100;}
+#d03 {perspective: 10;}

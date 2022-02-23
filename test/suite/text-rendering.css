@@ -1,0 +1,7 @@
+
+.arena p {font-size: 2em;}
+.arena .p01 {text-rendering: optimizeSpeed;}
+.arena .p02 {text-rendering: optimizeLegibility;}
+.arena .p03 {text-rendering: geometricPrecision;}
+.arena .p04 {text-rendering: auto;}
+

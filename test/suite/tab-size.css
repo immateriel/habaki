@@ -1,0 +1,8 @@
+
+.arena p {white-space: pre-wrap; border: 1px dotted orange;}
+#p01 {tab-size: 8;}
+#p02 {tab-size: 4;}
+#p03 {tab-size: 0;}
+#p04 {tab-size: 10px;}
+#p05 {tab-size: 5px;}
+#p06 {white-space: normal;}

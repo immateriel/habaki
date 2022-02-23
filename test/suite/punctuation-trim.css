@@ -1,0 +1,6 @@
+
+.arena li {font-family: serif;}
+#li02 {punctuation-trim: adjacent;}
+#li03 {punctuation-trim: start;}
+#li04 {punctuation-trim: end;}
+#li05 {punctuation-trim: allow-end;}

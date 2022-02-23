@@ -1,0 +1,13 @@
+
+.arena ol {display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; display: flex;
+   width: 90%; margin: 2em 0; padding: 0; border: 3px solid green;}
+.arena ol li {list-style: none;
+   border: 2px dotted gray; min-width: 5%; margin: 1px;}
+
+#l01 {justify-content: flex-start;}
+#l02 {justify-content: flex-end;}
+#l03 {justify-content: center;}
+#l04 {justify-content: space-between;}
+#l05 {justify-content: space-around;}
+
+input:checked + a + .arena ol, a:focus + .arena ol {flex-direction: column; height: 7em;}

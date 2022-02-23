@@ -1,0 +1,10 @@
+
+.arena p {border: 1px solid red; background: rgba(204,204,204,0.5); margin: 30px; padding: 10px;}
+#p01 {box-shadow: 5px 10px gray;}
+#p02 {box-shadow: 5px 10px 8px gray;}
+#p03 {box-shadow: 5px 10px 8px 8px gray;}
+#p04 {box-shadow: 5px 10px 8px -8px gray;}
+#p05 {box-shadow: inset 5px 10px gray;}
+#p06 {box-shadow: inset 5px 10px 8px gray;}
+#p07 {box-shadow: inset 5px 10px 8px 8px gray;}
+#p08 {box-shadow: inset 5px 10px 8px -8px gray;}

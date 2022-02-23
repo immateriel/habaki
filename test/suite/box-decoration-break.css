@@ -1,0 +1,5 @@
+
+p span {border: 2px solid red; background: url(i/blob-green.gif);
+	padding: 3px 1em; line-height: 2;}
+#p01 span {box-decoration-break: slice;}
+#p02 span {box-decoration-break: clone;}

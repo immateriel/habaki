@@ -1,0 +1,22 @@
+
+.arena table {border-collapse: separate; border-spacing: 0; margin-bottom: 2em;}
+.arena tr > * {vertical-align: middle; padding: 0.25em; border-right: 1px dotted; border-bottom: 1px dotted;}
+@font-face {
+	font-family: testFont;
+	src: url(f/Anivers-Regular.otf);
+}
+@font-face {
+	font-family: NSL;
+	src: url("f/Nadyezhda SL One.ttf");
+}
+
+.arena td {font: 200% testFont, Times, serif; font-variant-numeric: normal;}
+.arena table + table td, pre {font-family: NSL, Times, serif;}
+.t01 .st1 {font-variant-numeric: lining-nums;}
+.t01 .st2 {font-variant-numeric: oldstyle-nums;}
+.t02 .st1 {font-variant-numeric: proportional-nums;}
+.t02 .st2 {font-variant-numeric: tabular-nums;}
+.t03 .st1 {font-variant-numeric: diagonal-fractions;}
+.t03 .st2 {font-variant-numeric: stacked-fractions;}
+.t04 .st1 {font-variant-numeric: ordinal;}
+.t04 .st2 {font-variant-numeric: slashed-zero;}

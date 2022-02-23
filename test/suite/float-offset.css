@@ -1,0 +1,6 @@
+
+.arena p {border: 1px dotted gray; height: 50px;}
+.arena p img {float: left;}
+#p01 img {float-offset: 10px;}
+#p02 img {float-offset: 10px 0;}
+#p03 img {float-offset: 10px 10px;}

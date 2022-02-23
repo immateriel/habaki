@@ -1,0 +1,4 @@
+
+h1 {text-shadow: 5px 5px red;}
+h2 {text-shadow: 5px 5px 5px red;}
+h3 {text-shadow: 5px 5px 5px red, 10px 10px 10px blue;}

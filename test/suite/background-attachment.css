@@ -1,0 +1,9 @@
+
+body {background: url(i/hatchgrid-150.png) no-repeat center fixed;}
+.arena div {height: 50px; margin: 10px; padding: 1em; border: 5px dotted;
+	background: url(i/grid-400.png) no-repeat center fixed;}
+#d01 {background-clip: border-box;}
+#d02 {background-clip: padding-box;}
+#d03 {background-clip: content-box;} 
+
+section + h3 {clear: both;}

@@ -1,0 +1,8 @@
+
+.arena p {width: 33%; border: 1px dotted red; text-align: justify;}
+#p01 {text-align-last: start;}
+#p02 {text-align-last: end;}
+#p03 {text-align-last: left;}
+#p04 {text-align-last: right;}
+#p05 {text-align-last: center;}
+#p06 {text-align: left; text-align-last: justify;}

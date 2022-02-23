@@ -1,0 +1,23 @@
+
+.arena table {border-collapse: separate; border-spacing: 0; margin-bottom: 2em;}
+.arena tr > * {vertical-align: middle; padding: 0.25em; border-right: 1px dotted; border-bottom: 1px dotted;}
+@font-face {
+	font-family: testFont;
+	src: url(f/Anivers-Regular.otf);
+}
+@font-face {
+	font-family: NSL;
+	src: url("f/Nadyezhda SL One.ttf");
+}
+
+.arena td {font: 200% testFont, Times, serif;}
+.arena table + table td, pre {font-family: NSL, Times, serif;}
+pre {font-variant-ligatures: common-ligatures discretionary-ligatures historical-ligatures contextual;}
+.t01 .on  {font-variant-ligatures: common-ligatures;}
+.t01 .off {font-variant-ligatures: no-common-ligatures;}
+.t02 .on  {font-variant-ligatures: discretionary-ligatures;}
+.t02 .off {font-variant-ligatures: no-discretionary-ligatures;}
+.t03 .on  {font-variant-ligatures: historical-ligatures;}
+.t03 .off {font-variant-ligatures: no-historical-ligatures;}
+.t04 .on  {font-variant-ligatures: contextual;}
+.t04 .off {font-variant-ligatures: no-contextual;}

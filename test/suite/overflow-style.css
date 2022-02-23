@@ -1,0 +1,4 @@
+
+.arena p {width: 15em; height: 1em; border: 1px dotted gray;}
+#p01 {overflow-style: marquee-line;}
+#p02 {overflow-style: marquee-block;}

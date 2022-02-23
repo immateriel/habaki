@@ -1,0 +1,16 @@
+
+@font-face {
+	font-family: 'Myriad';
+	font-stretch: normal;
+	src: url('f/MyriadPro-Regular.otf') format('opentype');
+}
+.arena p {font-family: Myriad, serif;}
+#p01 {font-synthesis: none;}
+#p02 {font-synthesis: weight;}
+#p03 {font-synthesis: style;}
+#p04 {font-synthesis: weight style;}
+
+b, i {border-bottom: 1px dotted gray;}
+b {font-weight: bold;}
+i {font-style: italic;}
+

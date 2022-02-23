@@ -1,0 +1,22 @@
+
+.arena div {height: 100px; width: 150px; float: left;
+	margin: 10px; padding: 1em;
+	background: green url(i/hatchgrid.png) center no-repeat;}
+.arena div:nth-child(4n+1) {clear: left;}
+#d01 {background-size: 100px 100px;}
+#d02 {background-size: 100% 100%;}
+#d03 {background-size: 100px 100%;}
+#d04 {background-size: 100% 100px;}
+#d05 {background-size: 100px;}
+#d06 {background-size: 100px auto;}
+#d07 {background-size: auto 100px;}
+#d08 {background-size: auto 100%;}
+#d09 {background-size: cover;}
+#d10 {background-size: cover; background-position: 0% 100%;}
+#d11 {background-size: contain;}
+#d12 {background-size: contain; background-position: 0% 100%;}
+#d13 {background-size: cover; background-origin: content-box; background-clip: padding-box; border: 1px solid red;}
+#d14 {background-size: cover; background-origin: padding-box; background-clip: content-box; border: 1px solid red;}
+#d15 {background-size: contain; background-origin: content-box; background-clip: padding-box; border: 1px solid red;}
+#d16 {background-size: contain; background-origin: padding-box; background-clip: content-box; border: 1px solid red;}
+

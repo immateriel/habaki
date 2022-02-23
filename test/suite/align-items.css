@@ -1,0 +1,15 @@
+
+.arena ol {display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; display: flex;
+   width: 90%; margin: 2em 0; padding: 0; border: 3px solid green;}
+.arena ol li {list-style: none; border: 2px dotted gray; min-width: 5%; margin: 1px;}
+.arena ol li {padding: 10px 0;}
+.arena ol li + li {padding: 35px 0 45px;}
+.arena ol li + li + li {padding: 15px 0 5px;}
+
+#l01 {align-items: flex-start;}
+#l02 {align-items: flex-end;}
+#l03 {align-items: center;}
+#l04 {align-items: baseline;}
+#l05 {align-items: stretch;}
+
+input:checked + a + .arena ol, a:focus + .arena ol {flex-direction: column; width: 17em; height: 17em;}

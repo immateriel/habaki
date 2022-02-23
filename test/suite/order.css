@@ -1,0 +1,11 @@
+
+.arena ol {display: flex;
+   width: 90%; margin: 2em 0; padding: 0; border: 3px solid green;}
+.arena ol li {list-style: none; border: 2px dotted gray; min-width: 5%; margin: 0.5em;}
+.arena ol li img {width: 200px; height: 50px;}
+
+#l01 .c3 {order: -1;}
+
+#l02 .c1, #l02 .c2, #l02 .c3 {order: 13;}
+#l02 .c4 {order: 3;}
+#l02 .c5 {order: 0;}

@@ -1,0 +1,19 @@
+
+.arena span {font-weight: 100;}
+.arena span + span {font-weight: 200;}
+.arena span + span + span {font-weight: 300;}
+.arena span + span + span + span {font-weight: 400;}
+.arena span + span + span + span + span {font-weight: 500;}
+.arena span + span + span + span + span + span {font-weight: 600;}
+.arena span + span + span + span + span + span + span {font-weight: 700;}
+.arena span + span + span + span + span + span + span + span {font-weight: 800;}
+.arena span + span + span + span + span + span + span + span + span {font-weight: 900;}
+
+#p00 {font-family: CSSType, fantasy;}
+#p01 {font-family: Verdana, fantasy;}
+#p02 {font-family: Arial, fantasy;}
+#p03 {font-family: Helvetica, fantasy;}
+#p04 {font-family: Times, fantasy;}
+#p05 {font-family: Times New Roman, fantasy;}
+#p06 {font-family: Courier, fantasy;}
+#p07 {font-family: Impact, fantasy;}

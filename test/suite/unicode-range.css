@@ -1,0 +1,8 @@
+
+
+@font-face {
+	font-family: 'SSP';
+	src: url('f/SourceSansPro-Bold.ttf');
+	unicode-range: U+41-4D, U+6E, U+6F, U+7?;
+	}
+.arena p span {font: 2.5em SSP, serif;}

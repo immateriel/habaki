@@ -1,0 +1,4 @@
+
+.arena div {margin: 2em 0; column-count: 2; column-rule-style: solid;}
+#d01 {column-rule-color: red;}
+#d02 {column-rule-color: green;}

@@ -1,0 +1,4 @@
+
+.arena div {margin: 2em 0; column-count: 2;}
+#d01 {column-rule: 5px solid red;}
+#d02 {column-rule: 2em dashed green;}

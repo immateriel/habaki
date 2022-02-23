@@ -1,0 +1,28 @@
+
+@font-face {
+	font-family: "SwitzeraADF WOFF";
+	src: url("f/SwitzeraADF-Regular.woff") format("woff");
+}
+@font-face {
+	font-family: "SwitzeraADF SVG";
+	src: url("f/SwitzeraADF-Regular.svg#switzera_adfregular") format("svg");
+}
+@font-face {
+	font-family: "SwitzeraADF TTF";
+	src: url("f/SwitzeraADF-Regular.ttf") format("truetype");
+}
+@font-face {
+	font-family: "SwitzeraADF OTF";
+	src: url("f/SwitzeraADF-Regular.otf") format("opentype");
+}
+@font-face {
+	font-family: "SwitzeraADF EOT";
+	src: url("f/SwitzeraADF-Regular.eot");
+	src: url("f/SwitzeraADF-Regular.eot?#iefix") format("embedded-opentype");
+}
+
+#p01 {font-family: "SwitzeraADF WOFF", serif;}
+#p02 {font-family: "SwitzeraADF SVG", serif;}
+#p03 {font-family: "SwitzeraADF TTF", serif;}
+#p04 {font-family: "SwitzeraADF OTF", serif;}
+#p05 {font-family: "SwitzeraADF EOT", serif;}

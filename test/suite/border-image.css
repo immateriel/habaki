@@ -1,0 +1,6 @@
+
+#p01 {border-image: url(i/dot-red.gif) 100%/5px repeat;}
+#p02 {border-image: url(i/dot-red.gif) 100% repeat; border-width: 5px;}
+#p03 {border-image: url(i/dot-red.gif) 100% repeat;}
+#p04 {border-image: url(i/dot-red.gif) 100% stretch;}
+

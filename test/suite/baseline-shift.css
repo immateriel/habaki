@@ -1,0 +1,7 @@
+
+#p01 {font-size: 20px; line-height: 40px;}
+#i01 {baseline-shift: baseline;}
+#i02 {baseline-shift: sub;}
+#i03 {baseline-shift: super;}
+#i04 {baseline-shift: 80%;}
+#i05 {baseline-shift: -15px;}

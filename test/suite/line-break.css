@@ -1,0 +1,6 @@
+
+.arena p {border: 1px dotted orange;}
+#p01 {line-break: auto;}
+#p02 {line-break: loose;}
+#p03 {line-break: normal;}
+#p04 {line-break: strict;}

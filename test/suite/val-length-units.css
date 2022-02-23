@@ -1,0 +1,19 @@
+
+html {font-size: 20px;}
+div {background: #BBB; color: #000; width: 0;
+	padding: 0.25em 0 0.15em; margin-bottom: 0.5em;
+	text-indent: 1em; white-space: nowrap;}
+#pixel {width: 400px;}
+#em {width: 20em;}
+#rem {width: 20rem;}
+#inch {width: 4.167in;}
+#cm {width: 10.5833cm;}
+#mm {width: 105.833mm;}
+#pt {width: 300pt;}
+#pc {width: 25pc;}
+#ex {width: 40ex;}
+#ch {width: 40ch;}
+#vw {width: 50vw;}
+#vh {width: 50vh;}
+#vmin {width: 50vmin;}
+#vmax {width: 50vmax;}

@@ -1,0 +1,4 @@
+
+.arena p {width: 25em; border: 1px dotted red;}
+#p01 {text-wrap: avoid; word-wrap: normal;}
+#p02 {text-wrap: avoid; word-wrap: break-word;}

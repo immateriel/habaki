@@ -1,0 +1,27 @@
+PATH
+  remote: .
+  specs:
+    habaki (0.1.0)
+
+GEM
+  remote: http://rubygems.org/
+  specs:
+    minitest (5.14.4)
+    rake (10.5.0)
+    rake-compiler (1.1.1)
+      rake
+    ruby-prof (1.4.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  bundler (~> 1.14)
+  habaki!
+  minitest (~> 5.0)
+  rake (~> 10.0)
+  rake-compiler
+  ruby-prof
+
+BUNDLED WITH
+   1.17.3

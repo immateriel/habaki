@@ -1,0 +1,7 @@
+
+.arena ol {display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; display: flex;
+  width: 90%; flex-wrap: wrap; margin: 2em 0; padding: 0; border: 3px solid green;}
+.arena ol li {list-style: none; border: 2px dotted gray; min-width: 5%; margin: 1px;}
+.arena ol li img {width: 200px; height: 50px;}
+.arena ol li:nth-of-type(even) {padding-top: 60px; background: silver;}
+.arena ol li:nth-of-type(even) img {opacity: 0.5;}

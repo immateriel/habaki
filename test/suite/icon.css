@@ -1,0 +1,4 @@
+
+#p01 img.test {content: icon; icon: url(i/target.gif);}
+#p02 span {border: 1px dotted gray;}
+#p02 span.test {content: icon; icon: url(i/target.gif);}

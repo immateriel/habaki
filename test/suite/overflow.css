@@ -1,0 +1,9 @@
+
+.arena div {border-top: 1px dashed gray; margin-top: 1em; padding-top: 1em;}
+.arena p {width: 5em; height: 5em; border: 1px dotted gray; background: #FFA;}
+#d01 p {overflow: visible;}
+#d02 p {overflow: hidden;}
+#d03 p {overflow: scroll;}
+#d04 p {overflow: auto;}
+#d05 p {overflow: no-display;}
+#d05 p {overflow: no-content;}

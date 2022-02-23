@@ -1,0 +1,4 @@
+
+body * {bookmark-target: none}
+h2 {bookmark-target: attr(id);}
+p {bookmark-target: url("http://w3.org/");}

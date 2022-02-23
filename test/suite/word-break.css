@@ -1,0 +1,5 @@
+
+.arena p {border: 1px dotted orange; -moz-hyphens: auto; -webkit-hyphens: auto; hyphens: auto;}
+#p01 {word-break: normal;}
+#p02 {word-break: break-all;}
+#p03 {word-break: keep-all;}

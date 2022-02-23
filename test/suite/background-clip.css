@@ -1,0 +1,7 @@
+
+.arena div {height: 50px; width: 100px; float: left;
+	margin: 10px; padding: 1em; border: 5px dotted;
+	background: green;}
+#d01 {background-clip: border-box;}
+#d02 {background-clip: padding-box;}
+#d03 {background-clip: content-box;} 

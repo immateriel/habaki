@@ -1,0 +1,5 @@
+
+.arena p {width: 25em; border: 1px dotted red;}
+#p01 {text-align: justify;}
+#p02 {text-align: justify; text-justify: inter-word;}
+#p03 {text-align: justify; text-justify: distribute;}

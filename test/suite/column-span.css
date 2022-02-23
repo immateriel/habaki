@@ -1,0 +1,4 @@
+
+.arena div {margin: 2em 0; column-count: 3;}
+#d01 #spanner {column-span: 1;}
+#d02 #spanner {column-span: all;}

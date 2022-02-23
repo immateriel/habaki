@@ -1,0 +1,21 @@
+
+.arena div {height: 250px; width: 250px; float: left;
+	margin: 10px; padding: 0; border: none;
+	background: green url(i/hatchgrid-100.png) center;
+	background-repeat: round;}
+
+.arena .s01 {width: 90px; height: 90px;}
+.arena .s02 {width: 100px; height: 100px;}
+.arena .s03 {width: 110px; height: 110px;}
+.arena .s04 {width: 190px; height: 190px;}
+.arena .s05 {width: 200px; height: 200px;}
+.arena .s06 {width: 210px; height: 210px;}
+.arena .s07 {width: 290px; height: 290px;}
+.arena .s08 {width: 300px; height: 300px;}
+.arena .s09 {width: 310px; height: 310px;}
+.arena .s10 {width: 390px; height: 390px;}
+.arena .s11 {width: 400px; height: 400px;}
+.arena .s12 {width: 410px; height: 410px;}
+
+.arena .tl {background-position: top left; clear: left;}
+

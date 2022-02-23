@@ -1,0 +1,5 @@
+
+.arena p span {outline: 1px dotted red;}
+#p01 span {outline-offset: 5px;}
+#p02 span {outline-offset: -5px;}
+#p03 span {outline: 2px dashed orange -5px;}

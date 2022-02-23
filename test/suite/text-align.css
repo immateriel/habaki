@@ -1,0 +1,16 @@
+
+.arena p {width: 20em; border: 1px dotted red;}
+.arena p[class^="p0"] {float: left;}
+.arena p[dir="rtl"] {margin-left: 3em;}
+hr {clear: both;}
+
+.p01 {text-align: start;}
+.p02 {text-align: end;}
+.p03 {text-align: left;}
+.p04 {text-align: right;}
+.p05 {text-align: center;}
+.p06 {text-align: start end;}
+div.d01 {text-align: center;}
+div.d01 p {text-align: right;}
+div.d01 p + p {text-align: match-parent;}
+.t01 td {text-align: "D"; border-bottom: 1px dotted gray;}

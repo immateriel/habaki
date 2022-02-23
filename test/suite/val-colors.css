@@ -1,0 +1,13 @@
+
+.arena {background-color: #FFFFFF;}
+.arena p {background: red;}
+#p01 {background-color: #CCCCCC;}
+#p02 {background-color: #CCC;}
+#p03 {background-color: rgb(204,204,204);}
+#p04 {background-color: rgb(80%,80%,80%);}
+#p05 {background-color: hsl(120,0%,80%);}
+#p06 {background-color: rgba(102,102,102,0.3333333);}
+#p07 {background-color: rgba(40%,40%,40%,0.3333333);}
+#p08 {background-color: hsla(120,0%,40%,0.3333333);}
+#p09 {background-color: currentColor;}
+#p10 {background-color: transparent;}

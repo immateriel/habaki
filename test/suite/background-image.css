@@ -1,0 +1,8 @@
+
+.arena div {margin: 10px; padding: 1em; border: 5px double;
+	background-image: url(i/box-red.gif);
+	background-repeat: no-repeat;
+	background-position: top left, top right, bottom right, bottom left;
+	background-size: auto 25%;}
+
+#d01 {background-image: url(i/box-red.gif), url(i/box-red.gif), url(i/box-red.gif), url(i/box-red.gif);}

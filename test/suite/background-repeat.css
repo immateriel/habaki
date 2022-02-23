@@ -1,0 +1,29 @@
+
+.arena div {height: 50px; width: 100px; float: left;
+	margin: 10px; padding: 1em;
+	background: green url(i/hatchgrid.png) center;}
+.arena div:nth-child(4n-2) {clear: left;}
+#d01 {background-repeat: repeat;}
+#d02 {background-repeat: no-repeat;}
+#d03 {background-repeat: repeat no-repeat;}
+#d04 {background-repeat: no-repeat repeat;}
+#d05 {background-repeat: round;}
+#d06 {background-repeat: space;}
+#d07 {background-repeat: round space;}
+#d08 {background-repeat: space round;}
+#d09 {background-repeat: round repeat;}
+#d10 {background-repeat: repeat round;}
+#d11 {background-repeat: space repeat;}
+#d12 {background-repeat: repeat space;}
+#d13 {background-repeat: round no-repeat;}
+#d14 {background-repeat: no-repeat round;}
+#d15 {background-repeat: space no-repeat;}
+#d16 {background-repeat: no-repeat space;}
+#d17 {background-repeat: round; background-position: content-box;}
+#d18 {background-repeat: space; background-clip: content-box;}
+#d19 {background-repeat: round space; background-clip: content-box;}
+#d20 {background-repeat: space round; background-clip: content-box;}
+#d21 {background-repeat: space; background-image: url(i/grid-100.png);}
+#d22 {background-repeat: round; background-image: url(i/grid-100.png);}
+#d23 {background-repeat: space; background-image: url(i/grid-100.png); background-position: top left;}
+#d24 {background-repeat: round; background-image: url(i/grid-100.png); background-position: top left;}

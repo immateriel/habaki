@@ -1,0 +1,8 @@
+
+.arena div {width: 50px; height: 200px; margin: 10px; padding: 1em; border: 5px double; float: left;}
+
+	#ex01 {background-image: linear-gradient(red, orange, yellow, green, blue, indigo, violet);}
+	#ex02 {background-image: linear-gradient(red, orange, yellow 50%, green 40%, blue, indigo, violet);}
+	#ex03 {background-image: linear-gradient(red, orange, yellow, green 50%, blue 50%, indigo, violet);}
+	#ex04 {background-image: linear-gradient(red 25%, orange, yellow, green, blue, indigo, violet 75%);}
+	#ex05 {background-image: linear-gradient(red -25%, orange, yellow, green, blue, indigo, violet 125%);}

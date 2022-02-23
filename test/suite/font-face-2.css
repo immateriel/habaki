@@ -1,0 +1,15 @@
+
+
+@font-face {
+	font-family: 'A';
+	src: local('Arial');
+	}
+@font-face {
+	font-family: 'Ari';
+	src: local(Arial);
+	}
+.arena p {font-family: Georgia, serif;}
+.arena p span {border-bottom: 1px dotted #BBF;}
+.arena #p01 span {font-family: A, fantasy;}
+.arena #p02 span {font-family: Ari, fantasy;}
+.arena #p03 span {font-family: Arial, fantasy;}

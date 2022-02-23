@@ -1,0 +1,17 @@
+
+@font-face {
+  font-family: 'Ubuntu';
+  src: url('f/Ubuntu-R.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Myriad';
+  src: url('f/MyriadPro-Regular.otf') format('opentype');
+}
+
+.arena p {font-size: 128%;}
+.t1 {font-family: Myriad, serif;}
+.t2 {font-family: Ubuntu, serif;}
+
+.c1 {font-kerning: auto;}
+.c2 {font-kerning: normal;}
+.c3 {font-kerning: none;}

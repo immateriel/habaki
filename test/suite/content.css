@@ -1,0 +1,3 @@
+
+p span {content: "without a trace of sense";}
+p + p span {content: url(i/dot-red.gif);}

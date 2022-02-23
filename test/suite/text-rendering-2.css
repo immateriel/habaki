@@ -1,0 +1,12 @@
+
+@font-face {
+	font-family: NSL;
+	src: url("f/Nadyezhda SL One.ttf");
+}
+
+.arena p {font: 23px NSL, cursive;}
+.arena #p01 {text-rendering: optimizeLegibility;}
+.arena #p02 {text-rendering: optimizeSpeed;}
+.arena #p03 {text-rendering: geometricPrecision;}
+.arena #p04 {text-rendering: auto;}
+

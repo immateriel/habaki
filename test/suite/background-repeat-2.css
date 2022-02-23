@@ -1,0 +1,21 @@
+
+.arena div {height: 250px; width: 250px; float: left;
+	margin: 10px; padding: 0; border: none;
+	background: green url(i/hatchgrid-150.png) center;}
+.arena div:nth-child(4n+1) {clear: left;}
+#d01 {background-repeat: round;}
+#d02 {background-repeat: space;}
+#d03 {background-repeat: round space;}
+#d04 {background-repeat: space round;}
+#d05 {background-repeat: round no-repeat;}
+#d06 {background-repeat: no-repeat round;}
+#d07 {background-repeat: space no-repeat;}
+#d08 {background-repeat: no-repeat space;}
+#d09 {background-repeat: space; height: 290px; width: 290px;}
+#d10 {background-repeat: space; height: 310px; width: 310px;}
+#d11 {background-repeat: space; height: 440px; width: 440px;}
+#d12 {background-repeat: space; height: 460px; width: 460px;}
+#d13 {background-repeat: round; height: 290px; width: 290px;}
+#d14 {background-repeat: round; height: 310px; width: 310px;}
+#d15 {background-repeat: round; height: 440px; width: 440px;}
+#d16 {background-repeat: round; height: 460px; width: 460px;}

@@ -1,0 +1,38 @@
+
+.arena div {height: 100px; width: 100px; float: left;
+	margin: 10px;
+	border: 1px solid gray; text-align: center;
+	background: url(i/dot-red.gif) no-repeat center;}
+.arena div:nth-child(8n + 1) {clear: left;}
+#d01 {background-position: top 25px left 25px;}
+#d02 {background-position: left 25px top 25px;}
+#d03 {background-position: top 25px right 25px;}
+#d04 {background-position: right 25px top 25px;}
+#d05 {background-position: bottom 25px right 25px;}
+#d06 {background-position: right 25px bottom 25px;}
+#d07 {background-position: bottom 25px left 25px;}
+#d08 {background-position: left 25px bottom 25px;}
+#d11 {background-position: top 25% left 25%;}
+#d12 {background-position: left 25% top 25%;}
+#d13 {background-position: top 25% right 25%;}
+#d14 {background-position: right 25% top 25%;}
+#d15 {background-position: bottom 25% right 25%;}
+#d16 {background-position: right 25% bottom 25%;}
+#d17 {background-position: bottom 25% left 25%;}
+#d18 {background-position: left 25% bottom 25%;}
+#d21 {background-position: top left 25%;}
+#d22 {background-position: left top 25%;}
+#d23 {background-position: top right 25%;}
+#d24 {background-position: right top 25%;}
+#d25 {background-position: bottom right 25%;}
+#d26 {background-position: right bottom 25%;}
+#d27 {background-position: bottom left 25%;}
+#d28 {background-position: left bottom 25%;}
+#d31 {background-position: center 25% center 25%;}
+#d32 {background-position: center 25px center 25px;}
+#d33 {background-position: center center 25%;}
+#d34 {background-position: center 25px center;}
+#d35 {background-position: 25% left 25%;}
+#d36 {background-position: 25% top 25%;}
+#d37 {background-position: 25% right 25%;}
+#d38 {background-position: 25% top 25%;}

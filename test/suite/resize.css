@@ -1,0 +1,5 @@
+
+.arena p {width: 15em; height: 2em; border: 1px dotted gray; margin: 5em 0; overflow: auto;}
+#p01 {resize: horizontal;}
+#p02 {resize: vertical;}
+#p03 {resize: both;}
