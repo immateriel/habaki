@@ -62,8 +62,10 @@ module Habaki
         "url(#{@value.include?(" ") ? "\"#{@value}\"" : @value})"
       when :unicode_range
         @value
-      when :dimension # something is wrong ?
-        "0"
+      when :dimension # something is wrong with dimension
+        @value
+      when :unknown
+        @value
       else
         raise "Unsupported value '#{@value}' #{@unit}"
       end
@@ -406,6 +408,36 @@ module Habaki
   end
 
   class Rules < Array
+    # @return [Array<MediaRule>]
+    def medias
+      select { |rule| rule.is_a?(MediaRule) }
+    end
+
+    # @return [Array<SupportsRule>]
+    def supports
+      select { |rule| rule.is_a?(SupportsRule) }
+    end
+
+    # @return [Array<NamespaceRule>]
+    def namespaces
+      select { |rule| rule.is_a?(NamespaceRule) }
+    end
+
+    # @return [Array<FontFaceRule>]
+    def font_faces
+      select { |rule| rule.is_a?(FontFaceRule) }
+    end
+
+    # @return [Array<PageRule>]
+    def pages
+      select { |rule| rule.is_a?(PageRule) }
+    end
+
+    # @return [Array<StyleRule>]
+    def styles
+      select { |rule| rule.is_a?(StyleRule) }
+    end
+
     def string(indent = 0)
       str = " " * (indent > 0 ? indent - 1 : 0)
       str += map { |rule| rule.string(indent) }.join("\n")
@@ -438,7 +470,6 @@ module Habaki
     def string(indent = 0)
       "@import \"#{@href}\" #{@medias.string};"
     end
-
   end
 
   # import rule @media
@@ -507,7 +538,7 @@ module Habaki
   end
 
   # namespace rule @namespace
-  # TODO implement QualifiedName resolution
+  # TODO implement QualifiedName namespace resolution
   class NamespaceRule < Node
     attr_accessor :prefix
     attr_accessor :uri

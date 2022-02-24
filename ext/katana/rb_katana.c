@@ -849,6 +849,7 @@ VALUE rb_value_value(VALUE self)
   VALUE val = Qnil;
   KatanaValue *c_val;
   Data_Get_Struct(self, KatanaValue, c_val);
+
   switch (c_val->unit)
   {
   case KATANA_VALUE_NUMBER:
@@ -909,8 +910,14 @@ VALUE rb_value_value(VALUE self)
   case KATANA_VALUE_UNICODE_RANGE:
     val = rb_str_new2(c_val->string);
     break;
+  case KATANA_VALUE_DIMENSION:
+    val = rb_str_new2(c_val->string);
+    break;
+  case KATANA_VALUE_UNKNOWN:
+    val = rb_str_new2(c_val->string);
+    break;
   default:
-    fprintf(stderr, "KATANA: unsupported value unit %d (%s)\n", c_val->unit, c_val->raw);
+    fprintf(stderr, "KATANA: unsupported value unit %d (%s)\n", c_val->unit, c_val->string);
     break;
   }
 

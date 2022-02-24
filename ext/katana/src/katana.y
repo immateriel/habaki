@@ -1663,23 +1663,25 @@ term:
     // $$.fValue *= $1; 
     katana_value_set_sign(parser, $$, $1);
   }
-  | KATANA_CSS_STRING maybe_space { $$ = katana_new_value(parser); $$->id = KatanaValueInvalid; $$->isInt = false; katana_value_set_string(parser, $$, &$1); $$->unit = KATANA_VALUE_STRING; }
+  | KATANA_CSS_STRING maybe_space { $$ = katana_new_value(parser); $$->isInt = false; katana_value_set_string(parser, $$, &$1); $$->unit = KATANA_VALUE_STRING; }
   | KATANA_CSS_IDENT maybe_space { $$ = katana_new_ident_value(parser, &$1); }
   /* We might need to actually parse the number from a dimension, but we can't just put something that uses $$.string into unary_term. */
-  | KATANA_CSS_DIMEN maybe_space { $$ = katana_new_value(parser); $$->id = KatanaValueInvalid; katana_value_set_string(parser, $$, &$1); $$->isInt = false; $$->unit = KATANA_VALUE_DIMENSION; }
-  | unary_operator KATANA_CSS_DIMEN maybe_space { $$ = katana_new_value(parser); $$->id = KatanaValueInvalid; katana_value_set_string(parser, $$, &$2); $$->isInt = false; $$->unit = KATANA_VALUE_DIMENSION; }
-  | KATANA_CSS_URI maybe_space { $$ = katana_new_value(parser); $$->id = KatanaValueInvalid; katana_value_set_string(parser, $$, &$1); $$->isInt = false; $$->unit = KATANA_VALUE_URI; }
-  | KATANA_CSS_UNICODERANGE maybe_space { $$ = katana_new_value(parser); $$->id = KatanaValueInvalid; katana_value_set_string(parser, $$, &$1); $$->isInt = false; $$->unit = KATANA_VALUE_UNICODE_RANGE; }
-  | KATANA_CSS_HEX maybe_space { $$ = katana_new_value(parser); $$->id = KatanaValueInvalid; katana_value_set_string(parser, $$, &$1); $$->isInt = false; $$->unit = KATANA_VALUE_PARSER_HEXCOLOR; }
-  | '#' maybe_space { $$ = katana_new_value(parser); $$->id = KatanaValueInvalid; 
-    KatanaParserString tmp = {"#", 1}; 
-    katana_value_set_string(parser, $$, &tmp); 
-    $$->isInt = false; $$->unit = KATANA_VALUE_PARSER_HEXCOLOR; } /* Handle error case: "color: #;" */
+  | KATANA_CSS_DIMEN maybe_space { $$ = katana_new_value(parser); katana_value_set_string(parser, $$, &$1); $$->isInt = false; $$->unit = KATANA_VALUE_DIMENSION; }
+  | unary_operator KATANA_CSS_DIMEN maybe_space { $$ = katana_new_value(parser); katana_value_set_string(parser, $$, &$2); $$->isInt = false; $$->unit = KATANA_VALUE_DIMENSION; }
+  | KATANA_CSS_URI maybe_space { $$ = katana_new_value(parser); katana_value_set_string(parser, $$, &$1); $$->isInt = false; $$->unit = KATANA_VALUE_URI; }
+  | KATANA_CSS_UNICODERANGE maybe_space { $$ = katana_new_value(parser); katana_value_set_string(parser, $$, &$1); $$->isInt = false; $$->unit = KATANA_VALUE_UNICODE_RANGE; }
+  | KATANA_CSS_HEX maybe_space { $$ = katana_new_value(parser); katana_value_set_string(parser, $$, &$1); $$->isInt = false; $$->unit = KATANA_VALUE_PARSER_HEXCOLOR; }
+  | '#' maybe_space {
+      /* Handle error case: "color: #;" */
+      KatanaParserString tmp = {"#", 1};    
+      $$ = katana_new_value(parser);katana_value_set_string(parser, $$, &tmp); $$->isInt = false; $$->unit = 0;
+  }
   /* FIXME: according to the specs a function can have a unary_operator in front. I know no case where this makes sense */
   | function maybe_space
   | calc_function maybe_space
   | '%' maybe_space { /* Handle width: %; */
-      $$ = katana_new_value(parser); $$->id = KatanaValueInvalid; $$->isInt = false; $$->unit = 0;
+      KatanaParserString tmp = {"%", 1}; 
+      $$ = katana_new_value(parser); katana_value_set_string(parser, $$, &tmp); $$->isInt = false; $$->unit = 0;
   }
   | track_names_list maybe_space
   ;

@@ -255,14 +255,6 @@ typedef enum {
 //    KATANA_VALUE_PARSER_Q_EMS    = 0x100003,
 //} KatanaParserValueUnit;
 
-typedef enum {
-    KatanaValueInvalid = 0,
-    KatanaValueInherit = 1,
-    KatanaValueInitial = 2,
-    KatanaValueNone = 3,
-    KatanaValueCustom = 0x100010,
-} KatanaValueID;
-
 typedef enum { KatanaParseError } KatanaErrorType;
 
 typedef struct {
@@ -449,7 +441,6 @@ typedef struct {
 } KatanaValueFunction;
 
 typedef struct KatanaValue {
-    KatanaValueID id;
     bool isInt;
     union {
         int iValue;

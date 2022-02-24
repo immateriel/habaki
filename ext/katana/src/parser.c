@@ -699,7 +699,6 @@ void katana_destroy_function(KatanaParser* parser, KatanaValueFunction* e)
 KatanaValue* katana_new_number_value(KatanaParser* parser, int sign, KatanaParserNumber* value, KatanaValueUnit unit)
 {
     KatanaValue* v = katana_new_value(parser);
-    v->id = KatanaValueInvalid;
     v->isInt = false;
     v->fValue = sign * value->val;
     v->unit = unit;
@@ -714,7 +713,6 @@ KatanaValue* katana_new_number_value(KatanaParser* parser, int sign, KatanaParse
 KatanaValue* katana_new_dimension_value(KatanaParser* parser, KatanaParserNumber* value, KatanaValueUnit unit)
 {
     KatanaValue* v = katana_new_value(parser);
-    v->id = KatanaValueInvalid;
     v->isInt = false;
     v->fValue = value->val;
     v->raw = katana_string_to_characters(parser, &value->raw);
@@ -725,7 +723,6 @@ KatanaValue* katana_new_dimension_value(KatanaParser* parser, KatanaParserNumber
 KatanaValue* katana_new_operator_value(KatanaParser* parser, int value)
 {
     KatanaValue* v = katana_new_value(parser);
-    v->id = KatanaValueInvalid;
     v->isInt = false;
     v->unit = KATANA_VALUE_PARSER_OPERATOR;
     v->iValue = value;
@@ -735,9 +732,6 @@ KatanaValue* katana_new_operator_value(KatanaParser* parser, int value)
 KatanaValue* katana_new_ident_value(KatanaParser* parser, KatanaParserString* value)
 {
     KatanaValue* v = katana_new_value(parser);
-    // is it necessary to do this ?
-    // v.id = cssValueKeywordID(string);
-    v->id = KatanaValueCustom;
     v->isInt = false;
     v->unit = KATANA_VALUE_IDENT;
     v->string = katana_string_to_characters(parser, value);

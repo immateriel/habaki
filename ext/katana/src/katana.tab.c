@@ -740,16 +740,16 @@ static const yytype_int16 yyrline[] =
     1549,  1556,  1562,  1568,  1575,  1589,  1590,  1594,  1599,  1606,
     1609,  1612,  1618,  1622,  1627,  1631,  1640,  1646,  1652,  1653,
     1659,  1660,  1666,  1667,  1669,  1670,  1671,  1672,  1673,  1674,
-    1679,  1680,  1681,  1684,  1688,  1689,  1690,  1691,  1692,  1693,
-    1694,  1695,  1696,  1697,  1698,  1699,  1700,  1701,  1702,  1703,
-    1704,  1705,  1706,  1707,  1708,  1713,  1714,  1715,  1716,  1717,
-    1718,  1719,  1720,  1721,  1725,  1728,  1731,  1737,  1738,  1742,
-    1745,  1748,  1751,  1756,  1758,  1762,  1768,  1774,  1778,  1783,
-    1788,  1792,  1796,  1803,  1804,  1808,  1812,  1818,  1819,  1823,
-    1824,  1825,  1826,  1827,  1831,  1834,  1835,  1836,  1843,  1846,
-    1847,  1848,  1852,  1855,  1856,  1860,  1866,  1872,  1876,  1879,
-    1879,  1879,  1879,  1879,  1879,  1879,  1879,  1882,  1887,  1892,
-    1894,  1895,  1896,  1897,  1900,  1902,  1903,  1904
+    1680,  1681,  1682,  1686,  1690,  1691,  1692,  1693,  1694,  1695,
+    1696,  1697,  1698,  1699,  1700,  1701,  1702,  1703,  1704,  1705,
+    1706,  1707,  1708,  1709,  1710,  1715,  1716,  1717,  1718,  1719,
+    1720,  1721,  1722,  1723,  1727,  1730,  1733,  1739,  1740,  1744,
+    1747,  1750,  1753,  1758,  1760,  1764,  1770,  1776,  1780,  1785,
+    1790,  1794,  1798,  1805,  1806,  1810,  1814,  1820,  1821,  1825,
+    1826,  1827,  1828,  1829,  1833,  1836,  1837,  1838,  1845,  1848,
+    1849,  1850,  1854,  1857,  1858,  1862,  1868,  1874,  1878,  1881,
+    1881,  1881,  1881,  1881,  1881,  1881,  1881,  1884,  1889,  1894,
+    1896,  1897,  1898,  1899,  1902,  1904,  1905,  1906
 };
 #endif
 
@@ -3970,7 +3970,7 @@ yyreduce:
     break;
 
   case 272:
-                                  { (yyval.value) = katana_new_value(parser); (yyval.value)->id = KatanaValueInvalid; (yyval.value)->isInt = false; katana_value_set_string(parser, (yyval.value), &(yyvsp[-1].string)); (yyval.value)->unit = KATANA_VALUE_STRING; }
+                                  { (yyval.value) = katana_new_value(parser); (yyval.value)->isInt = false; katana_value_set_string(parser, (yyval.value), &(yyvsp[-1].string)); (yyval.value)->unit = KATANA_VALUE_STRING; }
     break;
 
   case 273:
@@ -3978,35 +3978,37 @@ yyreduce:
     break;
 
   case 274:
-                                 { (yyval.value) = katana_new_value(parser); (yyval.value)->id = KatanaValueInvalid; katana_value_set_string(parser, (yyval.value), &(yyvsp[-1].string)); (yyval.value)->isInt = false; (yyval.value)->unit = KATANA_VALUE_DIMENSION; }
+                                 { (yyval.value) = katana_new_value(parser); katana_value_set_string(parser, (yyval.value), &(yyvsp[-1].string)); (yyval.value)->isInt = false; (yyval.value)->unit = KATANA_VALUE_DIMENSION; }
     break;
 
   case 275:
-                                                { (yyval.value) = katana_new_value(parser); (yyval.value)->id = KatanaValueInvalid; katana_value_set_string(parser, (yyval.value), &(yyvsp[-1].string)); (yyval.value)->isInt = false; (yyval.value)->unit = KATANA_VALUE_DIMENSION; }
+                                                { (yyval.value) = katana_new_value(parser); katana_value_set_string(parser, (yyval.value), &(yyvsp[-1].string)); (yyval.value)->isInt = false; (yyval.value)->unit = KATANA_VALUE_DIMENSION; }
     break;
 
   case 276:
-                               { (yyval.value) = katana_new_value(parser); (yyval.value)->id = KatanaValueInvalid; katana_value_set_string(parser, (yyval.value), &(yyvsp[-1].string)); (yyval.value)->isInt = false; (yyval.value)->unit = KATANA_VALUE_URI; }
+                               { (yyval.value) = katana_new_value(parser); katana_value_set_string(parser, (yyval.value), &(yyvsp[-1].string)); (yyval.value)->isInt = false; (yyval.value)->unit = KATANA_VALUE_URI; }
     break;
 
   case 277:
-                                        { (yyval.value) = katana_new_value(parser); (yyval.value)->id = KatanaValueInvalid; katana_value_set_string(parser, (yyval.value), &(yyvsp[-1].string)); (yyval.value)->isInt = false; (yyval.value)->unit = KATANA_VALUE_UNICODE_RANGE; }
+                                        { (yyval.value) = katana_new_value(parser); katana_value_set_string(parser, (yyval.value), &(yyvsp[-1].string)); (yyval.value)->isInt = false; (yyval.value)->unit = KATANA_VALUE_UNICODE_RANGE; }
     break;
 
   case 278:
-                               { (yyval.value) = katana_new_value(parser); (yyval.value)->id = KatanaValueInvalid; katana_value_set_string(parser, (yyval.value), &(yyvsp[-1].string)); (yyval.value)->isInt = false; (yyval.value)->unit = KATANA_VALUE_PARSER_HEXCOLOR; }
+                               { (yyval.value) = katana_new_value(parser); katana_value_set_string(parser, (yyval.value), &(yyvsp[-1].string)); (yyval.value)->isInt = false; (yyval.value)->unit = KATANA_VALUE_PARSER_HEXCOLOR; }
     break;
 
   case 279:
-                    { (yyval.value) = katana_new_value(parser); (yyval.value)->id = KatanaValueInvalid; 
-    KatanaParserString tmp = {"#", 1}; 
-    katana_value_set_string(parser, (yyval.value), &tmp); 
-    (yyval.value)->isInt = false; (yyval.value)->unit = KATANA_VALUE_PARSER_HEXCOLOR; }
+                    {
+      /* Handle error case: "color: #;" */
+      KatanaParserString tmp = {"#", 1};    
+      (yyval.value) = katana_new_value(parser);katana_value_set_string(parser, (yyval.value), &tmp); (yyval.value)->isInt = false; (yyval.value)->unit = 0;
+  }
     break;
 
   case 282:
                     { /* Handle width: %; */
-      (yyval.value) = katana_new_value(parser); (yyval.value)->id = KatanaValueInvalid; (yyval.value)->isInt = false; (yyval.value)->unit = 0;
+      KatanaParserString tmp = {"%", 1}; 
+      (yyval.value) = katana_new_value(parser); katana_value_set_string(parser, (yyval.value), &tmp); (yyval.value)->isInt = false; (yyval.value)->unit = 0;
   }
     break;
 

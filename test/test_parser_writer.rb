@@ -9,10 +9,8 @@ class TestSuite < Minitest::Test
     css = %{
     a {color: blue; text-decoration: underline;}
     }
-
     stylesheet = Habaki::Stylesheet.new
     stylesheet.parse(css)
-
     assert_equal "blue", stylesheet.rules.first.declarations.select{|decl| decl.property == "color"}.first.values.first.value
   end
 
@@ -20,13 +18,18 @@ class TestSuite < Minitest::Test
     css = %{
     a {color: blue; text-decoration: underline;}
     }
-
     stylesheet = Habaki::Stylesheet.new
     stylesheet.parse(css)
-
     stylesheet.rules.first.declarations.reject!{|decl| decl.property == "color"}
     assert_equal 1, stylesheet.rules.first.declarations.length
     assert_equal "a {text-decoration: underline; }", stylesheet.string
+  end
+
+  def test_import
+    css = %{@import "mobstyle.css" screen and (max-width: 768px);}
+    stylesheet = Habaki::Stylesheet.new
+    stylesheet.parse(css)
+    assert_equal css, stylesheet.string
   end
 
   def test_media_not
@@ -92,6 +95,7 @@ svg|a {}
 *|a {}}
     stylesheet = Habaki::Stylesheet.new
     stylesheet.parse(css)
+    assert 2, stylesheet.rules.namespaces.length
     assert_equal css, stylesheet.string
   end
 
@@ -135,6 +139,13 @@ a {color: black; }
     css= %{@supports (transform-style: preserve-3d) or ((-moz-transform-style: preserve-3d) or ((-o-transform-style: preserve-3d) or (-webkit-transform-style: preserve-3d))) {
 a {color: black; }
 }}
+    stylesheet = Habaki::Stylesheet.new
+    stylesheet.parse(css)
+    assert_equal css, stylesheet.string
+  end
+
+  def test_invalid
+    css=%{p {padding: 4m; font-size: %; color: #; weight: em; }}
     stylesheet = Habaki::Stylesheet.new
     stylesheet.parse(css)
     assert_equal css, stylesheet.string
