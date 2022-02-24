@@ -410,6 +410,9 @@ void katana_destroy_rule(KatanaParser* parser, KatanaRule* rule)
         case KatanaRuleMedia:
             katana_destroy_media_rule(parser, (KatanaMediaRule*)rule);
             break;
+        case KatanaRuleNamespace:
+            katana_parser_deallocate(parser,  (void*) rule);
+           break;
         case KatanaRulePage:
             katana_destroy_page_rule(parser, (KatanaPageRule*)rule);
             break;
@@ -457,9 +460,19 @@ void katana_destroy_style_rule(KatanaParser* parser, KatanaStyleRule* e)
 }
 
 
-void katana_add_namespace(KatanaParser* parser, KatanaParserString* prefix, KatanaParserString* uri)
+KatanaRule* katana_new_namespace_rule(KatanaParser* parser, KatanaParserString* prefix, KatanaParserString* uri)
 {
-    // TODO: No need for right now
+    KatanaNamespaceRule* rule = katana_parser_allocate(parser, sizeof(KatanaNamespaceRule));
+
+    rule->base.name = "namespace";
+    rule->base.type = KatanaRuleNamespace;
+
+    rule->prefix = prefix == NULL ? NULL : katana_string_to_characters(parser, prefix);
+    rule->uri = uri == NULL ? NULL : katana_string_to_characters(parser, uri);
+
+    katana_parser_reset_declarations(parser);
+
+    return (KatanaRule*)rule;
 }
 
 

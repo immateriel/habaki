@@ -90,7 +90,7 @@ nth             [\+-]?{intnum}*n([\t\r\n ]*[\+-][\t\r\n ]*{intnum})?
 "@media"                {BEGIN(mediaquery); KATANA_TOKEN(KATANA_CSS_MEDIA_SYM)}
 "@font-face"            {KATANA_TOKEN(KATANA_CSS_FONT_FACE_SYM)}
 "@charset"              {KATANA_TOKEN(KATANA_CSS_CHARSET_SYM)}
-"@namespace"            {KATANA_TOKEN(KATANA_CSS_NAMESPACE_SYM) }
+"@namespace"            {BEGIN(mediaquery); KATANA_TOKEN(KATANA_CSS_NAMESPACE_SYM) }
 "@keyframes"            {KATANA_TOKEN(KATANA_CSS_KEYFRAMES_SYM) }
 "@supports"             {BEGIN(supports); KATANA_TOKEN(KATANA_CSS_SUPPORTS_SYM)}
 

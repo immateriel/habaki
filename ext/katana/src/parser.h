@@ -82,7 +82,7 @@ KatanaStylesheet* katana_new_stylesheet(KatanaParser* parser);
 void katana_parser_reset_declarations(KatanaParser* parser);
 
 
-void katana_add_namespace(KatanaParser* parser, KatanaParserString* prefix, KatanaParserString* uri);
+KatanaRule* katana_new_namespace_rule(KatanaParser* parser, KatanaParserString* prefix, KatanaParserString* uri);
 
 
 KatanaRule* katana_new_font_face(KatanaParser* parser);

@@ -123,6 +123,20 @@ module Habaki
     end
   end
 
+  class QualifiedName < Node
+    attr_accessor :local, :prefix
+
+    def read(tag)
+      @local = tag.local
+      @prefix = tag.prefix
+      self
+    end
+
+    def string(indent = 0)
+      @prefix ? "#{@prefix}|#{@local}" : @local
+    end
+  end
+
   class Selector < Node
     # @return [Symbol]
     attr_accessor :match
@@ -151,11 +165,11 @@ module Habaki
 
     def read(sel)
       @match = sel.match
-      @tag = sel.tag&.local
+      @tag = QualifiedName.read(sel.tag) if sel.tag
       @relation = sel.relation
       @pseudo = sel.pseudo
 
-      @attribute = sel.data.attribute&.local
+      @attribute = QualifiedName.read(sel.data.attribute) if sel.data.attribute
       @value = sel.data.value
       @argument = sel.data.argument
       if sel.data.selectors
@@ -179,7 +193,7 @@ module Habaki
     # @return [Boolean]
     def tag_match?(name)
       return false unless @match == :tag
-      @tag == name
+      @tag.local == name
     end
 
     # class match
@@ -205,7 +219,7 @@ module Habaki
     # @return [Boolean]
     def attribute_match?(name, val)
       if attribute_selector?
-        return false unless name == @attribute
+        return false unless name == @attribute.local
         case @match
         when :attribute_exact
           val == @value
@@ -225,7 +239,7 @@ module Habaki
 
       while sel do
         if sel.attribute_selector?
-          str += "[#{sel.attribute}"
+          str += "[#{sel.attribute.string}"
           case sel.match
           when :attribute_exact
             str += "="
@@ -244,7 +258,7 @@ module Habaki
         else
           case sel.match
           when :tag
-            str += "#{sel.tag}"
+            str += sel.tag.string
           when :class
             str += ".#{sel.value}"
           when :id
@@ -376,6 +390,8 @@ module Habaki
         FontFaceRule.read(rul)
       when Katana::PageRule
         PageRule.read(rul)
+      when Katana::NamespaceRule
+        NamespaceRule.read(rul)
       when Katana::StyleRule
         StyleRule.read(rul)
       else
@@ -478,6 +494,21 @@ module Habaki
 
     def string(indent = 0)
       "@page {#{@declarations.string(indent)}}"
+    end
+  end
+
+  class NamespaceRule < Node
+    attr_accessor :prefix
+    attr_accessor :uri
+
+    def read(rule)
+      @prefix = rule.prefix
+      @uri = rule.uri
+      self
+    end
+
+    def string(indent = 0)
+      "@namespace #{@prefix.length > 0 ? "#{@prefix} " : ""}\"#{@uri}\";"
     end
   end
 

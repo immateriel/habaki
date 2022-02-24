@@ -522,13 +522,12 @@ import:
 
 namespace:
     KATANA_CSS_NAMESPACE_SYM maybe_space maybe_ns_prefix string_or_uri maybe_space semi_or_eof {
-        katana_add_namespace(parser, &$3, &$4);
-        $$ = 0;
+        $$ = katana_new_namespace_rule(parser, &$3, &$4);
     }
   ;
 
 maybe_ns_prefix:
-/* empty */ { /*$$.clear();*/ }
+/* empty */ { $$ = (KatanaParserString){"", 0}; }
 | KATANA_CSS_IDENT maybe_space
 ;
 

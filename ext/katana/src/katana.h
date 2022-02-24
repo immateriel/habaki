@@ -348,6 +348,14 @@ typedef struct {
     KatanaArray* /* KatanaDeclaration */ declarations;
 } KatanaKeyframe;
 
+/* @namespace */
+typedef struct {
+    KatanaRule base;
+
+    const char* prefix;
+    const char* uri;
+} KatanaNamespaceRule;
+
 /**
  * The `@media` at-rule.
  */

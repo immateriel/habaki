@@ -64,7 +64,7 @@ VALUE rb_rule_each(VALUE array)
       // TODO
       break;
     case KatanaRuleNamespace:
-      // TODO
+      rb_yield(Data_Wrap_Struct(rb_NamespaceRule, NULL, NULL, rule));
       break;
     case KatanaRuleKeyframes:
       // TODO
@@ -897,7 +897,7 @@ VALUE rb_value_value(VALUE self)
     val = rb_str_new2(c_val->string);
     break;
   default:
-    fprintf(stderr, "KATANA: unsupported value unit %d (%s)\n",c_val->unit, c_val->raw);
+    fprintf(stderr, "KATANA: unsupported value unit %d (%s)\n", c_val->unit, c_val->raw);
     break;
   }
 
@@ -1054,6 +1054,27 @@ VALUE rb_stylesheet_imports(VALUE self)
   rb_define_method(sing, "each", rb_rule_each, 0);
 
   return array;
+}
+
+// NamespaceRule
+VALUE rb_namespace_rule_prefix(VALUE self)
+{
+  KatanaNamespaceRule *c_rule;
+  Data_Get_Struct(self, KatanaNamespaceRule, c_rule);
+  if (c_rule->prefix)
+    return rb_str_new2(c_rule->prefix);
+  else
+    return Qnil;
+}
+
+VALUE rb_namespace_rule_uri(VALUE self)
+{
+  KatanaNamespaceRule *c_rule;
+  Data_Get_Struct(self, KatanaNamespaceRule, c_rule);
+  if (c_rule->prefix)
+    return rb_str_new2(c_rule->uri);
+  else
+    return Qnil;
 }
 
 // MediaRule
@@ -1282,8 +1303,9 @@ void Init_katana()
   rb_SupportsRule = rb_define_class_under(rb_Katana, "SupportsRule", rb_cObject);
 
   // NamespaceRule
-  // TODO
   rb_NamespaceRule = rb_define_class_under(rb_Katana, "NamespaceRule", rb_cObject);
+  rb_define_method(rb_NamespaceRule, "prefix", rb_namespace_rule_prefix, 0);
+  rb_define_method(rb_NamespaceRule, "uri", rb_namespace_rule_uri, 0);
 
   // MediaRule
   rb_MediaRule = rb_define_class_under(rb_Katana, "MediaRule", rb_cObject);
