@@ -1048,6 +1048,7 @@ VALUE rb_stylesheet_imports(VALUE self)
 {
   KatanaStylesheet *c_stylesheet;
   Data_Get_Struct(self, KatanaStylesheet, c_stylesheet);
+
   VALUE array = Data_Wrap_Struct(rb_KArray, NULL, NULL, &c_stylesheet->imports);
 
   VALUE sing = rb_singleton_class(array);
@@ -1083,24 +1084,39 @@ VALUE rb_media_rule_rules(VALUE self)
 {
   KatanaMediaRule *c_media_rule;
   Data_Get_Struct(self, KatanaMediaRule, c_media_rule);
-  VALUE array = Data_Wrap_Struct(rb_KArray, NULL, NULL, c_media_rule->rules);
 
-  VALUE sing = rb_singleton_class(array);
-  rb_define_method(sing, "each", rb_rule_each, 0);
+  if (c_media_rule->rules)
+  {
+    VALUE array = Data_Wrap_Struct(rb_KArray, NULL, NULL, c_media_rule->rules);
 
-  return array;
+    VALUE sing = rb_singleton_class(array);
+    rb_define_method(sing, "each", rb_rule_each, 0);
+
+    return array;
+  }
+  else
+  {
+    return Qnil;
+  }
 }
 
 VALUE rb_media_rule_medias(VALUE self)
 {
   KatanaMediaRule *c_media_rule;
   Data_Get_Struct(self, KatanaMediaRule, c_media_rule);
-  VALUE array = Data_Wrap_Struct(rb_KArray, NULL, NULL, c_media_rule->medias);
 
-  VALUE sing = rb_singleton_class(array);
-  rb_define_method(sing, "each", rb_media_query_each, 0);
+  if (c_media_rule->medias)
+  {
+    VALUE array = Data_Wrap_Struct(rb_KArray, NULL, NULL, c_media_rule->medias);
+    VALUE sing = rb_singleton_class(array);
+    rb_define_method(sing, "each", rb_media_query_each, 0);
 
-  return array;
+    return array;
+  }
+  else
+  {
+    return Qnil;
+  }
 }
 
 // MediaQueryExp
@@ -1119,12 +1135,20 @@ VALUE rb_media_query_exp_values(VALUE self)
 {
   KatanaMediaQueryExp *c_query;
   Data_Get_Struct(self, KatanaMediaQueryExp, c_query);
-  VALUE array = Data_Wrap_Struct(rb_KArray, NULL, NULL, c_query->values);
 
-  VALUE sing = rb_singleton_class(array);
-  rb_define_method(sing, "each", rb_value_each, 0);
+  if (c_query->values)
+  {
+    VALUE array = Data_Wrap_Struct(rb_KArray, NULL, NULL, c_query->values);
 
-  return array;
+    VALUE sing = rb_singleton_class(array);
+    rb_define_method(sing, "each", rb_value_each, 0);
+
+    return array;
+  }
+  else
+  {
+    return Qnil;
+  }
 }
 
 // MediaQuery
@@ -1166,12 +1190,20 @@ VALUE rb_media_query_expressions(VALUE self)
 {
   KatanaMediaQuery *c_query;
   Data_Get_Struct(self, KatanaMediaQuery, c_query);
-  VALUE array = Data_Wrap_Struct(rb_KArray, NULL, NULL, c_query->expressions);
 
-  VALUE sing = rb_singleton_class(array);
-  rb_define_method(sing, "each", rb_expression_each, 0);
+  if (c_query->expressions)
+  {
+    VALUE array = Data_Wrap_Struct(rb_KArray, NULL, NULL, c_query->expressions);
 
-  return array;
+    VALUE sing = rb_singleton_class(array);
+    rb_define_method(sing, "each", rb_expression_each, 0);
+
+    return array;
+  }
+  else
+  {
+    return Qnil;
+  }
 }
 
 // PageRule
@@ -1180,12 +1212,20 @@ VALUE rb_page_rule_declarations(VALUE self)
 {
   KatanaPageRule *c_rule;
   Data_Get_Struct(self, KatanaPageRule, c_rule);
-  VALUE array = Data_Wrap_Struct(rb_KArray, NULL, NULL, c_rule->declarations);
 
-  VALUE sing = rb_singleton_class(array);
-  rb_define_method(sing, "each", rb_declaration_each, 0);
+  if (c_rule->declarations)
+  {
+    VALUE array = Data_Wrap_Struct(rb_KArray, NULL, NULL, c_rule->declarations);
 
-  return array;
+    VALUE sing = rb_singleton_class(array);
+    rb_define_method(sing, "each", rb_declaration_each, 0);
+
+    return array;
+  }
+  else
+  {
+    return Qnil;
+  }
 }
 
 // FontFaceRule
@@ -1194,12 +1234,20 @@ VALUE rb_font_face_rule_declarations(VALUE self)
 {
   KatanaFontFaceRule *c_rule;
   Data_Get_Struct(self, KatanaFontFaceRule, c_rule);
-  VALUE array = Data_Wrap_Struct(rb_KArray, NULL, NULL, c_rule->declarations);
 
-  VALUE sing = rb_singleton_class(array);
-  rb_define_method(sing, "each", rb_declaration_each, 0);
+  if (c_rule->declarations)
+  {
+    VALUE array = Data_Wrap_Struct(rb_KArray, NULL, NULL, c_rule->declarations);
 
-  return array;
+    VALUE sing = rb_singleton_class(array);
+    rb_define_method(sing, "each", rb_declaration_each, 0);
+
+    return array;
+  }
+  else
+  {
+    return Qnil;
+  }
 }
 
 // ImportRule
@@ -1218,12 +1266,20 @@ VALUE rb_import_rule_medias(VALUE self)
 {
   KatanaImportRule *c_rule;
   Data_Get_Struct(self, KatanaImportRule, c_rule);
-  VALUE array = Data_Wrap_Struct(rb_KArray, NULL, NULL, c_rule->medias);
 
-  VALUE sing = rb_singleton_class(array);
-  rb_define_method(sing, "each", rb_media_query_each, 0);
+  if (c_rule->medias)
+  {
+    VALUE array = Data_Wrap_Struct(rb_KArray, NULL, NULL, c_rule->medias);
 
-  return array;
+    VALUE sing = rb_singleton_class(array);
+    rb_define_method(sing, "each", rb_media_query_each, 0);
+
+    return array;
+  }
+  else
+  {
+    return Qnil;
+  }
 }
 
 // StyleRule
@@ -1232,36 +1288,60 @@ VALUE rb_style_rule_selectors(VALUE self)
 {
   KatanaStyleRule *c_style_rule;
   Data_Get_Struct(self, KatanaStyleRule, c_style_rule);
-  VALUE array = Data_Wrap_Struct(rb_KArray, NULL, NULL, c_style_rule->selectors);
 
-  VALUE sing = rb_singleton_class(array);
-  rb_define_method(sing, "each", rb_selector_each, 0);
+  if (c_style_rule->selectors)
+  {
+    VALUE array = Data_Wrap_Struct(rb_KArray, NULL, NULL, c_style_rule->selectors);
 
-  return array;
+    VALUE sing = rb_singleton_class(array);
+    rb_define_method(sing, "each", rb_selector_each, 0);
+
+    return array;
+  }
+  else
+  {
+    return Qnil;
+  }
 }
 
 VALUE rb_style_rule_declarations(VALUE self)
 {
   KatanaStyleRule *c_style_rule;
   Data_Get_Struct(self, KatanaStyleRule, c_style_rule);
-  VALUE array = Data_Wrap_Struct(rb_KArray, NULL, NULL, c_style_rule->declarations);
 
-  VALUE sing = rb_singleton_class(array);
-  rb_define_method(sing, "each", rb_declaration_each, 0);
+  if (c_style_rule->declarations)
+  {
+    VALUE array = Data_Wrap_Struct(rb_KArray, NULL, NULL, c_style_rule->declarations);
 
-  return array;
+    VALUE sing = rb_singleton_class(array);
+    rb_define_method(sing, "each", rb_declaration_each, 0);
+
+    return array;
+  }
+  else
+  {
+    return Qnil;
+  }
 }
 
 VALUE rb_declaration_values(VALUE self)
 {
   KatanaDeclaration *c_declaration;
   Data_Get_Struct(self, KatanaDeclaration, c_declaration);
-  VALUE array = Data_Wrap_Struct(rb_KArray, NULL, NULL, c_declaration->values);
 
-  VALUE sing = rb_singleton_class(array);
-  rb_define_method(sing, "each", rb_value_each, 0);
+  if (c_declaration->values)
+  {
+    VALUE array = Data_Wrap_Struct(rb_KArray, NULL, NULL, c_declaration->values);
 
-  return array;
+    VALUE sing = rb_singleton_class(array);
+    rb_define_method(sing, "each", rb_value_each, 0);
+
+    return array;
+  }
+  else
+  {
+    return Qnil;
+  }
 }
 
 VALUE rb_parse(VALUE self, VALUE data)

@@ -123,6 +123,7 @@ module Habaki
     end
   end
 
+  # name with optionnal prefix
   class QualifiedName < Node
     attr_accessor :local, :prefix
 
@@ -137,6 +138,7 @@ module Habaki
     end
   end
 
+  # CSS selector
   class Selector < Node
     # @return [Symbol]
     attr_accessor :match
@@ -306,6 +308,7 @@ module Habaki
     end
   end
 
+  # CSS style rule selectors + declarations
   class StyleRule < Node
     # @return [Array<Selector>]
     attr_accessor :selectors
@@ -341,14 +344,16 @@ module Habaki
 
     def read(exp)
       @feature = exp.feature
-      exp.values.each do |val|
-        @values << Value.read(val)
+      if exp.values
+        exp.values.each do |val|
+          @values << Value.read(val)
+        end
       end
       self
     end
 
     def string(indent = 0)
-      "(#{@feature}: #{@values.string})"
+      "(#{@feature}#{@values.length > 0 ? ": #{@values.string}" : ""})"
     end
   end
 
@@ -369,10 +374,10 @@ module Habaki
     end
 
     def string(indent = 0)
-      str = (@restrictor != :none ? @restrictor.to_s + " " : "") + @type
+      str = (@restrictor != :none ? @restrictor.to_s + " " : "") + (@type ? @type : "")
       if @expressions.length > 0
         @expressions.each do |exp|
-          str += " and "
+          str += " and " if str != ""
           str += exp.string
         end
         str += ""
@@ -414,6 +419,7 @@ module Habaki
     end
   end
 
+  # import rule @import
   class ImportRule < Node
     attr_accessor :href, :medias
 
@@ -435,6 +441,7 @@ module Habaki
 
   end
 
+  # import rule @media
   class MediaRule < Node
     include RulesReader
     attr_accessor :medias, :rules
@@ -459,6 +466,7 @@ module Habaki
     end
   end
 
+  # font face rule @font-face
   class FontFaceRule < Node
     attr_accessor :declarations
 
@@ -478,6 +486,7 @@ module Habaki
     end
   end
 
+  # page rule @page
   class PageRule < Node
     attr_accessor :declarations
 
@@ -497,6 +506,8 @@ module Habaki
     end
   end
 
+  # namespace rule @namespace
+  # TODO implement QualifiedName resolution
   class NamespaceRule < Node
     attr_accessor :prefix
     attr_accessor :uri

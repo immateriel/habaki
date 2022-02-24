@@ -373,6 +373,15 @@ typedef struct {
 } KatanaMediaRule;
 
 /**
+ * The `@supports` at-rule.
+ */
+typedef struct {
+    KatanaRule base;
+    KatanaArray* supports;
+    KatanaArray* /* KatanaRule */ rules;
+} KatanaSupportRule;
+
+/**
  * Media Query Exp List
  * Spec: http://www.w3.org/TR/mediaqueries-4/
  */

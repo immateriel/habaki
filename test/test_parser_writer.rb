@@ -62,12 +62,42 @@ article {
     assert_equal css, stylesheet.string
   end
 
+  def test_media_exp_only
+    css = %{@media (min-width: 900px) {
+a {
+ color: black;
+}
+}}
+    stylesheet = Habaki::Stylesheet.new
+    stylesheet.parse(css)
+    assert_equal css, stylesheet.string
+  end
+
+  def test_media_no_value
+    css = %{@media (monochrome) {
+a {
+ color: black;
+}
+}}
+    stylesheet = Habaki::Stylesheet.new
+    stylesheet.parse(css)
+    assert_equal css, stylesheet.string
+  end
+
   def test_namespace
     css = %{@namespace "http://www.w3.org/1999/xhtml";
 @namespace svg "http://www.w3.org/2000/svg";
 a {}
 svg|a {}
 *|a {}}
+    stylesheet = Habaki::Stylesheet.new
+    stylesheet.parse(css)
+    assert_equal css, stylesheet.string
+  end
+
+  def test_namespace_attr
+    css= %{@namespace epub "http://www.idpf.org/2007/ops";
+[epub|type~="toc"] {}}
     stylesheet = Habaki::Stylesheet.new
     stylesheet.parse(css)
     assert_equal css, stylesheet.string
