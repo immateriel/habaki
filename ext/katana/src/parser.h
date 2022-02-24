@@ -120,6 +120,10 @@ void katana_value_list_insert(KatanaParser* parser, KatanaValue* value, int inde
 void katana_value_list_steal_values(KatanaParser* parser, KatanaArray* values, KatanaArray* list);
 
 
+KatanaRule* katana_new_supports_rule(KatanaParser* parser, KatanaSupportsExp* exp, KatanaArray* rules);
+KatanaSupportsExp *katana_new_supports_exp(KatanaParser* parser, KatanaSupportsOperator op);
+void katana_supports_exp_list_add(KatanaParser* parser, KatanaSupportsExp* exp, KatanaArray* list);
+
 KatanaRule* katana_new_media_rule(KatanaParser* parser, KatanaArray* medias, KatanaArray* rules);
 
 
@@ -203,6 +207,7 @@ void katana_parse_internal_keyframe_rule(KatanaParser* parser, KatanaKeyframe* e
 void katana_parse_internal_keyframe_key_list(KatanaParser* parser, KatanaArray* e);
 void katana_parse_internal_value(KatanaParser* parser, KatanaArray* e);
 void katana_parse_internal_media_list(KatanaParser* parser, KatanaArray* e);
+void katana_parse_internal_supports_list(KatanaParser* parser, KatanaArray* e);
 void katana_parse_internal_declaration_list(KatanaParser* parser, bool e);
 void katana_parse_internal_selector(KatanaParser* parser, KatanaArray* e);
     

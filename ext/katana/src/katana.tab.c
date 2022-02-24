@@ -306,6 +306,8 @@ union KATANASTYPE
     KatanaKeyframe* keyframe;
     KatanaSourcePosition* location;
 
+    KatanaSupportsExp* supportsExp;
+
 
 };
 typedef union KATANASTYPE KATANASTYPE;
@@ -710,44 +712,44 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   314,   314,   315,   316,   317,   318,   319,   320,   321,
-     326,   332,   338,   344,   351,   357,   364,   378,   379,   383,
-     384,   387,   389,   390,   394,   395,   399,   400,   404,   405,
-     409,   410,   413,   415,   420,   423,   425,   432,   433,   434,
-     435,   436,   437,   438,   439,   440,   444,   450,   455,   462,
-     463,   467,   468,   474,   480,   481,   482,   483,   484,   485,
-     486,   487,   491,   495,   502,   508,   515,   518,   524,   530,
-     531,   535,   536,   540,   543,   549,   555,   561,   565,   572,
-     575,   581,   584,   587,   593,   596,   603,   604,   608,   615,
-     618,   622,   626,   630,   638,   642,   649,   655,   661,   667,
-     670,   676,   680,   686,   693,   700,   701,   702,   703,   707,
-     713,   716,   722,   725,   731,   734,   735,   742,   756,   763,
-     769,   776,   780,   784,   791,   792,   799,   800,   806,   810,
-     814,   822,   828,   832,   839,   842,   862,   871,   878,   893,
-     901,   906,   910,   917,   918,   922,   922,   930,   933,   936,
-     939,   942,   945,   948,   951,   954,   957,   960,   963,   966,
-     969,   972,   975,   981,   987,   994,  1001,  1009,  1010,  1011,
-    1012,  1021,  1022,  1026,  1027,  1031,  1037,  1044,  1050,  1056,
-    1062,  1067,  1072,  1079,  1080,  1081,  1094,  1109,  1113,  1117,
-    1126,  1131,  1136,  1141,  1149,  1155,  1164,  1168,  1175,  1181,
-    1187,  1188,  1194,  1201,  1212,  1213,  1214,  1218,  1228,  1236,
-    1245,  1246,  1250,  1256,  1263,  1269,  1276,  1282,  1285,  1288,
-    1291,  1294,  1297,  1303,  1304,  1308,  1321,  1334,  1349,  1358,
-    1366,  1376,  1380,  1391,  1406,  1425,  1429,  1446,  1449,  1460,
-    1464,  1475,  1481,  1484,  1485,  1486,  1489,  1493,  1497,  1504,
-    1518,  1525,  1531,  1537,  1544,  1558,  1559,  1563,  1568,  1575,
-    1578,  1581,  1587,  1591,  1596,  1600,  1609,  1615,  1621,  1622,
-    1628,  1629,  1635,  1636,  1638,  1639,  1640,  1641,  1642,  1643,
-    1648,  1649,  1650,  1653,  1657,  1658,  1659,  1660,  1661,  1662,
-    1663,  1664,  1665,  1666,  1667,  1668,  1669,  1670,  1671,  1672,
-    1673,  1674,  1675,  1676,  1677,  1682,  1683,  1684,  1685,  1686,
-    1687,  1688,  1689,  1690,  1694,  1697,  1700,  1706,  1707,  1711,
-    1714,  1717,  1720,  1725,  1727,  1731,  1737,  1743,  1747,  1752,
-    1757,  1761,  1765,  1772,  1773,  1777,  1781,  1787,  1788,  1792,
-    1793,  1794,  1795,  1796,  1800,  1803,  1804,  1805,  1812,  1815,
-    1816,  1817,  1821,  1824,  1825,  1829,  1835,  1841,  1845,  1848,
-    1848,  1848,  1848,  1848,  1848,  1848,  1848,  1851,  1856,  1861,
-    1863,  1864,  1865,  1866,  1869,  1871,  1872,  1873
+       0,   316,   316,   317,   318,   319,   320,   321,   322,   323,
+     328,   334,   340,   346,   353,   359,   366,   380,   381,   385,
+     386,   389,   391,   392,   396,   397,   401,   402,   406,   407,
+     411,   412,   415,   417,   422,   425,   427,   434,   435,   436,
+     437,   438,   439,   440,   441,   442,   446,   452,   457,   464,
+     465,   469,   470,   476,   482,   483,   484,   485,   486,   487,
+     488,   489,   493,   497,   504,   510,   517,   520,   526,   532,
+     533,   537,   538,   542,   545,   551,   557,   563,   567,   574,
+     577,   583,   586,   589,   595,   598,   605,   606,   610,   617,
+     620,   624,   628,   632,   640,   644,   651,   657,   663,   669,
+     672,   678,   682,   689,   697,   705,   706,   707,   708,   712,
+     720,   726,   735,   741,   750,   755,   756,   764,   786,   794,
+     800,   807,   811,   815,   822,   823,   830,   831,   837,   841,
+     845,   853,   859,   863,   870,   873,   893,   902,   909,   924,
+     932,   937,   941,   948,   949,   953,   953,   961,   964,   967,
+     970,   973,   976,   979,   982,   985,   988,   991,   994,   997,
+    1000,  1003,  1006,  1012,  1018,  1025,  1032,  1040,  1041,  1042,
+    1043,  1052,  1053,  1057,  1058,  1062,  1068,  1075,  1081,  1087,
+    1093,  1098,  1103,  1110,  1111,  1112,  1125,  1140,  1144,  1148,
+    1157,  1162,  1167,  1172,  1180,  1186,  1195,  1199,  1206,  1212,
+    1218,  1219,  1225,  1232,  1243,  1244,  1245,  1249,  1259,  1267,
+    1276,  1277,  1281,  1287,  1294,  1300,  1307,  1313,  1316,  1319,
+    1322,  1325,  1328,  1334,  1335,  1339,  1352,  1365,  1380,  1389,
+    1397,  1407,  1411,  1422,  1437,  1456,  1460,  1477,  1480,  1491,
+    1495,  1506,  1512,  1515,  1516,  1517,  1520,  1524,  1528,  1535,
+    1549,  1556,  1562,  1568,  1575,  1589,  1590,  1594,  1599,  1606,
+    1609,  1612,  1618,  1622,  1627,  1631,  1640,  1646,  1652,  1653,
+    1659,  1660,  1666,  1667,  1669,  1670,  1671,  1672,  1673,  1674,
+    1679,  1680,  1681,  1684,  1688,  1689,  1690,  1691,  1692,  1693,
+    1694,  1695,  1696,  1697,  1698,  1699,  1700,  1701,  1702,  1703,
+    1704,  1705,  1706,  1707,  1708,  1713,  1714,  1715,  1716,  1717,
+    1718,  1719,  1720,  1721,  1725,  1728,  1731,  1737,  1738,  1742,
+    1745,  1748,  1751,  1756,  1758,  1762,  1768,  1774,  1778,  1783,
+    1788,  1792,  1796,  1803,  1804,  1808,  1812,  1818,  1819,  1823,
+    1824,  1825,  1826,  1827,  1831,  1834,  1835,  1836,  1843,  1846,
+    1847,  1848,  1852,  1855,  1856,  1860,  1866,  1872,  1876,  1879,
+    1879,  1879,  1879,  1879,  1879,  1879,  1879,  1882,  1887,  1892,
+    1894,  1895,  1896,  1897,  1900,  1902,  1903,  1904
 };
 #endif
 
@@ -2801,11 +2803,13 @@ yyreduce:
   case 102:
                                                                                                                                                                              {
         // $$ = parser->createSupportsRule($4, $9);
+        (yyval.rule) = katana_new_supports_rule(parser, (yyvsp[-6].supportsExp), (yyvsp[-1].ruleList));
     }
     break;
 
   case 103:
                 {
+      katana_start_rule_header(parser, KatanaRuleSupports);
         // parser->startRuleHeader(StyleRule::Supports);
         // parser->markSupportsRuleHeaderStart();
     }
@@ -2813,6 +2817,7 @@ yyreduce:
 
   case 104:
                 {
+        katana_end_rule_header(parser);
         // parser->endRuleHeader();
         // parser->markSupportsRuleHeaderEnd();
     }
@@ -2821,36 +2826,52 @@ yyreduce:
   case 109:
                                                                      {
         // $$ = !$3;
+        (yyval.supportsExp) = katana_new_supports_exp(parser, KatanaSupportsOperatorNot);
+        katana_supports_exp_list_add(parser, (yyvsp[0].supportsExp), (yyval.supportsExp)->exps);
     }
     break;
 
   case 110:
                                                                                                   {
         // $$ = $1 && $4;
+        (yyval.supportsExp) = katana_new_supports_exp(parser, KatanaSupportsOperatorAnd);
+        katana_supports_exp_list_add(parser, (yyvsp[-3].supportsExp), (yyval.supportsExp)->exps);
+        katana_supports_exp_list_add(parser, (yyvsp[0].supportsExp), (yyval.supportsExp)->exps);
     }
     break;
 
   case 111:
                                                                                             {
         // $$ = $1 && $4;
+        (yyval.supportsExp) = katana_new_supports_exp(parser, KatanaSupportsOperatorAnd);
+        katana_supports_exp_list_add(parser, (yyvsp[-3].supportsExp), (yyval.supportsExp)->exps);
+        katana_supports_exp_list_add(parser, (yyvsp[0].supportsExp), (yyval.supportsExp)->exps);
     }
     break;
 
   case 112:
                                                                                                  {
         // $$ = $1 || $4;
+        (yyval.supportsExp) = katana_new_supports_exp(parser, KatanaSupportsOperatorOr);
+        katana_supports_exp_list_add(parser, (yyvsp[-3].supportsExp), (yyval.supportsExp)->exps);
+        katana_supports_exp_list_add(parser, (yyvsp[0].supportsExp), (yyval.supportsExp)->exps);
     }
     break;
 
   case 113:
                                                                                            {
         // $$ = $1 || $4;
+        (yyval.supportsExp) = katana_new_supports_exp(parser, KatanaSupportsOperatorOr);
+        katana_supports_exp_list_add(parser, (yyvsp[-3].supportsExp), (yyval.supportsExp)->exps);
+        katana_supports_exp_list_add(parser, (yyvsp[0].supportsExp), (yyval.supportsExp)->exps);
     }
     break;
 
   case 114:
                                                                        {
         // $$ = $3;
+        (yyval.supportsExp) = katana_new_supports_exp(parser, KatanaSupportsOperatorNone);
+        katana_supports_exp_list_add(parser, (yyvsp[-2].supportsExp), (yyval.supportsExp)->exps);
     }
     break;
 
@@ -2858,6 +2879,7 @@ yyreduce:
                                                                               {
         // parser->reportError($3, InvalidSupportsConditionCSSError);
         // $$ = false;
+        (yyval.supportsExp) = 0;
     }
     break;
 
@@ -2875,6 +2897,14 @@ yyreduce:
         // }
         // parser->m_valueList = nullptr;
         // parser->endProperty($8, false);
+        //$$ = 0;
+        (yyval.supportsExp) = katana_new_supports_exp(parser, KatanaSupportsOperatorNone);
+
+        (yyval.supportsExp)->decl = katana_parser_allocate(parser, sizeof(KatanaDeclaration));
+
+        (yyval.supportsExp)->decl->property = katana_string_to_characters(parser, &(yyvsp[-7].string));
+        (yyval.supportsExp)->decl->values = (yyvsp[-3].valueList);
+        (yyval.supportsExp)->decl->important = false;
     }
     break;
 
@@ -2882,6 +2912,7 @@ yyreduce:
                                                                                                                         {
         // $$ = false;
         // parser->endProperty(false, false, GeneralCSSError);        
+        (yyval.supportsExp) = 0;
     }
     break;
 

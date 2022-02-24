@@ -12,11 +12,9 @@ module Habaki
       obj.read(low)
     end
 
-    def read(low)
-    end
+    def read(low) end
 
-    def string(indent = 0)
-    end
+    def string(indent = 0) end
 
     def to_s
       string
@@ -115,7 +113,7 @@ module Habaki
     def string(indent = 0)
       str = ""
       str += "\n" if indent > 0
-      each{|decl|
+      each { |decl|
         str += decl.string(indent)
         str += indent > 0 ? "\n" : " "
       }
@@ -331,7 +329,7 @@ module Habaki
     end
 
     def string(indent = 0)
-      "#{@selectors.string} {#{@declarations.string(indent)}#{" "*(indent > 0 ? indent - 1 : 0)}}"
+      "#{@selectors.string} {#{@declarations.string(indent)}#{" " * (indent > 0 ? indent - 1 : 0)}}"
     end
   end
 
@@ -399,6 +397,8 @@ module Habaki
         NamespaceRule.read(rul)
       when Katana::StyleRule
         StyleRule.read(rul)
+      when Katana::SupportsRule
+        SupportsRule.read(rul)
       else
         raise "Unsupported rule #{rul.class}"
       end
@@ -407,8 +407,8 @@ module Habaki
 
   class Rules < Array
     def string(indent = 0)
-      str = " "*(indent > 0 ? indent - 1 : 0)
-      str += map{|rule| rule.string(indent)}.join("\n")
+      str = " " * (indent > 0 ? indent - 1 : 0)
+      str += map { |rule| rule.string(indent) }.join("\n")
       str
     end
   end
@@ -462,7 +462,7 @@ module Habaki
     end
 
     def string(indent = 0)
-      "@media #{@medias.string} {\n#{@rules.string(indent+1)}\n}"
+      "@media #{@medias.string} {\n#{@rules.string(indent + 1)}\n}"
     end
   end
 
@@ -520,6 +520,62 @@ module Habaki
 
     def string(indent = 0)
       "@namespace #{@prefix.length > 0 ? "#{@prefix} " : ""}\"#{@uri}\";"
+    end
+  end
+
+  class SupportsExp < Node
+    attr_accessor :operation
+    attr_accessor :expressions
+    attr_accessor :declaration
+
+    def initialize
+      @expressions = []
+    end
+
+    def read(exp)
+      @operation = exp.operation
+      exp.expressions.each do |sub_exp|
+        @expressions << SupportsExp.read(sub_exp)
+      end
+      @declaration = Declaration.read(exp.declaration) if exp.declaration
+      self
+    end
+
+    def string(indent = 0)
+      str = ""
+      case @expressions.length
+      when 0
+        if @declaration
+          str += "(#{@declaration.string.gsub(/;$/, "")})"
+        end
+      when 1
+        str += "(#{@operation == :not ? "not " : ""}" + @expressions[0].string + ")"
+      when 2
+        str += "#{@expressions[0].string} #{@operation} #{@expressions[1].string}"
+      end
+      str
+    end
+  end
+
+  class SupportsRule < Node
+    include RulesReader
+    attr_accessor :expression
+    attr_accessor :rules
+
+    def initialize
+      @rules = Rules.new
+    end
+
+    def read(rul)
+      @expression = SupportsExp.read(rul.expression)
+      rul.rules.each do |sub_rul|
+        @rules << read_rule(sub_rul)
+      end
+      self
+    end
+
+    def string(indent = 0)
+      "@supports #{@expression.string} {\n#{@rules.string(indent)}\n}"
     end
   end
 

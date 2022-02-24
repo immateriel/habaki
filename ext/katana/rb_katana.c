@@ -17,7 +17,7 @@
 
 VALUE rb_Katana, rb_Output, rb_KError, rb_KArray, rb_Stylesheet,
     rb_MediaRule, rb_MediaQuery, rb_MediaQueryExp,
-    rb_SupportsRule,
+    rb_SupportsRule, rb_SupportsExp,
     rb_PageRule, rb_FontFaceRule, rb_StyleRule, rb_ImportRule, rb_NamespaceRule,
     rb_Selector, rb_SelectorData, rb_Declaration, rb_Value, rb_QualifiedName, rb_ValueFunction;
 
@@ -61,7 +61,7 @@ VALUE rb_rule_each(VALUE array)
       rb_yield(Data_Wrap_Struct(rb_FontFaceRule, NULL, NULL, rule));
       break;
     case KatanaRuleSupports:
-      // TODO
+      rb_yield(Data_Wrap_Struct(rb_SupportsRule, NULL, NULL, rule));
       break;
     case KatanaRuleNamespace:
       rb_yield(Data_Wrap_Struct(rb_NamespaceRule, NULL, NULL, rule));
@@ -143,6 +143,19 @@ VALUE rb_expression_each(VALUE array)
   {
     KatanaMediaQueryExp *value = (KatanaMediaQueryExp *)c_array->data[i];
     rb_yield(Data_Wrap_Struct(rb_MediaQueryExp, NULL, NULL, value));
+  }
+  return Qnil;
+}
+
+VALUE rb_supports_expression_each(VALUE array)
+{
+  int i;
+  KatanaArray *c_array;
+  Data_Get_Struct(array, KatanaArray, c_array);
+  for (i = 0; i < c_array->length; i++)
+  {
+    KatanaSupportsExp *value = (KatanaSupportsExp *)c_array->data[i];
+    rb_yield(Data_Wrap_Struct(rb_SupportsExp, NULL, NULL, value));
   }
   return Qnil;
 }
@@ -1057,6 +1070,102 @@ VALUE rb_stylesheet_imports(VALUE self)
   return array;
 }
 
+// SupportsRule
+
+VALUE rb_supports_exp_op(VALUE self)
+{
+  ID id;
+  KatanaSupportsExp *c_exp;
+  Data_Get_Struct(self, KatanaSupportsExp, c_exp);
+
+  switch (c_exp->op)
+  {
+  case KatanaSupportsOperatorNone:
+    id = rb_intern("none");
+    break;
+  case KatanaSupportsOperatorNot:
+    id = rb_intern("not");
+    break;
+  case KatanaSupportsOperatorAnd:
+    id = rb_intern("and");
+    break;
+  case KatanaSupportsOperatorOr:
+    id = rb_intern("or");
+    break;
+  default:
+    id = rb_intern("unknown");
+    break;
+  }
+  return ID2SYM(id);
+}
+
+VALUE rb_supports_exp_exps(VALUE self)
+{
+  KatanaSupportsExp *c_exp;
+  Data_Get_Struct(self, KatanaSupportsExp, c_exp);
+
+  if (c_exp->exps)
+  {
+    VALUE array = Data_Wrap_Struct(rb_KArray, NULL, NULL, c_exp->exps);
+
+    VALUE sing = rb_singleton_class(array);
+    rb_define_method(sing, "each", rb_supports_expression_each, 0);
+
+    return array;
+  }
+  else
+  {
+    return Qnil;
+  }
+}
+
+VALUE rb_supports_exp_declaration(VALUE self)
+{
+  KatanaSupportsExp *c_exp;
+  Data_Get_Struct(self, KatanaSupportsExp, c_exp);
+  if(c_exp->decl) {
+    VALUE array = Data_Wrap_Struct(rb_Declaration, NULL, NULL, c_exp->decl);
+  } else {
+    return Qnil;
+  }
+}
+
+VALUE rb_supports_rules(VALUE self)
+{
+  KatanaSupportsRule *c_rule;
+  Data_Get_Struct(self, KatanaSupportsRule, c_rule);
+
+  if (c_rule->rules)
+  {
+    VALUE array = Data_Wrap_Struct(rb_KArray, NULL, NULL, c_rule->rules);
+
+    VALUE sing = rb_singleton_class(array);
+    rb_define_method(sing, "each", rb_rule_each, 0);
+
+    return array;
+  }
+  else
+  {
+    return Qnil;
+  }
+}
+
+VALUE rb_supports_exp(VALUE self)
+{
+  KatanaSupportsRule *c_rule;
+  Data_Get_Struct(self, KatanaSupportsRule, c_rule);
+
+  if (c_rule->exp)
+  {
+    VALUE exp = Data_Wrap_Struct(rb_SupportsExp, NULL, NULL, c_rule->exp);
+    return exp;
+  }
+  else
+  {
+    return Qnil;
+  }
+}
+
 // NamespaceRule
 VALUE rb_namespace_rule_prefix(VALUE self)
 {
@@ -1379,8 +1488,15 @@ void Init_katana()
   rb_define_method(rb_Stylesheet, "imports", rb_stylesheet_imports, 0);
 
   // SupportsRule
-  // TODO
+
+  rb_SupportsExp = rb_define_class_under(rb_Katana, "SupportsExpression", rb_cObject);
+  rb_define_method(rb_SupportsExp, "operation", rb_supports_exp_op, 0);
+  rb_define_method(rb_SupportsExp, "expressions", rb_supports_exp_exps, 0);
+  rb_define_method(rb_SupportsExp, "declaration", rb_supports_exp_declaration, 0);
+
   rb_SupportsRule = rb_define_class_under(rb_Katana, "SupportsRule", rb_cObject);
+  rb_define_method(rb_SupportsRule, "expression", rb_supports_exp, 0);
+  rb_define_method(rb_SupportsRule, "rules", rb_supports_rules, 0);
 
   // NamespaceRule
   rb_NamespaceRule = rb_define_class_under(rb_Katana, "NamespaceRule", rb_cObject);

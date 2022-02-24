@@ -56,6 +56,13 @@ typedef enum {
 } KatanaMediaQueryRestrictor;
 
 typedef enum {
+    KatanaSupportsOperatorNone,
+    KatanaSupportsOperatorNot,
+    KatanaSupportsOperatorAnd,
+    KatanaSupportsOperatorOr,
+} KatanaSupportsOperator;
+
+typedef enum {
     KatanaSelectorMatchUnknown = 0,
     KatanaSelectorMatchTag,                 // Example: div
     KatanaSelectorMatchId,                  // Example: #id
@@ -373,15 +380,6 @@ typedef struct {
 } KatanaMediaRule;
 
 /**
- * The `@supports` at-rule.
- */
-typedef struct {
-    KatanaRule base;
-    KatanaArray* supports;
-    KatanaArray* /* KatanaRule */ rules;
-} KatanaSupportRule;
-
-/**
  * Media Query Exp List
  * Spec: http://www.w3.org/TR/mediaqueries-4/
  */
@@ -464,6 +462,22 @@ typedef struct KatanaValue {
     const char* raw;
 } KatanaValue;
 
+typedef struct {
+    KatanaSupportsOperator op;
+    KatanaArray* exps;
+    KatanaDeclaration* decl;
+    const char* raw;
+} KatanaSupportsExp;
+
+/**
+ * The `@supports` at-rule.
+ */
+typedef struct {
+    KatanaRule base;
+    KatanaSupportsExp* exp;
+    KatanaArray* /* KatanaRule */ rules;
+} KatanaSupportsRule;
+
 /**
  * The `@charset` at-rule.
  */
@@ -524,6 +538,7 @@ typedef struct KatanaInternalOutput {
         KatanaArray* medias;
         KatanaArray* /* KatanaDeclaration */ declarations;
         KatanaArray* selectors;
+        KatanaArray* supports;
     };
     KatanaParserMode mode;
     KatanaArray /* KatanaError */ errors;

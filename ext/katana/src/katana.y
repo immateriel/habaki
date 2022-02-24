@@ -78,6 +78,8 @@
     KatanaArray* valueList;
     KatanaKeyframe* keyframe;
     KatanaSourcePosition* location;
+
+    KatanaSupportsExp* supportsExp;
 }
 
 %{
@@ -246,12 +248,12 @@
 %type <mediaQueryExpList> media_query_exp_list
 %type <mediaQueryExpList> maybe_and_media_query_exp_list
 
-%type <boolean> supports_condition
-%type <boolean> supports_condition_in_parens
-%type <boolean> supports_negation
-%type <boolean> supports_conjunction
-%type <boolean> supports_disjunction
-%type <boolean> supports_declaration_condition
+%type <supportsExp> supports_condition
+%type <supportsExp> supports_condition_in_parens
+%type <supportsExp> supports_negation
+%type <supportsExp> supports_conjunction
+%type <supportsExp> supports_disjunction
+%type <supportsExp> supports_declaration_condition
 
 %type <string> webkit_keyframe_name
 %type <keyframe> keyframe_rule
@@ -679,11 +681,13 @@ medium:
 supports:
     before_supports_rule KATANA_CSS_SUPPORTS_SYM maybe_space supports_condition at_supports_rule_header_end '{' at_rule_body_start maybe_space block_rule_body closing_brace {
         // $$ = parser->createSupportsRule($4, $9);
+        $$ = katana_new_supports_rule(parser, $4, $9);
     }
     ;
 
 before_supports_rule:
     /* empty */ {
+      katana_start_rule_header(parser, KatanaRuleSupports);
         // parser->startRuleHeader(StyleRule::Supports);
         // parser->markSupportsRuleHeaderStart();
     }
@@ -691,6 +695,7 @@ before_supports_rule:
 
 at_supports_rule_header_end:
     /* empty */ {
+        katana_end_rule_header(parser);
         // parser->endRuleHeader();
         // parser->markSupportsRuleHeaderEnd();
     }
@@ -706,35 +711,52 @@ supports_condition:
 supports_negation:
     KATANA_CSS_SUPPORTS_NOT maybe_space supports_condition_in_parens {
         // $$ = !$3;
+        $$ = katana_new_supports_exp(parser, KatanaSupportsOperatorNot);
+        katana_supports_exp_list_add(parser, $3, $$->exps);
     }
     ;
 
 supports_conjunction:
     supports_condition_in_parens KATANA_CSS_SUPPORTS_AND maybe_space supports_condition_in_parens {
         // $$ = $1 && $4;
+        $$ = katana_new_supports_exp(parser, KatanaSupportsOperatorAnd);
+        katana_supports_exp_list_add(parser, $1, $$->exps);
+        katana_supports_exp_list_add(parser, $4, $$->exps);
     }
     | supports_conjunction KATANA_CSS_SUPPORTS_AND maybe_space supports_condition_in_parens {
         // $$ = $1 && $4;
+        $$ = katana_new_supports_exp(parser, KatanaSupportsOperatorAnd);
+        katana_supports_exp_list_add(parser, $1, $$->exps);
+        katana_supports_exp_list_add(parser, $4, $$->exps);
     }
     ;
 
 supports_disjunction:
     supports_condition_in_parens KATANA_CSS_SUPPORTS_OR maybe_space supports_condition_in_parens {
         // $$ = $1 || $4;
+        $$ = katana_new_supports_exp(parser, KatanaSupportsOperatorOr);
+        katana_supports_exp_list_add(parser, $1, $$->exps);
+        katana_supports_exp_list_add(parser, $4, $$->exps);
     }
     | supports_disjunction KATANA_CSS_SUPPORTS_OR maybe_space supports_condition_in_parens {
         // $$ = $1 || $4;
+        $$ = katana_new_supports_exp(parser, KatanaSupportsOperatorOr);
+        katana_supports_exp_list_add(parser, $1, $$->exps);
+        katana_supports_exp_list_add(parser, $4, $$->exps);
     }
     ;
 
 supports_condition_in_parens:
     '(' maybe_space supports_condition closing_parenthesis maybe_space {
         // $$ = $3;
+        $$ = katana_new_supports_exp(parser, KatanaSupportsOperatorNone);
+        katana_supports_exp_list_add(parser, $3, $$->exps);
     }
     | supports_declaration_condition
     | '(' error error_location error_recovery closing_parenthesis maybe_space {
         // parser->reportError($3, InvalidSupportsConditionCSSError);
         // $$ = false;
+        $$ = 0;
     }
     ;
 
@@ -752,10 +774,19 @@ supports_declaration_condition:
         // }
         // parser->m_valueList = nullptr;
         // parser->endProperty($8, false);
+        //$$ = 0;
+        $$ = katana_new_supports_exp(parser, KatanaSupportsOperatorNone);
+
+        $$->decl = katana_parser_allocate(parser, sizeof(KatanaDeclaration));
+
+        $$->decl->property = katana_string_to_characters(parser, &$3);
+        $$->decl->values = $7;
+        $$->decl->important = false;
     }
     | '(' maybe_space KATANA_CSS_IDENT maybe_space ':' maybe_space error error_recovery closing_parenthesis maybe_space {
         // $$ = false;
         // parser->endProperty(false, false, GeneralCSSError);        
+        $$ = 0;
     }
     ;
 

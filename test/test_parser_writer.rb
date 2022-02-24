@@ -103,4 +103,41 @@ svg|a {}
     assert_equal css, stylesheet.string
   end
 
+  def test_supports
+    css= %{@supports (transform-style: preserve-3d) {
+a {color: black; }
+}}
+    stylesheet = Habaki::Stylesheet.new
+    stylesheet.parse(css)
+    assert_equal css, stylesheet.string
+  end
+
+  def test_supports_and
+    css= %{@supports (display: grid) and (display: inline-grid) {
+a {color: black; }
+}}
+    stylesheet = Habaki::Stylesheet.new
+    stylesheet.parse(css)
+    assert_equal css, stylesheet.string
+  end
+
+  def test_supports_not
+    css= %{@supports (display: grid) and (not (display: inline-grid)) {
+a {color: black; }
+}}
+    stylesheet = Habaki::Stylesheet.new
+    stylesheet.parse(css)
+    # TODO: fix double parentheses problem
+    # assert_equal css, stylesheet.string
+  end
+
+  def test_supports_or
+    css= %{@supports (transform-style: preserve-3d) or ((-moz-transform-style: preserve-3d) or ((-o-transform-style: preserve-3d) or (-webkit-transform-style: preserve-3d))) {
+a {color: black; }
+}}
+    stylesheet = Habaki::Stylesheet.new
+    stylesheet.parse(css)
+    assert_equal css, stylesheet.string
+  end
+
 end

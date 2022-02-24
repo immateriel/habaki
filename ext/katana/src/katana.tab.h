@@ -232,6 +232,8 @@ union KATANASTYPE
     KatanaKeyframe* keyframe;
     KatanaSourcePosition* location;
 
+    KatanaSupportsExp* supportsExp;
+
 
 };
 typedef union KATANASTYPE KATANASTYPE;

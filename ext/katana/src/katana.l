@@ -145,6 +145,8 @@ U\+{h}{1,6}-{h}{1,6}    {KATANA_TOKEN(KATANA_CSS_UNICODERANGE)}
 
 <mediaquery>"{"         |
 <mediaquery>";"         {BEGIN(INITIAL); KATANA_TOKEN(*yytext) }
+<supports>"{"         |
+<supports>";"         {BEGIN(INITIAL); KATANA_TOKEN(*yytext) }
 .                       {KATANA_TOKEN(*yytext)}
 
 %%

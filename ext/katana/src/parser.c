@@ -328,6 +328,11 @@ void katana_parse_internal_media_list(KatanaParser* parser, KatanaArray* e)
     parser->output->medias = e;
 }
 
+void katana_parse_internal_supports_list(KatanaParser* parser, KatanaArray* e)
+{
+    parser->output->supports = e;
+}
+
 void katana_parse_internal_declaration_list(KatanaParser* parser, bool e)
 {
     parser->output->declarations = parser->parsed_declarations;
@@ -411,6 +416,11 @@ void katana_destroy_rule(KatanaParser* parser, KatanaRule* rule)
             katana_destroy_media_rule(parser, (KatanaMediaRule*)rule);
             break;
         case KatanaRuleNamespace:
+            // TODO properly free things
+            katana_parser_deallocate(parser,  (void*) rule);
+           break;
+        case KatanaRuleSupports:
+            // TODO properly free things
             katana_parser_deallocate(parser,  (void*) rule);
            break;
         case KatanaRulePage:
@@ -838,11 +848,38 @@ void katana_parser_reset_declarations(KatanaParser* parser)
     parser->parsed_declarations = katana_new_array(parser);
 }
 
+KatanaSupportsExp *katana_new_supports_exp(KatanaParser* parser, KatanaSupportsOperator op)
+{
+    KatanaSupportsExp* exp = katana_parser_allocate(parser, sizeof(KatanaSupportsExp));
+    exp->op = op;
+    exp->exps = katana_new_array(parser);
+    exp->decl = NULL;
+    return exp;
+}
+
+void katana_supports_exp_list_add(KatanaParser* parser, KatanaSupportsExp* exp, KatanaArray* list)
+{
+    //assert(NULL != exp);
+    if ( NULL == exp )
+        return;
+    katana_array_add(parser, exp, list);
+}
+
+KatanaRule* katana_new_supports_rule(KatanaParser* parser, KatanaSupportsExp* exp, KatanaArray* rules)
+{
+    if ( exp == NULL || rules == NULL )
+        return NULL;
+    
+    KatanaSupportsRule* rule = katana_parser_allocate(parser, sizeof(KatanaSupportsRule));
+    rule->base.name = "supports";
+    rule->base.type = KatanaRuleSupports;
+    rule->exp = exp;
+    rule->rules = rules;
+    return (KatanaRule*)rule;
+}
 
 KatanaRule* katana_new_media_rule(KatanaParser* parser, KatanaArray* medias, KatanaArray* rules)
 {
-//	assert(NULL != medias && NULL != rules);
-    
     if ( medias == NULL || rules == NULL )
         return NULL;
     
