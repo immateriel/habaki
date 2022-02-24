@@ -17,13 +17,13 @@
 
 VALUE rb_Katana, rb_Output, rb_KError, rb_KArray, rb_Stylesheet,
     rb_MediaRule, rb_MediaQuery, rb_MediaQueryExp,
-    rb_PageRule, rb_FontFaceRule, rb_StyleRule, rb_ImportRule,
+    rb_SupportsRule,
+    rb_PageRule, rb_FontFaceRule, rb_StyleRule, rb_ImportRule, rb_NamespaceRule,
     rb_Selector, rb_SelectorData, rb_Declaration, rb_Value, rb_QualifiedName, rb_ValueFunction;
 
 void output_free(KatanaOutput *output)
 {
   katana_destroy_output(output);
-  // ruby_xfree(output);
 }
 
 VALUE rb_array_length(VALUE array)
@@ -61,6 +61,9 @@ VALUE rb_rule_each(VALUE array)
       rb_yield(Data_Wrap_Struct(rb_FontFaceRule, NULL, NULL, rule));
       break;
     case KatanaRuleSupports:
+      // TODO
+      break;
+    case KatanaRuleNamespace:
       // TODO
       break;
     case KatanaRuleKeyframes:
@@ -1273,6 +1276,14 @@ void Init_katana()
   rb_Stylesheet = rb_define_class_under(rb_Katana, "Stylesheet", rb_cObject);
   rb_define_method(rb_Stylesheet, "rules", rb_stylesheet_rules, 0);
   rb_define_method(rb_Stylesheet, "imports", rb_stylesheet_imports, 0);
+
+  // SupportsRule
+  // TODO
+  rb_SupportsRule = rb_define_class_under(rb_Katana, "SupportsRule", rb_cObject);
+
+  // NamespaceRule
+  // TODO
+  rb_NamespaceRule = rb_define_class_under(rb_Katana, "NamespaceRule", rb_cObject);
 
   // MediaRule
   rb_MediaRule = rb_define_class_under(rb_Katana, "MediaRule", rb_cObject);

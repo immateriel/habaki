@@ -100,7 +100,6 @@ int katana_tokenize(KATANASTYPE* lval , KATANALTYPE* loc, yyscan_t scanner, Kata
             lval->string.length = length;
         }
             break;
-            
         case KATANA_CSS_IMPORT_SYM:
         case KATANA_CSS_PAGE_SYM:
         case KATANA_CSS_MEDIA_SYM:

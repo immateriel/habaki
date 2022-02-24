@@ -36,6 +36,7 @@ extern int katanalex \
 %option 8bit
 %option stack
 %s mediaquery
+%s supports
 %s forkeyword
 
 h               [0-9a-fA-F]
@@ -73,6 +74,9 @@ nth             [\+-]?{intnum}*n([\t\r\n ]*[\+-][\t\r\n ]*{intnum})?
 <mediaquery>"not"       {KATANA_TOKEN(KATANA_CSS_MEDIA_NOT)}
 <mediaquery>"only"      {KATANA_TOKEN(KATANA_CSS_MEDIA_ONLY)}
 <mediaquery>"and"       {KATANA_TOKEN(KATANA_CSS_MEDIA_AND)}
+<supports>"not"         {KATANA_TOKEN(KATANA_CSS_SUPPORTS_NOT)}
+<supports>"or"          {KATANA_TOKEN(KATANA_CSS_SUPPORTS_OR)}
+<supports>"and"         {KATANA_TOKEN(KATANA_CSS_SUPPORTS_AND)}
 
 {string}                {KATANA_TOKEN(KATANA_CSS_STRING)}
 {ident}                 {KATANA_TOKEN(KATANA_CSS_IDENT)}
@@ -88,6 +92,7 @@ nth             [\+-]?{intnum}*n([\t\r\n ]*[\+-][\t\r\n ]*{intnum})?
 "@charset"              {KATANA_TOKEN(KATANA_CSS_CHARSET_SYM)}
 "@namespace"            {KATANA_TOKEN(KATANA_CSS_NAMESPACE_SYM) }
 "@keyframes"            {KATANA_TOKEN(KATANA_CSS_KEYFRAMES_SYM) }
+"@supports"             {BEGIN(supports); KATANA_TOKEN(KATANA_CSS_SUPPORTS_SYM)}
 
 "@"{ident}              {KATANA_TOKEN(KATANA_CSS_ATKEYWORD) }
 

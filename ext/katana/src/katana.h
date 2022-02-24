@@ -43,6 +43,7 @@ typedef enum {
     KatanaRulePage,
     KatanaRuleFontFace,
     KatanaRuleSupports,
+    KatanaRuleNamespace,
     KatanaRuleKeyframes,
     KatanaRuleCharset,
     KatanaRuleHost,
@@ -467,7 +468,6 @@ typedef struct {
 } KatanaError;
 
 // TODO: @document
-// TODO: @page
 // TODO: @supports
 // TODO: custom-at-rule
 

@@ -108,8 +108,8 @@
 
 /* Use api.header.include to #include this header
    instead of duplicating it here.  */
-#ifndef YY_KATANA_KATANA_TAB_H_INCLUDED
-# define YY_KATANA_KATANA_TAB_H_INCLUDED
+#ifndef YY_KATANA_SRC_KATANA_TAB_H_INCLUDED
+# define YY_KATANA_SRC_KATANA_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef KATANADEBUG
 # if defined YYDEBUG
@@ -331,7 +331,7 @@ struct KATANALTYPE
 
 int katanaparse (void* scanner, struct KatanaInternalParser * parser);
 
-#endif /* !YY_KATANA_KATANA_TAB_H_INCLUDED  */
+#endif /* !YY_KATANA_SRC_KATANA_TAB_H_INCLUDED  */
 
 /* Second part of user prologue.  */
 
