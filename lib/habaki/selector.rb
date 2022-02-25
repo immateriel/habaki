@@ -212,6 +212,15 @@ module Habaki
   end
 
   class Selectors < Array
+    extend NodeReader
+
+    def read(sels)
+      sels.each do |sel|
+        push Selector.read(sel)
+      end
+      self
+    end
+
     def string(indent = 0)
       map(&:string).join(",")
     end

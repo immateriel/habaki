@@ -1,14 +1,14 @@
 module Habaki
-  class Node
-    # lower level Katana struct
-    attr_accessor :low
-
+  module NodeReader
     # read from low level struct
-    def self.read(low)
+    def read(low)
       obj = self.new
-      obj.low = low
       obj.read(low)
     end
+  end
+
+  class Node
+    extend NodeReader
 
     def read(low) end
 

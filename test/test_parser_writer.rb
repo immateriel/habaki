@@ -1,7 +1,7 @@
 require 'habaki'
 require 'minitest/autorun'
 
-class TestSuite < Minitest::Test
+class TestParserWriter < Minitest::Test
   def setup
   end
 
@@ -11,7 +11,7 @@ class TestSuite < Minitest::Test
     }
     stylesheet = Habaki::Stylesheet.new
     stylesheet.parse(css)
-    assert_equal "blue", stylesheet.rules.first.declarations.select { |decl| decl.property == "color" }.first.values.first.value
+    assert_equal "blue", stylesheet.rules.first.declarations.select { |decl| decl.property == "color" }.first.value.data
   end
 
   def test_decl_del

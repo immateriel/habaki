@@ -1,25 +1,4 @@
 module Habaki
-  module RulesReader
-    def read_rule(rul)
-      case rul
-      when Katana::MediaRule
-        MediaRule.read(rul)
-      when Katana::FontFaceRule
-        FontFaceRule.read(rul)
-      when Katana::PageRule
-        PageRule.read(rul)
-      when Katana::NamespaceRule
-        NamespaceRule.read(rul)
-      when Katana::StyleRule
-        StyleRule.read(rul)
-      when Katana::SupportsRule
-        SupportsRule.read(rul)
-      else
-        raise "Unsupported rule #{rul.class}"
-      end
-    end
-  end
-
   # CSS style rule selectors + declarations
   class StyleRule < Node
     # @return [Array<Selector>]
@@ -33,12 +12,8 @@ module Habaki
     end
 
     def read(rule)
-      rule.selectors.each do |sel|
-        @selectors << Selector.read(sel)
-      end
-      rule.declarations.each do |decl|
-        @declarations << Declaration.read(decl)
-      end
+      @selectors = Selectors.read(rule.selectors)
+      @declarations = Declarations.read(rule.declarations)
       self
     end
 
@@ -57,9 +32,7 @@ module Habaki
     def read(exp)
       @feature = exp.feature
       if exp.values
-        exp.values.each do |val|
-          @values << Value.read(val)
-        end
+        @values = Values.read(exp.values)
       end
       self
     end
@@ -99,6 +72,8 @@ module Habaki
   end
 
   class Rules < Array
+    extend NodeReader
+
     # @return [Array<MediaRule>]
     def medias
       select { |rule| rule.is_a?(MediaRule) }
@@ -129,6 +104,34 @@ module Habaki
       select { |rule| rule.is_a?(StyleRule) }
     end
 
+    def read_rule(rul)
+      case rul
+      when Katana::ImportRule
+        ImportRule.read(rul)
+      when Katana::MediaRule
+        MediaRule.read(rul)
+      when Katana::FontFaceRule
+        FontFaceRule.read(rul)
+      when Katana::PageRule
+        PageRule.read(rul)
+      when Katana::NamespaceRule
+        NamespaceRule.read(rul)
+      when Katana::StyleRule
+        StyleRule.read(rul)
+      when Katana::SupportsRule
+        SupportsRule.read(rul)
+      else
+        raise "Unsupported rule #{rul.class}"
+      end
+    end
+
+    def read(rules)
+      rules.each do |rule|
+        push read_rule(rule)
+      end
+      self
+    end
+
     def string(indent = 0)
       str = " " * (indent > 0 ? indent - 1 : 0)
       str += map { |rule| rule.string(indent) }.join("\n")
@@ -137,6 +140,15 @@ module Habaki
   end
 
   class Medias < Array
+    extend NodeReader
+
+    def read(meds)
+      meds.each do |med|
+        push MediaQuery.read(med)
+      end
+      self
+    end
+
     def string(indent = 0)
       map(&:string).join(",")
     end
@@ -152,9 +164,7 @@ module Habaki
 
     def read(rul)
       @href = rul.href
-      rul.medias.each do |media|
-        @medias << MediaQuery.read(media)
-      end
+      @medias = Medias.read(rul.medias)
       self
     end
 
@@ -165,7 +175,6 @@ module Habaki
 
   # import rule @media
   class MediaRule < Node
-    include RulesReader
     attr_accessor :medias, :rules
 
     def initialize
@@ -174,12 +183,8 @@ module Habaki
     end
 
     def read(rul)
-      rul.medias.each do |media|
-        @medias << MediaQuery.read(media)
-      end
-      rul.rules.each do |rul|
-        @rules << read_rule(rul)
-      end
+      @medias = Medias.read(rul.medias)
+      @rules = Rules.read(rul.rules)
       self
     end
 
@@ -197,9 +202,7 @@ module Habaki
     end
 
     def read(rule)
-      rule.declarations.each do |decl|
-        @declarations << Declaration.read(decl)
-      end
+      @declarations = Declarations.read(rule.declarations)
       self
     end
 
@@ -217,9 +220,7 @@ module Habaki
     end
 
     def read(rule)
-      rule.declarations.each do |decl|
-        @declarations << Declaration.read(decl)
-      end
+      @declarations = Declarations.read(rule.declarations)
       self
     end
 
@@ -280,7 +281,6 @@ module Habaki
   end
 
   class SupportsRule < Node
-    include RulesReader
     attr_accessor :expression
     attr_accessor :rules
 
@@ -290,9 +290,7 @@ module Habaki
 
     def read(rul)
       @expression = SupportsExp.read(rul.expression)
-      rul.rules.each do |sub_rul|
-        @rules << read_rule(sub_rul)
-      end
+      @rules = Rules.read(rul.rules)
       self
     end
 

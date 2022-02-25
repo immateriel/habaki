@@ -11,12 +11,14 @@ module Habaki
       @values = Values.new
     end
 
+    def value
+      @values.first
+    end
+
     def read(decl)
       @property = decl.property
       @important = decl.important
-      decl.values.each do |val|
-        @values << Value.read(val)
-      end
+      @values = Values.read(decl.values)
       self
     end
 
@@ -32,6 +34,15 @@ module Habaki
   end
 
   class Declarations < Array
+    extend NodeReader
+
+    def read(decls)
+      decls.each do |decl|
+        push Declaration.read(decl)
+      end
+      self
+    end
+
     def string(indent = 0)
       str = ""
       str += "\n" if indent > 0

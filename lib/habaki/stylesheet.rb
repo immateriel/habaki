@@ -12,7 +12,6 @@ module Habaki
   end
 
   class Stylesheet < Node
-    include RulesReader
     attr_accessor :rules, :errors
 
     def initialize
@@ -31,13 +30,8 @@ module Habaki
 
     # @param [Katana::Output] out
     def read(out)
-      out.stylesheet.imports.each do |rul|
-        @rules << ImportRule.read(rul)
-      end
-
-      out.stylesheet.rules.each do |rul|
-        @rules << read_rule(rul)
-      end
+      @rules.read(out.stylesheet.imports)
+      @rules.read(out.stylesheet.rules)
 
       out.errors.each do |err|
         @errors << Error.read(err)
