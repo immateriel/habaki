@@ -232,7 +232,7 @@ VALUE rb_selector_match(VALUE self)
     id = rb_intern("attribute_end");
     break;
   default:
-    id = rb_intern("unknown");
+    id = rb_intern("undefined");
     break;
   }
   return ID2SYM(id);
@@ -838,7 +838,7 @@ VALUE rb_value_unit(VALUE self)
     id = rb_intern("value_id");
     break;
   default:
-    id = rb_intern("unknown");
+    id = rb_intern("undefined");
     break;
   }
   return ID2SYM(id);
@@ -1296,7 +1296,7 @@ VALUE rb_media_query_restrictor(VALUE self)
     id = rb_intern("not");
     break;
   default:
-    id = rb_intern("unknown");
+    id = rb_intern("undefined");
     break;
   }
   return ID2SYM(id);

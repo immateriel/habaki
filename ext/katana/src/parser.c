@@ -55,6 +55,8 @@ void katana_destroy_rule(KatanaParser* parser, KatanaRule* e);
 void katana_destroy_font_face_rule(KatanaParser* parser, KatanaFontFaceRule* e);
 void katana_destroy_import_rule(KatanaParser* parser, KatanaImportRule* e);
 void katana_destroy_media_rule(KatanaParser* parser, KatanaMediaRule* e);
+void katana_destroy_namespace_rule(KatanaParser* parser, KatanaNamespaceRule* e);
+void katana_destroy_supports_rule(KatanaParser* parser, KatanaSupportsRule* e);
 void katana_destroy_page_rule(KatanaParser* parser, KatanaPageRule* e);
 void katana_destroy_media_query(KatanaParser* parser, KatanaMediaQuery* e);
 void katana_destroy_media_query_exp(KatanaParser* parser, KatanaMediaQueryExp* e);
@@ -416,13 +418,11 @@ void katana_destroy_rule(KatanaParser* parser, KatanaRule* rule)
             katana_destroy_media_rule(parser, (KatanaMediaRule*)rule);
             break;
         case KatanaRuleNamespace:
-            // TODO properly free things
-            katana_parser_deallocate(parser,  (void*) rule);
-           break;
+            katana_destroy_namespace_rule(parser,  (KatanaNamespaceRule*) rule);
+            break;
         case KatanaRuleSupports:
-            // TODO properly free things
-            katana_parser_deallocate(parser,  (void*) rule);
-           break;
+            katana_destroy_supports_rule(parser,  (KatanaSupportsRule*) rule);
+            break;
         case KatanaRulePage:
             katana_destroy_page_rule(parser, (KatanaPageRule*)rule);
             break;
@@ -485,6 +485,12 @@ KatanaRule* katana_new_namespace_rule(KatanaParser* parser, KatanaParserString* 
     return (KatanaRule*)rule;
 }
 
+void katana_destroy_namespace_rule(KatanaParser* parser, KatanaNamespaceRule* e)
+{
+    katana_parser_deallocate(parser, (void*) e->prefix);
+    katana_parser_deallocate(parser, (void*) e->uri);
+    katana_parser_deallocate(parser,  (void*) e);
+}
 
 KatanaRule* katana_new_page_rule(KatanaParser* parser)
 {
@@ -872,6 +878,30 @@ KatanaRule* katana_new_supports_rule(KatanaParser* parser, KatanaSupportsExp* ex
     return (KatanaRule*)rule;
 }
 
+void katana_destroy_supports_exp(KatanaParser* parser, KatanaSupportsExp* e);
+
+void katana_destroy_supports_exp_list(KatanaParser* parser, KatanaArray* exps)
+{
+    katana_destroy_array(parser, katana_destroy_supports_exp, exps);
+    katana_parser_deallocate(parser,  (void*) exps);
+}
+
+void katana_destroy_supports_exp(KatanaParser* parser, KatanaSupportsExp* e)
+{
+    // TODO
+    //if(e->decl)
+    //    katana_destroy_declaration(parser, e->decl);
+    katana_destroy_supports_exp_list(parser, e->exps);
+    katana_parser_deallocate(parser,  (void*) e);
+}
+
+void katana_destroy_supports_rule(KatanaParser* parser, KatanaSupportsRule* e)
+{
+    katana_destroy_supports_exp(parser, e->exp);
+    katana_destroy_rule_list(parser,  (void*) e->rules),
+    katana_parser_deallocate(parser,  (void*) e);
+}
+
 KatanaRule* katana_new_media_rule(KatanaParser* parser, KatanaArray* medias, KatanaArray* rules)
 {
     if ( medias == NULL || rules == NULL )
@@ -892,7 +922,6 @@ void katana_destroy_media_rule(KatanaParser* parser, KatanaMediaRule* e)
     // katana_parser_deallocate(parser,  (void*) e->base.name);
     katana_parser_deallocate(parser,  (void*) e);
 }
-
 
 KatanaArray* katana_new_media_list(KatanaParser* parser)
 {
