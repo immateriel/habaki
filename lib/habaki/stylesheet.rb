@@ -1,8 +1,14 @@
 module Habaki
-
+  # syntax error
   class Error < Node
-    attr_accessor :line, :column, :message
+    # @return [Integer]
+    attr_accessor :line
+    # @return [Integer]
+    attr_accessor :column
+    # @return [String]
+    attr_accessor :message
 
+    # @!visibility private
     def read(err)
       @line = err.first_line
       @column = err.first_column
@@ -11,14 +17,19 @@ module Habaki
     end
   end
 
+  # main structure
   class Stylesheet < Node
-    attr_accessor :rules, :errors
+    # @return [Rules]
+    attr_accessor :rules
+    # @return [Array<Error>]
+    attr_accessor :errors
 
     def initialize
       @rules = Rules.new
       @errors = []
     end
 
+    # traverse each style matching mediatype
     def each_style(mediatype = "all", &block)
       @rules.font_faces.each do |style|
         block.call style
@@ -36,15 +47,23 @@ module Habaki
       end
     end
 
+    # instanciate and parse from data
+    # @param [String] data
+    # @return [Stylesheet]
     def self.parse(data)
-      self.new.parse(data)
+      stylesheet = self.new
+      stylesheet.parse(data)
+      stylesheet
     end
 
+    # parse from data
+    # @param [String] data
+    # @return [nil]
     def parse(data)
       read(Katana.parse(data))
-      self
     end
 
+    # @!visibility private
     # @param [Katana::Output] out
     def read(out)
       @rules.read(out.stylesheet.imports)
@@ -53,9 +72,9 @@ module Habaki
       out.errors.each do |err|
         @errors << Error.read(err)
       end
-      self
     end
 
+    # @!visibility private
     def string(indent = 0)
       @rules.string(indent)
     end

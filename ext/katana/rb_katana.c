@@ -628,7 +628,9 @@ VALUE rb_selector_data_selectors(VALUE self)
 }
 
 // Declaration
-
+/*
+* @return [String]
+*/
 VALUE rb_declaration_prop(VALUE self)
 {
   KatanaDeclaration *c_decl;
@@ -636,6 +638,9 @@ VALUE rb_declaration_prop(VALUE self)
   return rb_str_new2(c_decl->property);
 }
 
+/*
+* @return [Boolean]
+*/
 VALUE rb_declaration_important(VALUE self)
 {
   KatanaDeclaration *c_decl;
@@ -1460,6 +1465,11 @@ VALUE rb_declaration_values(VALUE self)
   }
 }
 
+/*
+* parse CSS data
+* @param [String] data
+* @return [Katana::Output]
+*/
 VALUE rb_parse(VALUE self, VALUE data)
 {
   KatanaOutput *output = katana_parse(RSTRING_PTR(data), RSTRING_LEN(data), KatanaParserModeStylesheet);
@@ -1469,6 +1479,7 @@ VALUE rb_parse(VALUE self, VALUE data)
 
 void Init_katana()
 {
+  /* Low-level parser */
   rb_Katana = rb_define_module("Katana");
 
   rb_Output = rb_define_class_under(rb_Katana, "Output", rb_cObject);

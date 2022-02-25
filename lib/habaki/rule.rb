@@ -1,9 +1,9 @@
 module Habaki
   # CSS style rule selectors + declarations
   class StyleRule < Node
-    # @return [Array<Selector>]
+    # @return [Selectors]
     attr_accessor :selectors
-    # @return [Array<Declaration>]
+    # @return [Declarations]
     attr_accessor :declarations
 
     def initialize
@@ -11,39 +11,48 @@ module Habaki
       @declarations = Declarations.new
     end
 
+    # @!visibility private
     def read(rule)
       @selectors = Selectors.read(rule.selectors)
       @declarations = Declarations.read(rule.declarations)
-      self
     end
 
+    # @!visibility private
     def string(indent = 0)
       "#{@selectors.string} {#{@declarations.string(indent)}#{" " * (indent > 0 ? indent - 1 : 0)}}"
     end
   end
 
   class MediaQueryExpression < Node
-    attr_accessor :feature, :values
+    attr_accessor :feature
+    # @return [Values]
+    attr_accessor :values
 
     def initialize
       @values = Values.new
     end
 
+    # @!visibility private
     def read(exp)
       @feature = exp.feature
       if exp.values
         @values = Values.read(exp.values)
       end
-      self
     end
 
+    # @!visibility private
     def string(indent = 0)
       "(#{@feature}#{@values.length > 0 ? ": #{@values.string}" : ""})"
     end
   end
 
   class MediaQuery < Node
-    attr_accessor :type, :restrictor, :expressions
+    # @return [String]
+    attr_accessor :type
+    # @return [Symbol]
+    attr_accessor :restrictor
+    # @return [Array<MediaQueryExpression>]
+    attr_accessor :expressions
 
     def initialize
       @expressions = []
@@ -58,15 +67,16 @@ module Habaki
       end
     end
 
+    # @!visibility private
     def read(med)
       @type = med.type
       @restrictor = med.restrictor
       med.expressions.each do |exp|
         @expressions << MediaQueryExpression.read(exp)
       end
-      self
     end
 
+    # @!visibility private
     def string(indent = 0)
       str = (@restrictor != :none ? @restrictor.to_s + " " : "") + (@type ? @type : "")
       if @expressions.length > 0
@@ -113,6 +123,22 @@ module Habaki
       select { |rule| rule.is_a?(StyleRule) }
     end
 
+    # @!visibility private
+    def read(rules)
+      rules.each do |rule|
+        push read_rule(rule)
+      end
+    end
+
+    # @!visibility private
+    def string(indent = 0)
+      str = " " * (indent > 0 ? indent - 1 : 0)
+      str += map { |rule| rule.string(indent) }.join("\n")
+      str
+    end
+
+    private
+
     def read_rule(rul)
       case rul
       when Katana::ImportRule
@@ -133,31 +159,20 @@ module Habaki
         raise "Unsupported rule #{rul.class}"
       end
     end
-
-    def read(rules)
-      rules.each do |rule|
-        push read_rule(rule)
-      end
-      self
-    end
-
-    def string(indent = 0)
-      str = " " * (indent > 0 ? indent - 1 : 0)
-      str += map { |rule| rule.string(indent) }.join("\n")
-      str
-    end
   end
 
+  # Array of {MediaQuery}
   class Medias < Array
     extend NodeReader
 
+    # @!visibility private
     def read(meds)
       meds.each do |med|
         push MediaQuery.read(med)
       end
-      self
     end
 
+    # @!visibility private
     def string(indent = 0)
       map(&:string).join(",")
     end
@@ -165,18 +180,22 @@ module Habaki
 
   # import rule @import
   class ImportRule < Node
-    attr_accessor :href, :medias
+    # @return [String]
+    attr_accessor :href
+    # @return [Medias]
+    attr_accessor :medias
 
     def initialize
       @medias = Medias.new
     end
 
+    # @!visibility private
     def read(rul)
       @href = rul.href
       @medias = Medias.read(rul.medias)
-      self
     end
 
+    # @!visibility private
     def string(indent = 0)
       "@import \"#{@href}\" #{@medias.string};"
     end
@@ -184,23 +203,29 @@ module Habaki
 
   # import rule @media
   class MediaRule < Node
-    attr_accessor :medias, :rules
+    # @return [Medias]
+    attr_accessor :medias
+    # @return [Rules]
+    attr_accessor :rules
 
     def initialize
       @medias = Medias.new
       @rules = Rules.new
     end
 
+    # does media match mediatype ?
+    # @return [Boolean]
     def match_type?(mediatype = "all")
       @medias.first&.match_type?(mediatype)
     end
 
+    # @!visibility private
     def read(rul)
       @medias = Medias.read(rul.medias)
       @rules = Rules.read(rul.rules)
-      self
     end
 
+    # @!visibility private
     def string(indent = 0)
       "@media #{@medias.string} {\n#{@rules.string(indent + 1)}\n}"
     end
@@ -208,17 +233,19 @@ module Habaki
 
   # font face rule @font-face
   class FontFaceRule < Node
+    # @return [Declarations]
     attr_accessor :declarations
 
     def initialize
       @declarations = Declarations.new
     end
 
+    # @!visibility private
     def read(rule)
       @declarations = Declarations.read(rule.declarations)
-      self
     end
 
+    # @!visibility private
     def string(indent = 0)
       "@font-face {#{@declarations.string(indent)}}"
     end
@@ -226,17 +253,19 @@ module Habaki
 
   # page rule @page
   class PageRule < Node
+    # @return [Declarations]
     attr_accessor :declarations
 
     def initialize
       @declarations = Declarations.new
     end
 
+    # @!visibility private
     def read(rule)
       @declarations = Declarations.read(rule.declarations)
-      self
     end
 
+    # @!visibility private
     def string(indent = 0)
       "@page {#{@declarations.string(indent)}}"
     end
@@ -245,38 +274,45 @@ module Habaki
   # namespace rule @namespace
   # TODO implement QualifiedName namespace resolution
   class NamespaceRule < Node
+    # @return [String]
     attr_accessor :prefix
+    # @return [String]
     attr_accessor :uri
 
+    # @!visibility private
     def read(rule)
       @prefix = rule.prefix
       @uri = rule.uri
-      self
     end
 
+    # @!visibility private
     def string(indent = 0)
       "@namespace #{@prefix.length > 0 ? "#{@prefix} " : ""}\"#{@uri}\";"
     end
   end
 
   class SupportsExp < Node
+    # @return [Symbol]
     attr_accessor :operation
+    # @return [Array<SupportExp>]
     attr_accessor :expressions
+    # @return [Declaration]
     attr_accessor :declaration
 
     def initialize
       @expressions = []
     end
 
+    # @!visibility private
     def read(exp)
       @operation = exp.operation
       exp.expressions.each do |sub_exp|
         @expressions << SupportsExp.read(sub_exp)
       end
       @declaration = Declaration.read(exp.declaration) if exp.declaration
-      self
     end
 
+    # @!visibility private
     def string(indent = 0)
       str = ""
       case @expressions.length
@@ -294,19 +330,22 @@ module Habaki
   end
 
   class SupportsRule < Node
+    # @return [SupportExp]
     attr_accessor :expression
+    # @return [Rules]
     attr_accessor :rules
 
     def initialize
       @rules = Rules.new
     end
 
+    # @!visibility private
     def read(rul)
       @expression = SupportsExp.read(rul.expression)
       @rules = Rules.read(rul.rules)
-      self
     end
 
+    # @!visibility private
     def string(indent = 0)
       "@supports #{@expression.string} {\n#{@rules.string(indent)}\n}"
     end

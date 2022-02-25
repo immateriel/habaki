@@ -1,17 +1,20 @@
 module Habaki
   class Value < Node
-    # @return [String, Float]
+    # @return [::String, Float]
     attr_accessor :data
 
     def initialize(data = nil)
       @data = data
     end
 
+    # @!visibility private
+    # @param [Katana::Value] val
     def read(val)
       @data = val.value
       self
     end
 
+    # @!visibility private
     def string(indent = 0)
       "#{@data}"
     end
@@ -26,6 +29,7 @@ module Habaki
 
   # dimension in px, pt etc
   class Dimension < Value
+    # @return [Symbol]
     attr_accessor :unit
 
     def initialize(data = nil, unit = nil)
@@ -33,25 +37,28 @@ module Habaki
       @unit = unit
     end
 
+    # @!visibility private
     def read(val)
       @data = val.value
       @unit = val.unit
       @unit = nil if @unit == :dimension
-      self
     end
 
+    # @!visibility private
     def string(indent = 0)
       @unit ? "#{data_i_or_f}#{@unit}" : @data
     end
   end
 
   class Percentage < Value
+    # @!visibility private
     def string(indent = 0)
       "#{data_i_or_f}%"
     end
   end
 
   class Number < Value
+    # @!visibility private
     def string(indent = 0)
       "#{data_i_or_f}"
     end
@@ -61,6 +68,7 @@ module Habaki
   end
 
   class String < Value
+    # @!visibility private
     def string(indent = 0)
       "'#{@data}'"
     end
@@ -70,29 +78,33 @@ module Habaki
   end
 
   class HexColor < Value
+    # @!visibility private
     def string(indent = 0)
       "##{@data}"
     end
   end
 
   class Function < Value
+    # @return [Values]
     attr_accessor :args
 
+    # @!visibility private
     def read(val)
       @data = val.value.name.sub("(","")
       @args = Values.new
       if val.value.args
         @args = Values.read(val.value.args)
       end
-      self
     end
 
+    # @!visibility private
     def string(indent = 0)
       "#{@data}(#{@args.string})"
     end
   end
 
   class Url < Value
+    # @!visibility private
     def string(indent = 0)
       "url(#{@data.include?(" ") ? "\"#{@data}\"" : @data})"
     end
@@ -101,8 +113,29 @@ module Habaki
   class UnicodeRange < Value
   end
 
+  # Array of {Values}
   class Values < Array
     extend NodeReader
+
+    # @!visibility private
+    def read(vals)
+      vals.each do |val|
+        push read_from_unit(val)
+      end
+    end
+
+    # @!visibility private
+    def string(indent = 0)
+      str = ""
+      each_cons(2) do |val|
+        str += val[0].string
+        str += val[1].is_a?(Operator) || val[0].is_a?(Operator) ? "" : " "
+      end
+      str += last.string if last
+      str
+    end
+
+    private
 
     def read_from_unit(val)
       case val.unit
@@ -133,21 +166,5 @@ module Habaki
       end
     end
 
-    def read(vals)
-      vals.each do |val|
-        push read_from_unit(val)
-      end
-      self
-    end
-
-    def string(indent = 0)
-      str = ""
-      each_cons(2) do |val|
-        str += val[0].string
-        str += val[1].is_a?(Operator) || val[0].is_a?(Operator) ? "" : " "
-      end
-      str += last.string if last
-      str
-    end
   end
 end

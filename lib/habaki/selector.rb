@@ -3,12 +3,14 @@ module Habaki
   class QualifiedName < Node
     attr_accessor :local, :prefix
 
+    # @!visibility private
+    # @param [Katana::QualifiedName] tag
     def read(tag)
       @local = tag.local
       @prefix = tag.prefix
-      self
     end
 
+    # @!visibility private
     def string(indent = 0)
       @prefix ? "#{@prefix}|#{@local}" : @local
     end
@@ -28,24 +30,8 @@ module Habaki
     attr_accessor :value
     # @return [String]
     attr_accessor :argument
-    # @return [Array<Selector>]
+    # @return [Selectors]
     attr_accessor :selectors
-
-    def read(sel)
-      @match = sel.match
-      @tag = QualifiedName.read(sel.tag) if sel.tag
-      @pseudo = sel.pseudo
-
-      @attribute = QualifiedName.read(sel.data.attribute) if sel.data.attribute
-      @value = sel.data.value
-      @argument = sel.data.argument
-      if sel.data.selectors
-        sel.data.selectors.each do |dat_sel|
-          @selectors << Selector.read(dat_sel)
-        end
-      end
-      self
-    end
 
     # is this selector on attribute ?
     # @return [Boolean]
@@ -100,6 +86,21 @@ module Habaki
       end
     end
 
+    # @!visibility private
+    # @param [Katana::Selector] sel
+    def read(sel)
+      @match = sel.match
+      @tag = QualifiedName.read(sel.tag) if sel.tag
+      @pseudo = sel.pseudo
+
+      @attribute = QualifiedName.read(sel.data.attribute) if sel.data.attribute
+      @value = sel.data.value
+      @argument = sel.data.argument
+
+      @selectors = Selectors.read(sel.data.selectors) if sel.data.selectors
+    end
+
+    # @!visibility private
     def string(indent = 0)
       str = ""
 
@@ -149,27 +150,29 @@ module Habaki
     end
   end
 
+  # Array of {SubSelector}
   class SubSelectors < Array
+    # @return [Symbol]
     attr_accessor :relation
 
     # @return [SubSelector]
     def tag_selector
-      select{|sub_sel| sub_sel.match == :tag}.first
+      select { |sub_sel| sub_sel.match == :tag }.first
     end
 
     # @return [SubSelector]
     def class_selector
-      select{|sub_sel| sub_sel.match == :class}.first
+      select { |sub_sel| sub_sel.match == :class }.first
     end
 
     # @return [SubSelector]
     def id_selector
-      select{|sub_sel| sub_sel.match == :id}.first
+      select { |sub_sel| sub_sel.match == :id }.first
     end
 
     # @return [Array<SubSelector>]
     def attribute_selectors
-      select{|sub_sel| sub_sel.attribute_selector?}
+      select { |sub_sel| sub_sel.attribute_selector? }
     end
 
     # @return [Boolean, nil]
@@ -189,9 +192,10 @@ module Habaki
 
     # @return [Boolean, nil]
     def attribute_match?(name, val)
-      attribute_selectors.length > 0 ? attribute_selectors.inject(true){|res, attr| res && attr.attribute_match?(name, val)} : nil
+      attribute_selectors.length > 0 ? attribute_selectors.inject(true) { |res, attr| res && attr.attribute_match?(name, val) } : nil
     end
 
+    # @!visibility private
     def string(indent = 0)
       str = ""
       case @relation
@@ -213,17 +217,20 @@ module Habaki
 
   # CSS selector
   class Selector < Node
+    # @return [Array<SubSelectors>]
     attr_accessor :sub_selectors
 
     def initialize
       @sub_selectors = []
     end
 
+    # @!visibility private
+    # @param [Katana::Selector] sel
     def read(sel)
       @sub_selectors = rec_sub_sel(sel)
-      self
     end
 
+    # @!visibility private
     def string(indent = 0)
       @sub_selectors.map(&:string).join("")
     end
@@ -251,16 +258,19 @@ module Habaki
     end
   end
 
+  # Array of {Selectors}
   class Selectors < Array
     extend NodeReader
 
+    # @!visibility private
+    # @param [Katana::Array] sels
     def read(sels)
       sels.each do |sel|
         push Selector.read(sel)
       end
-      self
     end
 
+    # @!visibility private
     def string(indent = 0)
       map(&:string).join(",")
     end
