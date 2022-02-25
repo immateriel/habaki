@@ -8,4 +8,5 @@ if stylesheet.errors.length > 0
     STDERR.puts "ERROR: #{error.line}:#{error.column} #{error.message}"
   end
 end
+
 puts stylesheet.string(0)

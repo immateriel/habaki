@@ -49,6 +49,15 @@ module Habaki
       @expressions = []
     end
 
+    def match_type?(mediatype = "all")
+      case @restrictor
+      when :none
+        @type == mediatype || @type == "all"
+      when :not
+        @type != mediatype
+      end
+    end
+
     def read(med)
       @type = med.type
       @restrictor = med.restrictor
@@ -180,6 +189,10 @@ module Habaki
     def initialize
       @medias = Medias.new
       @rules = Rules.new
+    end
+
+    def match_type?(mediatype = "all")
+      @medias.first&.match_type?(mediatype)
     end
 
     def read(rul)

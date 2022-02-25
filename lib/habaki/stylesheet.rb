@@ -19,6 +19,23 @@ module Habaki
       @errors = []
     end
 
+    def each_style(mediatype = "all", &block)
+      @rules.font_faces.each do |style|
+        block.call style
+      end
+      if mediatype == "print" || mediatype == "all"
+        @rules.pages.each do |style|
+          block.call style
+        end
+      end
+      @rules.styles.each do |style|
+        block.call style
+      end
+      @rules.medias.select{|media| media.match_type?(mediatype)}.each do |style|
+        block.call style
+      end
+    end
+
     def self.parse(data)
       self.new.parse(data)
     end

@@ -47,20 +47,20 @@ module Habaki
 
     # find declaration with property
     # @param [String] property
-    def find_declaration(property)
+    def find_by_property(property)
       select { |decl| decl.property == property }.first
     end
 
     # remove declaration with property
     # @param [String] property
-    def remove_declaration(property)
+    def remove_by_property(property)
       reject! { |decl| decl.property == property }
     end
 
     # add declaration
     # @param [String] property
     # @param [Value, Array<Value>] value
-    def add_declaration(property, value)
+    def add_by_property(property, value)
       decl = Habaki::Declaration.new(property)
       decl.values = Values.new([value].flatten)
       push decl

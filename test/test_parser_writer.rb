@@ -11,9 +11,9 @@ class TestParserWriter < Minitest::Test
     }
     stylesheet = Habaki::Stylesheet.new
     stylesheet.parse(css)
-    assert_equal "blue", stylesheet.rules.first.declarations.find_declaration("color").value.data
-    assert_equal 16.0, stylesheet.rules.first.declarations.find_declaration("font-size").value.data
-    assert_equal :px, stylesheet.rules.first.declarations.find_declaration("font-size").value.unit
+    assert_equal "blue", stylesheet.rules.first.declarations.find_by_property("color").value.data
+    assert_equal 16.0, stylesheet.rules.first.declarations.find_by_property("font-size").value.data
+    assert_equal :px, stylesheet.rules.first.declarations.find_by_property("font-size").value.unit
   end
 
   def test_decl_del
@@ -22,7 +22,7 @@ class TestParserWriter < Minitest::Test
     }
     stylesheet = Habaki::Stylesheet.new
     stylesheet.parse(css)
-    stylesheet.rules.first.declarations.remove_declaration("color")
+    stylesheet.rules.first.declarations.remove_by_property("color")
     assert_equal 1, stylesheet.rules.first.declarations.length
     assert_equal "a {text-decoration: underline; }", stylesheet.string
   end
@@ -33,9 +33,31 @@ class TestParserWriter < Minitest::Test
     }
     stylesheet = Habaki::Stylesheet.new
     stylesheet.parse(css)
-    stylesheet.rules.first.declarations.add_declaration("font-size", Habaki::Dimension.new(12, :pt))
-    assert_equal 3, stylesheet.rules.first.declarations.length
-    assert_equal "a {color: blue; text-decoration: underline; font-size: 12pt; }", stylesheet.string
+    stylesheet.rules.first.declarations.add_by_property("font-size", Habaki::Dimension.new(12, :pt))
+    # arbitrary value type
+    stylesheet.rules.first.declarations.add_by_property("line-height", Habaki::Value.new("14pt"))
+    assert_equal 4, stylesheet.rules.first.declarations.length
+    assert_equal "a {color: blue; text-decoration: underline; font-size: 12pt; line-height: 14pt; }", stylesheet.string
+  end
+
+  def test_media_sel
+    css = %{
+    @media print {
+    a {color: blue; text-decoration: underline;}
+    }
+    @media all {
+    div {color: black;}
+    }
+    @media (min-width: 100px) {
+    div {font-size: 10pt;}
+    }
+    @media not screen {
+    p {font-size: 12pt;}
+    }}
+    stylesheet = Habaki::Stylesheet.new
+    stylesheet.parse(css)
+    assert_equal 3, stylesheet.rules.medias.select{|media| media.match_type?("print")}.length
+    assert_equal 1, stylesheet.rules.medias.select{|media| media.match_type?("screen")}.length
   end
 
   def test_attr
