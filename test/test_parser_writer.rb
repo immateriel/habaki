@@ -153,11 +153,41 @@ li:nth-last-child(3n+2) {color: green; }}
     assert_equal css, stylesheet.string
   end
 
+  # TODO
+  if false
+    def test_charset
+      css = %{@charset "utf-8"; }
+      stylesheet = Habaki::Stylesheet.new
+      stylesheet.parse(css)
+      assert_equal css, stylesheet.string
+    end
+
+  def test_host
+    css = %{:host(.special-custom-element) {font-weight: bold; }}
+    stylesheet = Habaki::Stylesheet.new
+    stylesheet.parse(css)
+    assert_equal css, stylesheet.string
+  end
+  end
+
   def test_invalid
     css = %{p {padding: 4m; font-size: %; color: #; weight: em; }}
     stylesheet = Habaki::Stylesheet.new
     stylesheet.parse(css)
     assert_equal css, stylesheet.string
+  end
+
+  def test_error
+    css=%{a,{ }
+div {color: green; }
+.inv { invalid }}
+    stylesheet = Habaki::Stylesheet.new
+    stylesheet.parse(css)
+    assert_equal 2, stylesheet.errors.length
+    assert_equal 1, stylesheet.errors[0].line
+    assert_equal 3, stylesheet.errors[1].line
+    assert_equal %{div {color: green; }
+.inv {}}, stylesheet.string
   end
 
 end

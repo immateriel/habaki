@@ -5,21 +5,17 @@
 
 #include "tokenizer.h"
 
-#define YY_EXTRA_TYPE YYSTYPE *
+extern int yylex \
+            (YYSTYPE* yylval_param, YYLTYPE* yylloc_param, yyscan_t yyscanner, void* parser);
 
-#define yylval yyg->yyextra_r
-
-extern int katanalex \
-            (YYSTYPE* yylval_param, YYLTYPE* yylloc, yyscan_t yyscanner, void* parser);
-
-#define YY_DECL int katanalex \
-            (YYSTYPE * yylval_param, YYLTYPE* yylloc, yyscan_t yyscanner, void* parser)
+#define YY_DECL int yylex \
+            (YYSTYPE * yylval_param, YYLTYPE* yylloc_param, yyscan_t yyscanner, void* parser)
 
 #define KATANA_TOKEN(x) katana_tokenize(yylval, yylloc, yyscanner, parser, x); return (x);
-#define YY_NO_INPUT
 
-#define YY_USER_ACTION /*yylloc->filename = filename;*/ \
-        yylval = yylval_param; \
+#define YY_USER_INIT yylineno = yycolumn = yylloc->first_line = yylloc->last_line = yylloc->first_column = yylloc->last_column = 1;
+
+#define YY_USER_ACTION \
         yylloc->first_line = yylloc->last_line = yylineno; \
         yylloc->first_column = yycolumn; yylloc->last_column = yycolumn+(int)yyleng-1; \
         yycolumn += (int)yyleng;
@@ -29,7 +25,10 @@ extern int katanalex \
 %option noline
 %option reentrant
 %option prefix="katana"
+%option bison-bridge
+%option bison-locations
 %option yylineno
+%option noinput
 
 %option case-insensitive
 %option noyywrap

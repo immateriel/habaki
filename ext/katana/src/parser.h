@@ -213,7 +213,7 @@ void katana_parse_internal_selector(KatanaParser* parser, KatanaArray* e);
     
 
 // Bison error
-void katanaerror(KATANALTYPE* yyloc, void* scanner, KatanaParser * parser, char*);
+void katanaerror(YYLTYPE* yyloc, void* scanner, KatanaParser * parser, char*);
 
 // Bison parser location
 KatanaSourcePosition* katana_parser_current_location(KatanaParser* parser, KATANALTYPE* yylloc);

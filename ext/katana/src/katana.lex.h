@@ -212,6 +212,30 @@
 #define yywrap katanawrap
 #endif
 
+#ifdef yyget_lval
+#define katanaget_lval_ALREADY_DEFINED
+#else
+#define yyget_lval katanaget_lval
+#endif
+
+#ifdef yyset_lval
+#define katanaset_lval_ALREADY_DEFINED
+#else
+#define yyset_lval katanaset_lval
+#endif
+
+#ifdef yyget_lloc
+#define katanaget_lloc_ALREADY_DEFINED
+#else
+#define yyget_lloc katanaget_lloc
+#endif
+
+#ifdef yyset_lloc
+#define katanaset_lloc_ALREADY_DEFINED
+#else
+#define yyset_lloc katanaset_lloc
+#endif
+
 #ifdef yyalloc
 #define katanaalloc_ALREADY_DEFINED
 #else
@@ -436,7 +460,8 @@ void yyfree ( void * , yyscan_t yyscanner );
 #ifdef YY_HEADER_EXPORT_START_CONDITIONS
 #define INITIAL 0
 #define mediaquery 1
-#define forkeyword 2
+#define supports 2
+#define forkeyword 3
 
 #endif
 
@@ -449,7 +474,7 @@ void yyfree ( void * , yyscan_t yyscanner );
 #endif
 
 #ifndef YY_EXTRA_TYPE
-#define YY_EXTRA_TYPE YYSTYPE *
+#define YY_EXTRA_TYPE void *
 #endif
 
 int yylex_init (yyscan_t* scanner);
@@ -489,6 +514,14 @@ int yyget_column  ( yyscan_t yyscanner );
 
 void yyset_column ( int _column_no , yyscan_t yyscanner );
 
+YYSTYPE * yyget_lval ( yyscan_t yyscanner );
+
+void yyset_lval ( YYSTYPE * yylval_param , yyscan_t yyscanner );
+
+       YYLTYPE *yyget_lloc ( yyscan_t yyscanner );
+    
+        void yyset_lloc ( YYLTYPE * yylloc_param , yyscan_t yyscanner );
+    
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
  */
@@ -532,13 +565,13 @@ static int yy_flex_strlen ( const char * , yyscan_t yyscanner);
  * easily add parameters.
  */
 #ifndef YY_DECL
+#define YY_DECL_IS_OURS 1
 
-extern int katanalex \
-                (YYSTYPE* yylval_param, YYLTYPE* yylloc, yyscan_t yyscanner, void* parser);
+extern int yylex \
+            (YYSTYPE* yylval_param, YYLTYPE* yylloc_param, yyscan_t yyscanner, void* parser);
 
-#define YY_DECL int katanalex \
-                (YYSTYPE * yylval_param, YYLTYPE* yylloc, yyscan_t yyscanner, void* parser)
-
+#define YY_DECL int yylex \
+            (YYSTYPE * yylval_param, YYLTYPE* yylloc_param, yyscan_t yyscanner, void* parser);
 #endif /* !YY_DECL */
 
 /* yy_get_previous_state - get the state just before the EOB char was reached */

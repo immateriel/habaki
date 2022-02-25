@@ -643,6 +643,17 @@ module Habaki
     end
   end
 
+  class Error < Node
+    attr_accessor :line, :column, :message
+
+    def read(err)
+      @line = err.first_line
+      @column = err.first_column
+      @message = err.message
+      self
+    end
+  end
+
   class Stylesheet < Node
     include RulesReader
     attr_accessor :rules, :errors
@@ -671,7 +682,9 @@ module Habaki
         @rules << read_rule(rul)
       end
 
-      @errors = out.errors
+      out.errors.each do |err|
+        @errors << Error.read(err)
+      end
       self
     end
 
