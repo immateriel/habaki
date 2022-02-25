@@ -57,7 +57,7 @@ module Habaki
     # @param [String] name
     # @return [Boolean]
     def tag_match?(name)
-      return false unless @match == :tag
+      return nil unless @match == :tag
       @tag.local == name
     end
 
@@ -65,7 +65,7 @@ module Habaki
     # @param [String] name
     # @return [Boolean]
     def class_match?(name)
-      return false unless @match == :class
+      return nil unless @match == :class
       @value == name
     end
 
@@ -73,7 +73,7 @@ module Habaki
     # @param [String] name
     # @return [Boolean]
     def id_match?(name)
-      return false unless @match == :id
+      return nil unless @match == :id
       @value == name
     end
 
@@ -96,7 +96,7 @@ module Habaki
           false
         end
       else
-        false
+        nil
       end
     end
 
@@ -151,6 +151,46 @@ module Habaki
 
   class SubSelectors < Array
     attr_accessor :relation
+
+    # @return [SubSelector]
+    def tag_selector
+      select{|sub_sel| sub_sel.match == :tag}.first
+    end
+
+    # @return [SubSelector]
+    def class_selector
+      select{|sub_sel| sub_sel.match == :class}.first
+    end
+
+    # @return [SubSelector]
+    def id_selector
+      select{|sub_sel| sub_sel.match == :id}.first
+    end
+
+    # @return [Array<SubSelector>]
+    def attribute_selectors
+      select{|sub_sel| sub_sel.attribute_selector?}
+    end
+
+    # @return [Boolean, nil]
+    def tag_match?(name)
+      tag_selector&.tag_match?(name)
+    end
+
+    # @return [Boolean, nil]
+    def class_match?(name)
+      class_selector&.class_match?(name)
+    end
+
+    # @return [Boolean, nil]
+    def id_match?(name)
+      id_selector&.id_match?(name)
+    end
+
+    # @return [Boolean, nil]
+    def attribute_match?(name, val)
+      attribute_selectors.length > 0 ? attribute_selectors.inject(true){|res, attr| res && attr.attribute_match?(name, val)} : nil
+    end
 
     def string(indent = 0)
       str = ""

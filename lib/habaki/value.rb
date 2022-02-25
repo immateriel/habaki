@@ -24,6 +24,7 @@ module Habaki
     end
   end
 
+  # dimension in px, pt etc
   class Dimension < Value
     attr_accessor :unit
 

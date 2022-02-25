@@ -25,104 +25,81 @@ class TestParserWriter < Minitest::Test
     assert_equal "a {text-decoration: underline; }", stylesheet.string
   end
 
+  def test_attr
+    assert_identical_css(%{input[value="M"] {color: blue; }})
+  end
+
+  def test_mul_attr
+    assert_identical_css(%{input[name="A"][value="M"] {color: blue; }})
+  end
+
   def test_import
-    css = %{@import "mobstyle.css" screen and (max-width: 768px);}
-    stylesheet = Habaki::Stylesheet.new
-    stylesheet.parse(css)
-    assert_equal css, stylesheet.string
+    assert_identical_css(%{@import "mobstyle.css" screen and (max-width: 768px);})
   end
 
   def test_media_not
-    css = %{@media not screen {
+    assert_identical_css(%{@media not screen {
 article {
  padding: 1rem 3rem;
 }
-}}
-    stylesheet = Habaki::Stylesheet.new
-    stylesheet.parse(css)
-    assert_equal css, stylesheet.string
+}})
   end
 
   def test_media_only
-    css = %{@media only screen {
+    assert_identical_css(%{@media only screen {
 article {
  padding: 1rem 3rem;
 }
-}}
-    stylesheet = Habaki::Stylesheet.new
-    stylesheet.parse(css)
-    assert_equal css, stylesheet.string
+}})
   end
 
   def test_media_and
-    css = %{@media screen and (min-width: 900px) {
+    assert_identical_css(%{@media screen and (min-width: 900px) {
 article {
  padding: 1rem 3rem;
 }
-}}
-    stylesheet = Habaki::Stylesheet.new
-    stylesheet.parse(css)
-    assert_equal css, stylesheet.string
+}})
   end
 
   def test_media_exp_only
-    css = %{@media (min-width: 900px) {
+    assert_identical_css(%{@media (min-width: 900px) {
 a {
  color: black;
 }
-}}
-    stylesheet = Habaki::Stylesheet.new
-    stylesheet.parse(css)
-    assert_equal css, stylesheet.string
+}})
   end
 
   def test_media_no_value
-    css = %{@media (monochrome) {
+    assert_identical_css(%{@media (monochrome) {
 a {
  color: black;
 }
-}}
-    stylesheet = Habaki::Stylesheet.new
-    stylesheet.parse(css)
-    assert_equal css, stylesheet.string
+}})
   end
 
   def test_namespace
-    css = %{@namespace "http://www.w3.org/1999/xhtml";
+    assert_identical_css(%{@namespace "http://www.w3.org/1999/xhtml";
 @namespace svg "http://www.w3.org/2000/svg";
 a {}
 svg|a {}
-*|a {}}
-    stylesheet = Habaki::Stylesheet.new
-    stylesheet.parse(css)
-    assert 2, stylesheet.rules.namespaces.length
-    assert_equal css, stylesheet.string
+*|a {}})
   end
 
   def test_namespace_attr
-    css = %{@namespace epub "http://www.idpf.org/2007/ops";
-[epub|type~="toc"] {}}
-    stylesheet = Habaki::Stylesheet.new
-    stylesheet.parse(css)
-    assert_equal css, stylesheet.string
+    assert_identical_css(%{@namespace epub "http://www.idpf.org/2007/ops";
+[epub|type~="toc"] {}})
   end
 
   def test_supports
-    css = %{@supports (transform-style: preserve-3d) {
+    assert_identical_css(%{@supports (transform-style: preserve-3d) {
 a {color: black; }
-}}
-    stylesheet = Habaki::Stylesheet.new
-    stylesheet.parse(css)
-    assert_equal css, stylesheet.string
+}})
   end
 
   def test_supports_and
-    css = %{@supports (display: grid) and (display: inline-grid) {
+    assert_identical_css(%{@supports (display: grid) and (display: inline-grid) {
 a {color: black; }
-}}
-    stylesheet = Habaki::Stylesheet.new
-    stylesheet.parse(css)
-    assert_equal css, stylesheet.string
+}})
   end
 
   def test_supports_not
@@ -136,49 +113,34 @@ a {color: black; }
   end
 
   def test_supports_or
-    css = %{@supports (transform-style: preserve-3d) or ((-moz-transform-style: preserve-3d) or ((-o-transform-style: preserve-3d) or (-webkit-transform-style: preserve-3d))) {
+    assert_identical_css(%{@supports (transform-style: preserve-3d) or ((-moz-transform-style: preserve-3d) or ((-o-transform-style: preserve-3d) or (-webkit-transform-style: preserve-3d))) {
 a {color: black; }
-}}
-    stylesheet = Habaki::Stylesheet.new
-    stylesheet.parse(css)
-    assert_equal css, stylesheet.string
+}})
   end
 
   def test_pseudo
-    css = %{a:hover {color: blue; }
+    assert_identical_css(%{a:hover {color: blue; }
 p.nt:nth-of-type(3n) {color: red; }
-li:nth-last-child(3n+2) {color: green; }}
-    stylesheet = Habaki::Stylesheet.new
-    stylesheet.parse(css)
-    assert_equal css, stylesheet.string
+li:nth-last-child(3n+2) {color: green; }})
   end
 
   # TODO
   if false
     def test_charset
-      css = %{@charset "utf-8"; }
-      stylesheet = Habaki::Stylesheet.new
-      stylesheet.parse(css)
-      assert_equal css, stylesheet.string
+      assert_identical_css(%{@charset "utf-8"; })
     end
 
-  def test_host
-    css = %{:host(.special-custom-element) {font-weight: bold; }}
-    stylesheet = Habaki::Stylesheet.new
-    stylesheet.parse(css)
-    assert_equal css, stylesheet.string
-  end
+    def test_host
+      assert_identical_css(%{:host(.special-custom-element) {font-weight: bold; }})
+    end
   end
 
   def test_invalid
-    css = %{p {padding: 4m; font-size: %; color: #; weight: em; }}
-    stylesheet = Habaki::Stylesheet.new
-    stylesheet.parse(css)
-    assert_equal css, stylesheet.string
+    assert_identical_css(%{p {padding: 4m; font-size: %; color: #; weight: em; }})
   end
 
   def test_error
-    css=%{a,{ }
+    css = %{a,{ }
 div {color: green; }
 .inv { invalid }}
     stylesheet = Habaki::Stylesheet.new
@@ -188,6 +150,15 @@ div {color: green; }
     assert_equal 3, stylesheet.errors[1].line
     assert_equal %{div {color: green; }
 .inv {}}, stylesheet.string
+  end
+
+  private
+
+  def assert_identical_css(css)
+    stylesheet = Habaki::Stylesheet.new
+    stylesheet.parse(css)
+    assert_equal css, stylesheet.string
+
   end
 
 end
