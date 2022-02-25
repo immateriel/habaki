@@ -7,11 +7,13 @@ class TestParserWriter < Minitest::Test
 
   def test_decl
     css = %{
-    a {color: blue; text-decoration: underline;}
+    a {color: blue; text-decoration: underline; font-size: 16px; }
     }
     stylesheet = Habaki::Stylesheet.new
     stylesheet.parse(css)
-    assert_equal "blue", stylesheet.rules.first.declarations.select { |decl| decl.property == "color" }.first.value.data
+    assert_equal "blue", stylesheet.rules.first.declarations.find_declaration("color").value.data
+    assert_equal 16.0, stylesheet.rules.first.declarations.find_declaration("font-size").value.data
+    assert_equal :px, stylesheet.rules.first.declarations.find_declaration("font-size").value.unit
   end
 
   def test_decl_del
@@ -20,9 +22,20 @@ class TestParserWriter < Minitest::Test
     }
     stylesheet = Habaki::Stylesheet.new
     stylesheet.parse(css)
-    stylesheet.rules.first.declarations.reject! { |decl| decl.property == "color" }
+    stylesheet.rules.first.declarations.remove_declaration("color")
     assert_equal 1, stylesheet.rules.first.declarations.length
     assert_equal "a {text-decoration: underline; }", stylesheet.string
+  end
+
+  def test_decl_add
+    css = %{
+    a {color: blue; text-decoration: underline;}
+    }
+    stylesheet = Habaki::Stylesheet.new
+    stylesheet.parse(css)
+    stylesheet.rules.first.declarations.add_declaration("font-size", Habaki::Dimension.new(12, :pt))
+    assert_equal 3, stylesheet.rules.first.declarations.length
+    assert_equal "a {color: blue; text-decoration: underline; font-size: 12pt; }", stylesheet.string
   end
 
   def test_attr

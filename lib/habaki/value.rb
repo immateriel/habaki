@@ -30,7 +30,7 @@ module Habaki
 
     def initialize(data = nil, unit = nil)
       @data = data
-      @unit = data
+      @unit = unit
     end
 
     def read(val)

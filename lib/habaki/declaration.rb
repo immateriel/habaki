@@ -7,7 +7,9 @@ module Habaki
     # @return [Boolean]
     attr_accessor :important
 
-    def initialize
+    def initialize(property = nil, important = false)
+      @property = property
+      @important = important
       @values = Values.new
     end
 
@@ -41,6 +43,27 @@ module Habaki
         push Declaration.read(decl)
       end
       self
+    end
+
+    # find declaration with property
+    # @param [String] property
+    def find_declaration(property)
+      select { |decl| decl.property == property }.first
+    end
+
+    # remove declaration with property
+    # @param [String] property
+    def remove_declaration(property)
+      reject! { |decl| decl.property == property }
+    end
+
+    # add declaration
+    # @param [String] property
+    # @param [Value, Array<Value>] value
+    def add_declaration(property, value)
+      decl = Habaki::Declaration.new(property)
+      decl.values = Values.new([value].flatten)
+      push decl
     end
 
     def string(indent = 0)
