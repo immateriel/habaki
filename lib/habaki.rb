@@ -138,14 +138,11 @@ module Habaki
     end
   end
 
-  # CSS selector
-  class Selector < Node
+  class SubSelector < Node
     # @return [Symbol]
     attr_accessor :match
     # @return [String]
     attr_accessor :tag
-    # @return [Symbol]
-    attr_accessor :relation
     # @return [Symbol]
     attr_accessor :pseudo
 
@@ -158,17 +155,9 @@ module Habaki
     # @return [Array<Selector>]
     attr_accessor :selectors
 
-    # @return [Selector]
-    attr_accessor :history
-
-    def initialize
-      @selectors = Selectors.new
-    end
-
     def read(sel)
       @match = sel.match
       @tag = QualifiedName.read(sel.tag) if sel.tag
-      @relation = sel.relation
       @pseudo = sel.pseudo
 
       @attribute = QualifiedName.read(sel.data.attribute) if sel.data.attribute
@@ -179,8 +168,6 @@ module Habaki
           @selectors << Selector.read(dat_sel)
         end
       end
-
-      @history = Selector.read(sel.tag_history) if sel.tag_history
       self
     end
 
@@ -227,6 +214,8 @@ module Habaki
           val == @value
         when :attribute_begin
           val.start_with?(@value)
+        when :attribute_contain
+          val.include?(@value)
         else
           false
         end
@@ -237,68 +226,112 @@ module Habaki
 
     def string(indent = 0)
       str = ""
-      sel = self
 
-      while sel do
-        if sel.attribute_selector?
-          str += "[#{sel.attribute.string}"
-          case sel.match
-          when :attribute_exact
-            str += "="
-          when :attribute_set
-            str += "]"
-          when :attribute_list
-            str += "~="
-          when :attribute_hyphen
-            str += "|="
-          when :attribute_begin
-            str += "^="
-          when :attribute_end
-            str += "$="
-          end
-          str += "\"#{sel.value}\"]" if sel.match != :attribute_set
-        else
-          case sel.match
-          when :tag
-            str += sel.tag.string
-          when :class
-            str += ".#{sel.value}"
-          when :id
-            str += "##{sel.value}"
-          when :attribute_contain
-            str += "*="
-          when :pseudo_class, :pseudo_page_class
-            str += ":#{sel.value}"
-            case sel.pseudo
-            when :any, :not, :host, :host_context
-              str += sel.selectors.map(&:string).join(",")
-              str += ")"
-            when :lang, :nth_child, :nth_last_child, :nth_of_type, :nth_last_of_type
-              str += "#{sel.argument})"
-            end
-          when :pseudo_element
-            str += "::#{sel.value}"
-          end
+      if attribute_selector?
+        str += "[#{@attribute.string}"
+        case @match
+        when :attribute_exact
+          str += "="
+        when :attribute_set
+          str += "]"
+        when :attribute_list
+          str += "~="
+        when :attribute_hyphen
+          str += "|="
+        when :attribute_begin
+          str += "^="
+        when :attribute_end
+          str += "$="
+        when :attribute_contain
+          str += "*="
         end
-
-        break if sel.relation != :sub_selector || !sel.history
-        sel = sel.history
+        str += "\"#{@value}\"]" if @match != :attribute_set
+      else
+        case @match
+        when :tag
+          str += @tag.string
+        when :class
+          str += ".#{@value}"
+        when :id
+          str += "##{@value}"
+        when :attribute_contain
+          str += "*="
+        when :pseudo_class, :pseudo_page_class
+          str += ":#{@value}"
+          case @pseudo
+          when :any, :not, :host, :host_context
+            str += @selectors.string
+            str += ")"
+          when :lang, :nth_child, :nth_last_child, :nth_of_type, :nth_last_of_type
+            str += "#{@argument})"
+          end
+        when :pseudo_element
+          str += "::#{@value}"
+        end
       end
-
-      case sel.relation
-      when :descendant
-        str = sel.history.to_s + " " + str
-      when :child
-        str = sel.history.to_s + " > " + str
-      when :direct_adjacent
-        str = sel.history.to_s + " + " + str
-      when :indirect_adjacent
-        str = sel.history.to_s + " ~ " + str
-      when :shadow_pseudo
-        str = sel.history.to_s + str
-      end
-
       str
+    end
+  end
+
+  class SubSelectors < Array
+    attr_accessor :relation
+
+    def string(indent = 0)
+      str = ""
+      case @relation
+      when :descendant
+        str += " "
+      when :child
+        str += " > "
+      when :direct_adjacent
+        str += " + "
+      when :indirect_adjacent
+        str += " ~ "
+      end
+      each do |sub_sel|
+        str += sub_sel.string
+      end
+      str
+    end
+  end
+
+  # CSS selector
+  class Selector < Node
+    attr_accessor :sub_selectors
+
+    def initialize
+      @sub_selectors = []
+    end
+
+    def read(sel)
+      @sub_selectors = rec_sub_sel(sel)
+      self
+    end
+
+    def string(indent = 0)
+      @sub_selectors.map(&:string).join("")
+    end
+
+    private
+
+    # parse sub selectors recursively
+    def rec_sub_sel(sel)
+      sub_sels = []
+      cur_sel = sel
+      cur_sub_sel = SubSelectors.new
+      while cur_sel do
+        cur_sub_sel << SubSelector.read(cur_sel)
+        break if cur_sel.relation != :sub_selector || !cur_sel.tag_history
+        cur_sel = cur_sel.tag_history
+      end
+
+      sub_sels << cur_sub_sel
+      cur_sub_sel.relation = cur_sel.relation if cur_sel.relation != :sub_selector
+
+      if cur_sel.relation != :sub_selector
+        sub_sels = rec_sub_sel(cur_sel.tag_history) + sub_sels
+      end
+      sub_sels
     end
   end
 

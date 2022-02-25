@@ -11,7 +11,7 @@ class TestSuite < Minitest::Test
     }
     stylesheet = Habaki::Stylesheet.new
     stylesheet.parse(css)
-    assert_equal "blue", stylesheet.rules.first.declarations.select{|decl| decl.property == "color"}.first.values.first.value
+    assert_equal "blue", stylesheet.rules.first.declarations.select { |decl| decl.property == "color" }.first.values.first.value
   end
 
   def test_decl_del
@@ -20,7 +20,7 @@ class TestSuite < Minitest::Test
     }
     stylesheet = Habaki::Stylesheet.new
     stylesheet.parse(css)
-    stylesheet.rules.first.declarations.reject!{|decl| decl.property == "color"}
+    stylesheet.rules.first.declarations.reject! { |decl| decl.property == "color" }
     assert_equal 1, stylesheet.rules.first.declarations.length
     assert_equal "a {text-decoration: underline; }", stylesheet.string
   end
@@ -100,7 +100,7 @@ svg|a {}
   end
 
   def test_namespace_attr
-    css= %{@namespace epub "http://www.idpf.org/2007/ops";
+    css = %{@namespace epub "http://www.idpf.org/2007/ops";
 [epub|type~="toc"] {}}
     stylesheet = Habaki::Stylesheet.new
     stylesheet.parse(css)
@@ -108,7 +108,7 @@ svg|a {}
   end
 
   def test_supports
-    css= %{@supports (transform-style: preserve-3d) {
+    css = %{@supports (transform-style: preserve-3d) {
 a {color: black; }
 }}
     stylesheet = Habaki::Stylesheet.new
@@ -117,7 +117,7 @@ a {color: black; }
   end
 
   def test_supports_and
-    css= %{@supports (display: grid) and (display: inline-grid) {
+    css = %{@supports (display: grid) and (display: inline-grid) {
 a {color: black; }
 }}
     stylesheet = Habaki::Stylesheet.new
@@ -126,7 +126,7 @@ a {color: black; }
   end
 
   def test_supports_not
-    css= %{@supports (display: grid) and (not (display: inline-grid)) {
+    css = %{@supports (display: grid) and (not (display: inline-grid)) {
 a {color: black; }
 }}
     stylesheet = Habaki::Stylesheet.new
@@ -136,7 +136,7 @@ a {color: black; }
   end
 
   def test_supports_or
-    css= %{@supports (transform-style: preserve-3d) or ((-moz-transform-style: preserve-3d) or ((-o-transform-style: preserve-3d) or (-webkit-transform-style: preserve-3d))) {
+    css = %{@supports (transform-style: preserve-3d) or ((-moz-transform-style: preserve-3d) or ((-o-transform-style: preserve-3d) or (-webkit-transform-style: preserve-3d))) {
 a {color: black; }
 }}
     stylesheet = Habaki::Stylesheet.new
@@ -144,8 +144,17 @@ a {color: black; }
     assert_equal css, stylesheet.string
   end
 
+  def test_pseudo
+    css = %{a:hover {color: blue; }
+p.nt:nth-of-type(3n) {color: red; }
+li:nth-last-child(3n+2) {color: green; }}
+    stylesheet = Habaki::Stylesheet.new
+    stylesheet.parse(css)
+    assert_equal css, stylesheet.string
+  end
+
   def test_invalid
-    css=%{p {padding: 4m; font-size: %; color: #; weight: em; }}
+    css = %{p {padding: 4m; font-size: %; color: #; weight: em; }}
     stylesheet = Habaki::Stylesheet.new
     stylesheet.parse(css)
     assert_equal css, stylesheet.string

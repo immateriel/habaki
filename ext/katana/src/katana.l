@@ -135,9 +135,9 @@ nth             [\+-]?{intnum}*n([\t\r\n ]*[\+-][\t\r\n ]*{intnum})?
 "not("                  {KATANA_TOKEN(KATANA_CSS_NOTFUNCTION)}
 "url("{w}{string}{w}")" {KATANA_TOKEN(KATANA_CSS_URI)}
 "url("{w}{url}{w}")"    {KATANA_TOKEN(KATANA_CSS_URI)}
-"-webkit-calc("         {KATANA_TOKEN(KATANA_CSS_CALCFUNCTION)}
-"-webkit-min("          {KATANA_TOKEN(KATANA_CSS_MINFUNCTION)}
-"-webkit-max("          {KATANA_TOKEN(KATANA_CSS_MAXFUNCTION)}
+"calc("                 {KATANA_TOKEN(KATANA_CSS_CALCFUNCTION)}
+"min("                  {KATANA_TOKEN(KATANA_CSS_MINFUNCTION)}
+"max("                  {KATANA_TOKEN(KATANA_CSS_MAXFUNCTION)}
 {ident}"("              {KATANA_TOKEN(KATANA_CSS_FUNCTION)}
 
 U\+{range}              {KATANA_TOKEN(KATANA_CSS_UNICODERANGE)}
@@ -145,8 +145,8 @@ U\+{h}{1,6}-{h}{1,6}    {KATANA_TOKEN(KATANA_CSS_UNICODERANGE)}
 
 <mediaquery>"{"         |
 <mediaquery>";"         {BEGIN(INITIAL); KATANA_TOKEN(*yytext) }
-<supports>"{"         |
-<supports>";"         {BEGIN(INITIAL); KATANA_TOKEN(*yytext) }
+<supports>"{"           |
+<supports>";"           {BEGIN(INITIAL); KATANA_TOKEN(*yytext) }
 .                       {KATANA_TOKEN(*yytext)}
 
 %%

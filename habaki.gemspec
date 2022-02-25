@@ -1,6 +1,6 @@
 spec = Gem::Specification.new do |s|
   s.name    = "habaki"
-  s.version = "0.2.0"
+  s.version = "0.3.0"
   s.summary = "CSS parser/writer"
   s.author  = "Julien Boulnois"
   s.license = "MIT"
