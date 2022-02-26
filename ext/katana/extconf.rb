@@ -7,7 +7,7 @@ CONFIG['warnflags'].gsub!(/-W.* /, '')
 
 $srcs = %w{src/katana-parser/katana.tab.c src/katana-parser/foundation.c src/katana-parser/katana.lex.c
 src/katana-parser/parser.c src/katana-parser/selector.c src/katana-parser/tokenizer.c
-src/rb_katana.c
+src/rb_katana_array.c src/rb_katana_selector.c src/rb_katana_declaration.c src/rb_katana_rule.c src/rb_katana.c
 }
 
 $INCFLAGS << " -I$(srcdir)/src"

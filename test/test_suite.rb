@@ -8,7 +8,7 @@ class TestSuite < Minitest::Test
   Dir.glob("test/suite/*.css").each do |f|
       define_method "test_suite_#{File.basename(f, ".css").gsub("-","_")}" do
       input = strip_css(File.read(f))
-      stylesheet = Habaki::Stylesheet.parse(File.read(f))
+      stylesheet = Habaki::Stylesheet.parse_file(f)
       output = strip_css(stylesheet.to_s)
       assert_identical_css(input, output)
     end

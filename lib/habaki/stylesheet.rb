@@ -29,22 +29,27 @@ module Habaki
       @errors = []
     end
 
-    # traverse each style matching mediatype
-    def each_style(mediatype = "all", &block)
-      @rules.font_faces.each do |style|
-        block.call style
-      end
-      if mediatype == "print" || mediatype == "all"
-        @rules.pages.each do |style|
-          block.call style
+    # traverse all rules (including media & supports)
+    def each_rule(&block)
+      @rules.each do |rule|
+        block.call rule
+        if rule.rules
+          rule.rules.each do |emb_rule|
+            block.call emb_rule
+          end
         end
       end
-      @rules.styles.each do |style|
-        block.call style
+    end
+
+    # remove all empty rules
+    def compact!
+      @rules.reject!{|rule| rule.declarations && rule.declarations.length == 0}
+      @rules.each do |rule|
+        if rule.rules
+          rule.rules.reject!{|emb_rule| emb_rule.declarations && emb_rule.declarations.length == 0}
+        end
       end
-      @rules.medias.select{|media| media.match_type?(mediatype)}.each do |style|
-        block.call style
-      end
+      @rules.reject!{|rule| rule.rules && rule.rules.length == 0}
     end
 
     # instanciate and parse from data
@@ -56,11 +61,25 @@ module Habaki
       stylesheet
     end
 
+    # parse from file
+    # @param [String] filename
+    # @return [nil]
+    def self.parse_file(filename)
+      parse(File.read(filename))
+    end
+
     # parse from data
     # @param [String] data
     # @return [nil]
     def parse(data)
       read(Katana.parse(data))
+    end
+
+    # parse from file
+    # @param [String] filename
+    # @return [nil]
+    def parse_file(filename)
+      parse(File.read(filename))
     end
 
     # @!visibility private

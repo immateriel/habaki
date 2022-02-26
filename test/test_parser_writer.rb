@@ -58,6 +58,15 @@ class TestParserWriter < Minitest::Test
     stylesheet.parse(css)
     assert_equal 3, stylesheet.rules.medias.select{|media| media.match_type?("print")}.length
     assert_equal 1, stylesheet.rules.medias.select{|media| media.match_type?("screen")}.length
+
+    stylesheet.each_rule do |rule|
+      if rule.declarations
+        rule.declarations.remove_by_property("font-size")
+      end
+    end
+    stylesheet.compact!
+    assert_equal 2, stylesheet.rules.medias.select{|media| media.match_type?("print")}.length
+
   end
 
   def test_attr
