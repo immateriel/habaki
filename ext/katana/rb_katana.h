@@ -90,4 +90,9 @@ VALUE rb_charset_rule_encoding(VALUE self);
 VALUE rb_style_rule_selectors(VALUE self);
 VALUE rb_style_rule_declarations(VALUE self);
 
+void init_katana_rule();
+void init_katana_selector();
+void init_katana_declaration();
+
 #endif
+

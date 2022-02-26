@@ -3,14 +3,14 @@ module Habaki
   class QualifiedName < Node
     attr_accessor :local, :prefix
 
-    # @!visibility private
+    # @api private
     # @param [Katana::QualifiedName] tag
     def read(tag)
       @local = tag.local
       @prefix = tag.prefix
     end
 
-    # @!visibility private
+    # @api private
     def string(indent = 0)
       @prefix ? "#{@prefix}|#{@local}" : @local
     end
@@ -86,7 +86,7 @@ module Habaki
       end
     end
 
-    # @!visibility private
+    # @api private
     # @param [Katana::Selector] sel
     def read(sel)
       @match = sel.match
@@ -100,7 +100,7 @@ module Habaki
       @selectors = Selectors.read(sel.data.selectors) if sel.data.selectors
     end
 
-    # @!visibility private
+    # @api private
     def string(indent = 0)
       str = ""
 
@@ -195,7 +195,7 @@ module Habaki
       attribute_selectors.length > 0 ? attribute_selectors.inject(true) { |res, attr| res && attr.attribute_match?(name, val) } : nil
     end
 
-    # @!visibility private
+    # @api private
     def string(indent = 0)
       str = ""
       case @relation
@@ -224,13 +224,13 @@ module Habaki
       @sub_selectors = []
     end
 
-    # @!visibility private
+    # @api private
     # @param [Katana::Selector] sel
     def read(sel)
       @sub_selectors = rec_sub_sel(sel)
     end
 
-    # @!visibility private
+    # @api private
     def string(indent = 0)
       @sub_selectors.map(&:string).join("")
     end
@@ -262,15 +262,15 @@ module Habaki
   class Selectors < Array
     extend NodeReader
 
-    # @!visibility private
-    # @param [Katana::Array] sels
+    # @api private
+    # @param [Katana::Array<Katana::Selector>] sels
     def read(sels)
       sels.each do |sel|
         push Selector.read(sel)
       end
     end
 
-    # @!visibility private
+    # @api private
     def string(indent = 0)
       map(&:string).join(",")
     end

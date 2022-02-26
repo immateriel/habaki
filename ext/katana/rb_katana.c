@@ -11,6 +11,9 @@ void output_free(KatanaOutput *output)
   katana_destroy_output(output);
 }
 
+/*
+ * @return [Katana::Stylesheet, nil]
+ */
 VALUE rb_output_stylesheet(VALUE self)
 {
   KatanaOutput *c_output;
@@ -22,6 +25,9 @@ VALUE rb_output_stylesheet(VALUE self)
     return Qnil;
 }
 
+/*
+ * @return [Katana::Array<Katana::Declaration>, nil]
+ */
 VALUE rb_output_declarations(VALUE self)
 {
   KatanaOutput *c_output;
@@ -42,6 +48,9 @@ VALUE rb_output_declarations(VALUE self)
   }
 }
 
+/*
+ * @return [Katana::Array<Katana::Error>]
+ */
 VALUE rb_output_errors(VALUE self)
 {
   KatanaOutput *c_output;
@@ -64,8 +73,23 @@ VALUE rb_output_dump(VALUE self)
   return Qnil;
 }
 
+// Array
+/*
+* @return [Integer]
+*/
+VALUE rb_array_length(VALUE array)
+{
+  KatanaArray *c_array;
+  Data_Get_Struct(array, KatanaArray, c_array);
+  return INT2NUM(c_array->length);
+}
+
+
 // Error
 
+/*
+ * @return [Integer]
+ */
 VALUE rb_error_first_line(VALUE self)
 {
   KatanaError *c_err;
@@ -73,6 +97,9 @@ VALUE rb_error_first_line(VALUE self)
   return INT2NUM(c_err->first_line);
 }
 
+/*
+ * @return [Integer]
+ */
 VALUE rb_error_first_column(VALUE self)
 {
   KatanaError *c_err;
@@ -80,6 +107,9 @@ VALUE rb_error_first_column(VALUE self)
   return INT2NUM(c_err->first_column);
 }
 
+/*
+ * @return [Integer]
+ */
 VALUE rb_error_last_line(VALUE self)
 {
   KatanaError *c_err;
@@ -87,6 +117,9 @@ VALUE rb_error_last_line(VALUE self)
   return INT2NUM(c_err->last_line);
 }
 
+/*
+ * @return [Integer]
+ */
 VALUE rb_error_last_column(VALUE self)
 {
   KatanaError *c_err;
@@ -94,6 +127,9 @@ VALUE rb_error_last_column(VALUE self)
   return INT2NUM(c_err->last_column);
 }
 
+/*
+ * @return [String]
+ */
 VALUE rb_error_message(VALUE self)
 {
   KatanaError *c_err;
@@ -101,6 +137,9 @@ VALUE rb_error_message(VALUE self)
   return rb_str_new2(c_err->message);
 }
 
+/*
+ * @return [Katana::Array]
+ */
 VALUE rb_stylesheet_rules(VALUE self)
 {
   KatanaStylesheet *c_stylesheet;
@@ -113,6 +152,9 @@ VALUE rb_stylesheet_rules(VALUE self)
   return array;
 }
 
+/*
+ * @return [Katana::Array]
+ */
 VALUE rb_stylesheet_imports(VALUE self)
 {
   KatanaStylesheet *c_stylesheet;
@@ -127,7 +169,7 @@ VALUE rb_stylesheet_imports(VALUE self)
 }
 
 /*
- * parse CSS data
+ * parse CSS from string
  * @param [String] data
  * @return [Katana::Output]
  */
@@ -139,7 +181,7 @@ VALUE rb_parse(VALUE self, VALUE data)
 }
 
 /*
- * parse CSS data
+ * parse CSS inline from string
  * @param [String] data
  * @return [Katana::Output]
  */
@@ -179,101 +221,9 @@ void Init_katana()
   rb_define_method(rb_Stylesheet, "rules", rb_stylesheet_rules, 0);
   rb_define_method(rb_Stylesheet, "imports", rb_stylesheet_imports, 0);
 
-  // SupportsRule
-
-  rb_SupportsExp = rb_define_class_under(rb_Katana, "SupportsExpression", rb_cObject);
-  rb_define_method(rb_SupportsExp, "operation", rb_supports_exp_op, 0);
-  rb_define_method(rb_SupportsExp, "expressions", rb_supports_exp_exps, 0);
-  rb_define_method(rb_SupportsExp, "declaration", rb_supports_exp_declaration, 0);
-
-  rb_SupportsRule = rb_define_class_under(rb_Katana, "SupportsRule", rb_cObject);
-  rb_define_method(rb_SupportsRule, "expression", rb_supports_exp, 0);
-  rb_define_method(rb_SupportsRule, "rules", rb_supports_rules, 0);
-
-  // NamespaceRule
-  rb_NamespaceRule = rb_define_class_under(rb_Katana, "NamespaceRule", rb_cObject);
-  rb_define_method(rb_NamespaceRule, "prefix", rb_namespace_rule_prefix, 0);
-  rb_define_method(rb_NamespaceRule, "uri", rb_namespace_rule_uri, 0);
-
-  // MediaRule
-  rb_MediaRule = rb_define_class_under(rb_Katana, "MediaRule", rb_cObject);
-  rb_define_method(rb_MediaRule, "medias", rb_media_rule_medias, 0);
-  rb_define_method(rb_MediaRule, "rules", rb_media_rule_rules, 0);
-
-  // MediaQueryExp
-  rb_MediaQueryExp = rb_define_class_under(rb_Katana, "MediaQueryExpression", rb_cObject);
-  rb_define_method(rb_MediaQueryExp, "feature", rb_media_query_exp_feature, 0);
-  rb_define_method(rb_MediaQueryExp, "values", rb_media_query_exp_values, 0);
-
-  // MediaQuery
-  rb_MediaQuery = rb_define_class_under(rb_Katana, "MediaQuery", rb_cObject);
-  rb_define_method(rb_MediaQuery, "type", rb_media_query_type, 0);
-  rb_define_method(rb_MediaQuery, "restrictor", rb_media_query_restrictor, 0);
-  rb_define_method(rb_MediaQuery, "expressions", rb_media_query_expressions, 0);
-
-  // PageRule
-  rb_PageRule = rb_define_class_under(rb_Katana, "PageRule", rb_cObject);
-  rb_define_method(rb_PageRule, "declarations", rb_page_rule_declarations, 0);
-
-  // FontFaceRule
-  rb_FontFaceRule = rb_define_class_under(rb_Katana, "FontFaceRule", rb_cObject);
-  rb_define_method(rb_FontFaceRule, "declarations", rb_font_face_rule_declarations, 0);
-
-  // ImportRule
-  rb_ImportRule = rb_define_class_under(rb_Katana, "ImportRule", rb_cObject);
-  rb_define_method(rb_ImportRule, "href", rb_import_rule_href, 0);
-  rb_define_method(rb_ImportRule, "medias", rb_import_rule_medias, 0);
-
-  // CharsetRule
-  rb_CharsetRule = rb_define_class_under(rb_Katana, "CharsetRule", rb_cObject);
-  rb_define_method(rb_CharsetRule, "encoding", rb_charset_rule_encoding, 0);
-
-  // StyleRule
-  rb_StyleRule = rb_define_class_under(rb_Katana, "StyleRule", rb_cObject);
-  rb_define_method(rb_StyleRule, "selectors", rb_style_rule_selectors, 0);
-  rb_define_method(rb_StyleRule, "declarations", rb_style_rule_declarations, 0);
-
-  // SelectorData
-  rb_SelectorData = rb_define_class_under(rb_Katana, "SelectorData", rb_cObject);
-  // TODO: bits
-  rb_define_method(rb_SelectorData, "value", rb_selector_data_value, 0);
-  rb_define_method(rb_SelectorData, "attribute", rb_selector_data_attr, 0);
-  rb_define_method(rb_SelectorData, "argument", rb_selector_data_argument, 0);
-  rb_define_method(rb_SelectorData, "selectors", rb_selector_data_selectors, 0);
-
-  // Selector
-  rb_Selector = rb_define_class_under(rb_Katana, "Selector", rb_cObject);
-  rb_define_method(rb_Selector, "specificity", rb_selector_specificity, 0);
-  rb_define_method(rb_Selector, "match", rb_selector_match, 0);
-  rb_define_method(rb_Selector, "tag", rb_selector_tag, 0);
-  rb_define_method(rb_Selector, "relation", rb_selector_relation, 0);
-  rb_define_method(rb_Selector, "pseudo", rb_selector_pseudo, 0);
-  rb_define_method(rb_Selector, "data", rb_selector_data, 0);
-  rb_define_method(rb_Selector, "tag_history", rb_selector_tag_history, 0);
-
-  // Declaration
-  rb_Declaration = rb_define_class_under(rb_Katana, "Declaration", rb_cObject);
-  rb_define_method(rb_Declaration, "property", rb_declaration_prop, 0);
-  rb_define_method(rb_Declaration, "important", rb_declaration_important, 0);
-  rb_define_method(rb_Declaration, "values", rb_declaration_values, 0);
-  rb_define_method(rb_Declaration, "raw", rb_declaration_raw, 0);
-
-  // Value
-  rb_Value = rb_define_class_under(rb_Katana, "Value", rb_cObject);
-  rb_define_method(rb_Value, "value", rb_value_value, 0);
-  rb_define_method(rb_Value, "unit", rb_value_unit, 0);
-  rb_define_method(rb_Value, "raw", rb_value_raw, 0);
-
-  // ValueFunction
-  rb_ValueFunction = rb_define_class_under(rb_Katana, "ValueFunction", rb_cObject);
-  rb_define_method(rb_ValueFunction, "name", rb_value_function_name, 0);
-  rb_define_method(rb_ValueFunction, "args", rb_value_function_args, 0);
-
-  // QualifiedName
-  rb_QualifiedName = rb_define_class_under(rb_Katana, "QualifiedName", rb_cObject);
-  rb_define_method(rb_QualifiedName, "local", rb_name_local, 0);
-  rb_define_method(rb_QualifiedName, "prefix", rb_name_prefix, 0);
-  rb_define_method(rb_QualifiedName, "uri", rb_name_uri, 0);
+  init_katana_rule();
+  init_katana_selector();
+  init_katana_declaration();
 
   // Module method
   rb_define_singleton_method(rb_Katana, "parse", rb_parse, 1);

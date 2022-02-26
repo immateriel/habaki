@@ -7,14 +7,16 @@ module Habaki
       @data = data
     end
 
-    # @!visibility private
+    # @api private
     # @param [Katana::Value] val
+    # @return [void]
     def read(val)
       @data = val.value
       self
     end
 
-    # @!visibility private
+    # @api private
+    # @return [String]
     def string(indent = 0)
       "#{@data}"
     end
@@ -37,28 +39,32 @@ module Habaki
       @unit = unit
     end
 
-    # @!visibility private
+    # @api private
+    # @return [void]
     def read(val)
       @data = val.value
       @unit = val.unit
       @unit = nil if @unit == :dimension
     end
 
-    # @!visibility private
+    # @api private
+    # @return [String]
     def string(indent = 0)
       @unit ? "#{data_i_or_f}#{@unit}" : @data
     end
   end
 
   class Percentage < Value
-    # @!visibility private
+    # @api private
+    # @return [String]
     def string(indent = 0)
       "#{data_i_or_f}%"
     end
   end
 
   class Number < Value
-    # @!visibility private
+    # @api private
+    # @return [String]
     def string(indent = 0)
       "#{data_i_or_f}"
     end
@@ -68,7 +74,8 @@ module Habaki
   end
 
   class String < Value
-    # @!visibility private
+    # @api private
+    # @return [String]
     def string(indent = 0)
       "'#{@data}'"
     end
@@ -78,7 +85,8 @@ module Habaki
   end
 
   class HexColor < Value
-    # @!visibility private
+    # @api private
+    # @return [String]
     def string(indent = 0)
       "##{@data}"
     end
@@ -88,7 +96,9 @@ module Habaki
     # @return [Values]
     attr_accessor :args
 
-    # @!visibility private
+    # @api private
+    # @param [Katana::Value] val
+    # @return [void]
     def read(val)
       @data = val.value.name.sub("(","")
       @args = Values.new
@@ -97,14 +107,16 @@ module Habaki
       end
     end
 
-    # @!visibility private
+    # @api private
+    # @return [String]
     def string(indent = 0)
       "#{@data}(#{@args.string})"
     end
   end
 
   class Url < Value
-    # @!visibility private
+    # @api private
+    # @return [String]
     def string(indent = 0)
       "url(#{@data.include?(" ") ? "\"#{@data}\"" : @data})"
     end
@@ -117,14 +129,17 @@ module Habaki
   class Values < Array
     extend NodeReader
 
-    # @!visibility private
+    # @api private
+    # @param [Katana::Array<Katana::Value>] vals
+    # @return [void]
     def read(vals)
       vals.each do |val|
         push read_from_unit(val)
       end
     end
 
-    # @!visibility private
+    # @api private
+    # @return [String]
     def string(indent = 0)
       str = ""
       each_cons(2) do |val|

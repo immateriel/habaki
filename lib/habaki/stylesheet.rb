@@ -8,12 +8,13 @@ module Habaki
     # @return [String]
     attr_accessor :message
 
-    # @!visibility private
+    # @api private
+    # @param [Katana::Error] err
+    # @return [void]
     def read(err)
       @line = err.first_line
       @column = err.first_column
       @message = err.message
-      self
     end
   end
 
@@ -63,27 +64,28 @@ module Habaki
 
     # parse from file
     # @param [String] filename
-    # @return [nil]
+    # @return [Stylesheet]
     def self.parse_file(filename)
       parse(File.read(filename))
     end
 
     # parse from data
     # @param [String] data
-    # @return [nil]
+    # @return [void]
     def parse(data)
       read(Katana.parse(data))
     end
 
     # parse from file
     # @param [String] filename
-    # @return [nil]
+    # @return [void]
     def parse_file(filename)
       parse(File.read(filename))
     end
 
-    # @!visibility private
+    # @api private
     # @param [Katana::Output] out
+    # @return [void]
     def read(out)
       @rules.read(out.stylesheet.imports)
       @rules.read(out.stylesheet.rules)
@@ -93,7 +95,8 @@ module Habaki
       end
     end
 
-    # @!visibility private
+    # @api private
+    # @return [String]
     def string(indent = 0)
       @rules.string(indent)
     end

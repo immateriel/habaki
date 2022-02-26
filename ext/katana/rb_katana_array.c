@@ -1,3 +1,6 @@
+/* 
+* Typed each method for Katana::Array
+*/
 #include "rb_katana.h"
 
 extern VALUE rb_Katana, rb_Output, rb_KError, rb_KArray, rb_Stylesheet,
@@ -5,13 +8,6 @@ extern VALUE rb_Katana, rb_Output, rb_KError, rb_KArray, rb_Stylesheet,
     rb_SupportsRule, rb_SupportsExp,
     rb_PageRule, rb_FontFaceRule, rb_StyleRule, rb_ImportRule, rb_NamespaceRule, rb_CharsetRule,
     rb_Selector, rb_SelectorData, rb_Declaration, rb_Value, rb_QualifiedName, rb_ValueFunction;
-
-VALUE rb_array_length(VALUE array)
-{
-  KatanaArray *c_array;
-  Data_Get_Struct(array, KatanaArray, c_array);
-  return INT2NUM(c_array->length);
-}
 
 VALUE rb_rule_each(VALUE array)
 {

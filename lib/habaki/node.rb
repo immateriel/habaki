@@ -1,6 +1,6 @@
 module Habaki
   module NodeReader
-    # read from low level struct
+    # read from low level Katana struct
     def read(low)
       obj = self.new
       obj.read(low)
@@ -11,6 +11,7 @@ module Habaki
   class Node
     extend NodeReader
 
+    # read from low level Katana struct
     # @return [nil]
     def read(low) end
 

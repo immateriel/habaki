@@ -51,14 +51,16 @@ module Habaki
       select { |rule| rule.is_a?(StyleRule) }
     end
 
-    # @!visibility private
+    # @api private
+    # @param [Katana::Array] rules
+    # @return [void]
     def read(rules)
       rules.each do |rule|
         push read_rule(rule)
       end
     end
 
-    # @!visibility private
+    # @api private
     def string(indent = 0)
       str = " " * (indent > 0 ? indent - 1 : 0)
       str += map { |rule| rule.string(indent) }.join("\n")
@@ -103,13 +105,16 @@ module Habaki
       @declarations = Declarations.new
     end
 
-    # @!visibility private
+    # @api private
+    # @param [Katana::StyleRule] rule
+    # @return [void]
     def read(rule)
       @selectors = Selectors.read(rule.selectors)
       @declarations = Declarations.read(rule.declarations)
     end
 
-    # @!visibility private
+    # @api private
+    # @return [String]
     def string(indent = 0)
       "#{@selectors.string} {#{@declarations.string(indent)}#{" " * (indent > 0 ? indent - 1 : 0)}}"
     end
@@ -124,7 +129,9 @@ module Habaki
       @values = Values.new
     end
 
-    # @!visibility private
+    # @api private
+    # @param [Katana::MediaQueryExpression] exp
+    # @return [void]
     def read(exp)
       @feature = exp.feature
       if exp.values
@@ -132,7 +139,8 @@ module Habaki
       end
     end
 
-    # @!visibility private
+    # @api private
+    # @return [String]
     def string(indent = 0)
       "(#{@feature}#{@values.length > 0 ? ": #{@values.string}" : ""})"
     end
@@ -159,7 +167,9 @@ module Habaki
       end
     end
 
-    # @!visibility private
+    # @api private
+    # @param [Katana::MediaQuery] med
+    # @return [void]
     def read(med)
       @type = med.type
       @restrictor = med.restrictor
@@ -168,7 +178,8 @@ module Habaki
       end
     end
 
-    # @!visibility private
+    # @api private
+    # @return [String]
     def string(indent = 0)
       str = (@restrictor != :none ? @restrictor.to_s + " " : "") + (@type ? @type : "")
       if @expressions.length > 0
@@ -186,14 +197,17 @@ module Habaki
   class MediaQueries < Array
     extend NodeReader
 
-    # @!visibility private
+    # @api private
+    # @param [Katana::Array<Katana::MediaQuery>] meds
+    # @return [void]
     def read(meds)
       meds.each do |med|
         push MediaQuery.read(med)
       end
     end
 
-    # @!visibility private
+    # @api private
+    # @return [String]
     def string(indent = 0)
       map(&:string).join(",")
     end
@@ -210,13 +224,16 @@ module Habaki
       @medias = MediaQueries.new
     end
 
-    # @!visibility private
-    def read(rul)
-      @href = rul.href
-      @medias = MediaQueries.read(rul.medias)
+    # @api private
+    # @param [Katana::ImportRule] rule
+    # @return [void]
+    def read(rule)
+      @href = rule.href
+      @medias = MediaQueries.read(rule.medias)
     end
 
-    # @!visibility private
+    # @api private
+    # @return [String]
     def string(indent = 0)
       "@import \"#{@href}\" #{@medias.string};"
     end
@@ -227,12 +244,15 @@ module Habaki
     # @return [String]
     attr_accessor :encoding
 
-    # @!visibility private
-    def read(rul)
-      @encoding = rul.encoding
+    # @api private
+    # @param [Katana::CharsetRule] rule
+    # @return [void]
+    def read(rule)
+      @encoding = rule.encoding
     end
 
-    # @!visibility private
+    # @api private
+    # @return [String]
     def string(indent = 0)
       "@charset \"#{@encoding}\";"
     end
@@ -256,13 +276,16 @@ module Habaki
       @medias.first&.match_type?(mediatype)
     end
 
-    # @!visibility private
-    def read(rul)
-      @medias = MediaQueries.read(rul.medias)
-      @rules = Rules.read(rul.rules)
+    # @api private
+    # @param [Katana::MediaRule] rule
+    # @return [void]
+    def read(rule)
+      @medias = MediaQueries.read(rule.medias)
+      @rules = Rules.read(rule.rules)
     end
 
-    # @!visibility private
+    # @api private
+    # @return [String]
     def string(indent = 0)
       "@media #{@medias.string} {\n#{@rules.string(indent + 1)}\n}"
     end
@@ -277,12 +300,15 @@ module Habaki
       @declarations = Declarations.new
     end
 
-    # @!visibility private
+    # @api private
+    # @param [Katana::FontFaceRule] rule
+    # @return [void]
     def read(rule)
       @declarations = Declarations.read(rule.declarations)
     end
 
-    # @!visibility private
+    # @api private
+    # @return [String]
     def string(indent = 0)
       "@font-face {#{@declarations.string(indent)}}"
     end
@@ -297,12 +323,15 @@ module Habaki
       @declarations = Declarations.new
     end
 
-    # @!visibility private
+    # @api private
+    # @param [Katana::PageRule] rule
+    # @return [void]
     def read(rule)
       @declarations = Declarations.read(rule.declarations)
     end
 
-    # @!visibility private
+    # @api private
+    # @return [String]
     def string(indent = 0)
       "@page {#{@declarations.string(indent)}}"
     end
@@ -316,13 +345,16 @@ module Habaki
     # @return [String]
     attr_accessor :uri
 
-    # @!visibility private
+    # @api private
+    # @param [Katana::NamespaceRule] rule
+    # @return [void]
     def read(rule)
       @prefix = rule.prefix
       @uri = rule.uri
     end
 
-    # @!visibility private
+    # @api private
+    # @return [String]
     def string(indent = 0)
       "@namespace #{@prefix.length > 0 ? "#{@prefix} " : ""}\"#{@uri}\";"
     end
@@ -340,7 +372,7 @@ module Habaki
       @expressions = []
     end
 
-    # @!visibility private
+    # @api private
     def read(exp)
       @operation = exp.operation
       exp.expressions.each do |sub_exp|
@@ -349,7 +381,8 @@ module Habaki
       @declaration = Declaration.read(exp.declaration) if exp.declaration
     end
 
-    # @!visibility private
+    # @api private
+    # @return [String]
     def string(indent = 0)
       str = ""
       case @expressions.length
@@ -366,6 +399,7 @@ module Habaki
     end
   end
 
+  # supports rule @supports
   class SupportsRule < Rule
     # @return [SupportExp]
     attr_accessor :expression
@@ -376,13 +410,16 @@ module Habaki
       @rules = Rules.new
     end
 
-    # @!visibility private
-    def read(rul)
-      @expression = SupportsExpression.read(rul.expression)
-      @rules = Rules.read(rul.rules)
+    # @api private
+    # @param [Katana::SupportsRule] rule
+    # @return [void]
+    def read(rule)
+      @expression = SupportsExpression.read(rule.expression)
+      @rules = Rules.read(rule.rules)
     end
 
-    # @!visibility private
+    # @api private
+    # @return [String]
     def string(indent = 0)
       "@supports #{@expression.string} {\n#{@rules.string(indent)}\n}"
     end
