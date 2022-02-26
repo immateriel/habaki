@@ -185,6 +185,11 @@ li:nth-last-child(3n+2) {color: green; }})
     assert_identical_css(%{p {padding: 4m; font-size: %; color: #; weight: em; }})
   end
 
+  def test_inline
+    css = %{font-size: 12pt; color: blue; }
+    assert_equal css, Habaki::Declarations.parse(css).string
+  end
+
   def test_error
     css = %{a,{ }
 div {color: green; }

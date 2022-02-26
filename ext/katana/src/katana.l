@@ -93,6 +93,14 @@ nth             [\+-]?{intnum}*n([\t\r\n ]*[\+-][\t\r\n ]*{intnum})?
 "@keyframes"            {KATANA_TOKEN(KATANA_CSS_KEYFRAMES_SYM) }
 "@supports"             {BEGIN(supports); KATANA_TOKEN(KATANA_CSS_SUPPORTS_SYM)}
 
+"@-internal-rule"               {KATANA_TOKEN(KATANA_INTERNAL_RULE_SYM)}
+"@-internal-keyframe-rule"      {KATANA_TOKEN(KATANA_INTERNAL_KEYFRAME_RULE_SYM)}
+"@-internal-keyframe-key-list"  {KATANA_TOKEN(KATANA_INTERNAL_KEYFRAME_KEY_LIST_SYM)}
+"@-internal-media-list"         {KATANA_TOKEN(KATANA_INTERNAL_MEDIALIST_SYM)}
+"@-internal-value"              {KATANA_TOKEN(KATANA_INTERNAL_VALUE_SYM)}
+"@-internal-selector"           {KATANA_TOKEN(KATANA_INTERNAL_SELECTOR_SYM)}
+"@-internal-decls"              {KATANA_TOKEN(KATANA_INTERNAL_DECLS_SYM)}
+
 "@"{ident}              {KATANA_TOKEN(KATANA_CSS_ATKEYWORD) }
 
 "!"{w}"important"       {KATANA_TOKEN(KATANA_CSS_IMPORTANT_SYM)}

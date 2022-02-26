@@ -111,6 +111,7 @@ static void output_init(KatanaParser* parser, KatanaParserMode mode)
 {
     KatanaOutput* output = katana_parser_allocate(parser, sizeof(KatanaOutput));
     output->stylesheet = katana_new_stylesheet(parser);
+    output->declarations = NULL;
     output->mode = mode;
     katana_array_init(parser, 0, &output->errors);
     parser->output = output;

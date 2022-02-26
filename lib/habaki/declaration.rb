@@ -43,6 +43,19 @@ module Habaki
   class Declarations < Array
     extend NodeReader
 
+    def self.parse(data)
+      decls = Declarations.new
+      decls.parse(data)
+      decls
+    end
+
+    def parse(data)
+      out = Katana.parse_inline(data)
+      if out.declarations
+        read(out.declarations)
+      end
+    end
+
     # find declaration with property
     # @param [String] property
     # @return [Declaration]

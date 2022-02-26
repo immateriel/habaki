@@ -11,13 +11,35 @@ void output_free(KatanaOutput *output)
   katana_destroy_output(output);
 }
 
-
 VALUE rb_output_stylesheet(VALUE self)
 {
   KatanaOutput *c_output;
   Data_Get_Struct(self, KatanaOutput, c_output);
 
-  return Data_Wrap_Struct(rb_Stylesheet, NULL, NULL, c_output->stylesheet);
+  if (c_output->stylesheet)
+    return Data_Wrap_Struct(rb_Stylesheet, NULL, NULL, c_output->stylesheet);
+  else
+    return Qnil;
+}
+
+VALUE rb_output_declarations(VALUE self)
+{
+  KatanaOutput *c_output;
+  Data_Get_Struct(self, KatanaOutput, c_output);
+
+  if (c_output->declarations)
+  {
+    VALUE array = Data_Wrap_Struct(rb_KArray, NULL, NULL, c_output->declarations);
+
+    VALUE sing = rb_singleton_class(array);
+    rb_define_method(sing, "each", rb_declaration_each, 0);
+
+    return array;
+  }
+  else
+  {
+    return Qnil;
+  }
 }
 
 VALUE rb_output_errors(VALUE self)
@@ -104,15 +126,26 @@ VALUE rb_stylesheet_imports(VALUE self)
   return array;
 }
 
-
 /*
-* parse CSS data
-* @param [String] data
-* @return [Katana::Output]
-*/
+ * parse CSS data
+ * @param [String] data
+ * @return [Katana::Output]
+ */
 VALUE rb_parse(VALUE self, VALUE data)
 {
   KatanaOutput *output = katana_parse(RSTRING_PTR(data), RSTRING_LEN(data), KatanaParserModeStylesheet);
+
+  return Data_Wrap_Struct(rb_Output, NULL, output_free, output);
+}
+
+/*
+ * parse CSS data
+ * @param [String] data
+ * @return [Katana::Output]
+ */
+VALUE rb_parse_inline(VALUE self, VALUE data)
+{
+  KatanaOutput *output = katana_parse(RSTRING_PTR(data), RSTRING_LEN(data), KatanaParserModeDeclarationList);
 
   return Data_Wrap_Struct(rb_Output, NULL, output_free, output);
 }
@@ -125,6 +158,7 @@ void Init_katana()
   rb_Output = rb_define_class_under(rb_Katana, "Output", rb_cObject);
   rb_define_method(rb_Output, "dump", rb_output_dump, 0);
   rb_define_method(rb_Output, "stylesheet", rb_output_stylesheet, 0);
+  rb_define_method(rb_Output, "declarations", rb_output_declarations, 0);
   rb_define_method(rb_Output, "errors", rb_output_errors, 0);
 
   // Array
@@ -241,5 +275,7 @@ void Init_katana()
   rb_define_method(rb_QualifiedName, "prefix", rb_name_prefix, 0);
   rb_define_method(rb_QualifiedName, "uri", rb_name_uri, 0);
 
+  // Module method
   rb_define_singleton_method(rb_Katana, "parse", rb_parse, 1);
+  rb_define_singleton_method(rb_Katana, "parse_inline", rb_parse_inline, 1);
 }
