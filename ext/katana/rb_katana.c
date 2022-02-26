@@ -3,7 +3,7 @@
 VALUE rb_Katana, rb_Output, rb_KError, rb_KArray, rb_Stylesheet,
     rb_MediaRule, rb_MediaQuery, rb_MediaQueryExp,
     rb_SupportsRule, rb_SupportsExp,
-    rb_PageRule, rb_FontFaceRule, rb_StyleRule, rb_ImportRule, rb_NamespaceRule,
+    rb_PageRule, rb_FontFaceRule, rb_StyleRule, rb_ImportRule, rb_NamespaceRule, rb_CharsetRule,
     rb_Selector, rb_SelectorData, rb_Declaration, rb_Value, rb_QualifiedName, rb_ValueFunction;
 
 void output_free(KatanaOutput *output)
@@ -189,6 +189,10 @@ void Init_katana()
   rb_ImportRule = rb_define_class_under(rb_Katana, "ImportRule", rb_cObject);
   rb_define_method(rb_ImportRule, "href", rb_import_rule_href, 0);
   rb_define_method(rb_ImportRule, "medias", rb_import_rule_medias, 0);
+
+  // CharsetRule
+  rb_CharsetRule = rb_define_class_under(rb_Katana, "CharsetRule", rb_cObject);
+  rb_define_method(rb_CharsetRule, "encoding", rb_charset_rule_encoding, 0);
 
   // StyleRule
   rb_StyleRule = rb_define_class_under(rb_Katana, "StyleRule", rb_cObject);

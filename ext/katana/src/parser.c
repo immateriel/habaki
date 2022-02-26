@@ -588,9 +588,13 @@ void katana_parser_clear_keyframes(KatanaParser* parser, KatanaArray* keyframes)
 }
 
 
-void katana_set_charset(KatanaParser* parser, KatanaParserString* charset)
+void katana_set_charset(KatanaParser* parser, KatanaParserString* encoding)
 {
-//    parser->output->stylesheet->encoding = katana_string_to_characters(parser, charset);
+    KatanaCharsetRule* rule = katana_parser_allocate(parser, sizeof(KatanaCharsetRule));
+    rule->base.name = "charset";
+    rule->base.type = KatanaRuleCharset;
+    rule->encoding = katana_string_to_characters(parser, encoding);
+    katana_add_rule(parser, (KatanaRule*)rule);
 }
 
 

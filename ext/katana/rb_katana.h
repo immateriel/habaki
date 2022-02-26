@@ -85,6 +85,8 @@ VALUE rb_font_face_rule_declarations(VALUE self);
 VALUE rb_import_rule_href(VALUE self);
 VALUE rb_import_rule_medias(VALUE self);
 
+VALUE rb_charset_rule_encoding(VALUE self);
+
 VALUE rb_style_rule_selectors(VALUE self);
 VALUE rb_style_rule_declarations(VALUE self);
 

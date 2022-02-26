@@ -96,7 +96,7 @@ void katana_keyframe_rule_list_add(KatanaParser* parser, KatanaKeyframe* keyfram
 void katana_parser_clear_keyframes(KatanaParser* parser, KatanaArray* keyframes);
 
 
-void katana_set_charset(KatanaParser* parser, KatanaParserString* charset);
+void katana_set_charset(KatanaParser* parser, KatanaParserString* encoding);
 
 
 KatanaRule* katana_new_import_rule(KatanaParser* parser, KatanaParserString* href, KatanaArray* media);

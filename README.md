@@ -4,7 +4,6 @@ Use WebKit based https://github.com/hackers-painters/katana-parser custom fork, 
 
 TODO:
 - add inline declarations parsing
-- parse comments
 - implement @keyframes
-- implement @charset
 - implement :host()
+- parse comments

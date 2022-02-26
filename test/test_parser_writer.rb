@@ -168,11 +168,13 @@ p.nt:nth-of-type(3n) {color: red; }
 li:nth-last-child(3n+2) {color: green; }})
   end
 
+
+  def test_charset
+    assert_identical_css(%{@charset "utf-8";})
+  end
+
   # TODO
   if false
-    def test_charset
-      assert_identical_css(%{@charset "utf-8"; })
-    end
 
     def test_host
       assert_identical_css(%{:host(.special-custom-element) {font-weight: bold; }})

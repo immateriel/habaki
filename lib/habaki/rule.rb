@@ -16,6 +16,11 @@ module Habaki
   class Rules < Array
     extend NodeReader
 
+    # @return [CharsetRule, nil]
+    def charset
+      select { |rule| rule.is_a?(CharsetRule) }.first
+    end
+
     # @return [Array<MediaRule>]
     def medias
       select { |rule| rule.is_a?(MediaRule) }
@@ -66,6 +71,8 @@ module Habaki
       case rul
       when Katana::ImportRule
         ImportRule.read(rul)
+      when Katana::CharsetRule
+        CharsetRule.read(rul)
       when Katana::MediaRule
         MediaRule.read(rul)
       when Katana::FontFaceRule
@@ -215,7 +222,23 @@ module Habaki
     end
   end
 
-  # import rule @media
+  # charset rule @charset
+  class CharsetRule < Rule
+    # @return [String]
+    attr_accessor :encoding
+
+    # @!visibility private
+    def read(rul)
+      @encoding = rul.encoding
+    end
+
+    # @!visibility private
+    def string(indent = 0)
+      "@charset \"#{@encoding}\";"
+    end
+  end
+
+  # media rule @media
   class MediaRule < Rule
     # @return [MediaQueries]
     attr_accessor :medias
