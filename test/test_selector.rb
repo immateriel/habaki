@@ -191,15 +191,124 @@ class TestSelector < Minitest::Test
     assert_selector_found(css, html, "blue text")
   end
 
+  def test_html_pseudo_last_child
+    css = %{div p:last-child {color: blue;}}
+    html = %{<html>
+    <div>
+    <p>other text</p>
+    <p>other text</p>
+    <p>blue text</p>
+    </div>
+    </html>}
+
+    assert_selector_found(css, html, "blue text")
+  end
+
+  def test_html_pseudo_only_child
+    css = %{div p:only-child {color: blue;}}
+    html = %{<html>
+    <div>
+    <p>other text</p>
+    <p>other text</p>
+    </div>
+    <div>
+    <p>blue text</p>
+    </div>
+    </html>}
+
+    assert_selector_found(css, html, "blue text")
+  end
+
+  def test_html_pseudo_nth_child
+    css = %{div p:nth-child(2) {color: blue;}}
+    html = %{<html>
+    <div>
+    <p>other text</p>
+    <p>blue text</p>
+    <p>other text</p>
+    </div>
+    </html>}
+
+    assert_selector_found(css, html, "blue text")
+
+    css = %{div p:nth-child(odd) {color: blue;}}
+    html = %{<html>
+    <div>
+    <p>blue text</p>
+    <p>other text</p>
+    </div>
+    </html>}
+
+    assert_selector_found(css, html, "blue text")
+
+    css = %{div p:nth-child(even) {color: blue;}}
+    html = %{<html>
+    <div>
+    <p>other text</p>
+    <p>blue text</p>
+    <p>other text</p>
+    </div>
+    </html>}
+
+    assert_selector_found(css, html, "blue text")
+
+    css = %{div p:nth-child(2n) {color: blue;}}
+    html = %{<html>
+    <div>
+    <p>other text</p>
+    <p>blue text</p>
+    <p>other text</p>
+    </div>
+    </html>}
+
+    assert_selector_found(css, html, "blue text")
+
+    css = %{div span:nth-child(2n+1) {color: blue;}}
+    html = %{<html>
+    <div class="first">
+    <span>Span 1!</span>
+    <span>Span 2</span>
+    <span>Span 3!</span>
+    <span>Span 4</span>
+    <span>Span 5!</span>
+    <span>Span 6</span>
+    <span>Span 7!</span>
+    </div>
+    </html>}
+
+    found_elements = select_elements(css, html)
+    assert_equal 4, found_elements.length
+    assert_equal "Span 1!", found_elements[0].text
+    assert_equal "Span 3!", found_elements[1].text
+    assert_equal "Span 5!", found_elements[2].text
+    assert_equal "Span 7!", found_elements[3].text
+
+    css = %{div p:nth-child(xx) {color: blue;}}
+    html = %{<html>
+    <div>
+    <p>other text</p>
+    <p>blue text</p>
+    <p>other text</p>
+    </div>
+    </html>}
+
+    found_elements = select_elements(css, html)
+    assert_equal 0, found_elements.length
+  end
+
   private
 
-  def assert_selector_found(css, html, text)
+  def select_elements(css, html)
     stylesheet = Habaki::Stylesheet.new
     stylesheet.parse(css)
     selector = stylesheet.rules.first.selectors.first
 
-    found_elements = selector.select(Habaki::NokogiriSelectorVisitor.new(Nokogiri::HTML.parse(html)))
+    selector.select(Habaki::NokogiriSelectorVisitor.new(Nokogiri::HTML.parse(html)))
+  end
+
+  def assert_selector_found(css, html, text)
+    found_elements = select_elements(css, html)
     assert_equal 1, found_elements.length
-    assert_equal text, found_elements.first.element.text
+    assert_equal text, found_elements.first.text
   end
 end

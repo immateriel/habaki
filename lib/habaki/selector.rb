@@ -171,7 +171,11 @@ module Habaki
     # element attribute
     # @param [String] key
     # @return [String]
-    def attr(key)
+    def attr(key) end
+
+    # inner text
+    # @return [String]
+    def text
     end
 
     # element parent
@@ -182,6 +186,11 @@ module Habaki
     # element previous
     # @return [SelectorVisitor]
     def previous
+    end
+
+    # @return [Array<SelectorVisitor>]
+    def children
+      []
     end
 
     # traverse elements
@@ -212,6 +221,10 @@ module Habaki
       @element[key]
     end
 
+    def text
+      @element.text
+    end
+
     def parent
       NokogiriSelectorVisitor.new(@element.parent) if @element.respond_to?(:parent)
     end
@@ -220,11 +233,21 @@ module Habaki
       NokogiriSelectorVisitor.new(@element.previous_element) if @element.respond_to?(:previous_element) && @element.previous_element
     end
 
+    def children
+      @element.children.map do |child|
+        child.is_a?(Nokogiri::XML::Element) ? NokogiriSelectorVisitor.new(child) : nil
+      end.compact
+    end
+
     def traverse &block
       @element.traverse do |el|
         next unless el.is_a?(Nokogiri::XML::Element)
         block.call NokogiriSelectorVisitor.new(el)
       end
+    end
+
+    def ==(other)
+      @element == other.element
     end
   end
 
@@ -285,11 +308,53 @@ module Habaki
       end
     end
 
+    def pseudo_match?(element)
+      match = true
+      each do |sub_sel|
+        case sub_sel.pseudo
+        when :root
+          match &&= element.tag_name == "html"
+        when :empty
+          match &&= element.children.length == 0
+        when :first_child
+          parent_element = element.parent
+          match &&= parent_element&.children.first == element
+        when :last_child
+          parent_element = element.parent
+          match &&= parent_element&.children.last == element
+        when :only_child
+          parent_element = element.parent
+          match &&= parent_element&.children.length == 1 && parent_element&.children.first == element
+        when :nth_child
+          parent_element = element.parent
+          arg = sub_sel.argument.split("+")
+          case arg[0]
+          when "odd"
+            match &&= ((parent_element&.children.index(element)+1) % 2 == 1)
+          when "even"
+            match &&= ((parent_element&.children.index(element)+1) % 2 == 0)
+          when /^\d+$/
+            match &&= parent_element&.children[sub_sel.argument.to_i - 1] == element
+          when "n"
+            match &&= ((parent_element&.children.index(element)+1) % 1) == (arg[1]&.to_i||0)
+          when /n$/
+            match &&= ((parent_element&.children.index(element)+1) % arg[0].sub("n","").to_i) == (arg[1]&.to_i||0)
+          else
+            # invalid ?
+            match &&= false
+          end
+        else
+          match &&= true
+        end
+      end
+      match
+    end
+
     # does element match with this sub selector ?
     # @param [SelectorVisitor] element
     # @return [Boolean]
     def match?(element)
-      tag_match?(element.tag_name) && class_match?(element.class_name) && id_match?(element.id_name) && attributes_match?(element)
+      tag_match?(element.tag_name) && class_match?(element.class_name) && id_match?(element.id_name) && attributes_match?(element) && pseudo_match?(element)
     end
 
     # @api private
