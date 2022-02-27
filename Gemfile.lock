@@ -6,7 +6,10 @@ PATH
 GEM
   remote: http://rubygems.org/
   specs:
+    mini_portile2 (2.4.0)
     minitest (5.14.4)
+    nokogiri (1.10.10)
+      mini_portile2 (~> 2.4.0)
     rake (10.5.0)
     rake-compiler (1.1.1)
       rake
@@ -19,6 +22,7 @@ DEPENDENCIES
   bundler (~> 1.14)
   habaki!
   minitest (~> 5.0)
+  nokogiri
   rake (~> 10.0)
   rake-compiler
   ruby-prof

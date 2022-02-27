@@ -64,20 +64,21 @@ module Habaki
     end
 
     # attribute match
-    # TODO: finish
-    # @param [String] name
     # @param [String] val
     # @return [Boolean]
-    def attribute_match?(name, val)
+    def attribute_value_match?(val)
       if attribute_selector?
-        return false unless name == @attribute.local
         case @match
         when :attribute_exact
           val == @value
         when :attribute_begin
           val.start_with?(@value)
+        when :attribute_end
+          val.end_with?(@value)
         when :attribute_contain
           val.include?(@value)
+        when :attribute_hyphen
+          val == @value || val == "#{@value}-"
         else
           false
         end
@@ -150,6 +151,83 @@ module Habaki
     end
   end
 
+  # @abstract CSS selector element visitor
+  class SelectorVisitor
+    # element tag name
+    # @return [String]
+    def tag_name
+    end
+
+    # element class name
+    # @return [String]
+    def class_name
+    end
+
+    # element id name
+    # @return [String]
+    def id_name
+    end
+
+    # element attribute
+    # @param [String] key
+    # @return [String]
+    def attr(key)
+    end
+
+    # element parent
+    # @return [SelectorVisitor]
+    def parent
+    end
+
+    # element previous
+    # @return [SelectorVisitor]
+    def previous
+    end
+
+    # traverse elements
+    def traverse &block
+    end
+  end
+
+  class NokogiriSelectorVisitor < SelectorVisitor
+    attr_accessor :element
+
+    def initialize(element)
+      @element = element
+    end
+
+    def tag_name
+      @element.name
+    end
+
+    def class_name
+      @element["class"]
+    end
+
+    def id_name
+      @element["id"]
+    end
+
+    def attr(key)
+      @element[key]
+    end
+
+    def parent
+      NokogiriSelectorVisitor.new(@element.parent) if @element.respond_to?(:parent)
+    end
+
+    def previous
+      NokogiriSelectorVisitor.new(@element.previous_element) if @element.respond_to?(:previous_element) && @element.previous_element
+    end
+
+    def traverse &block
+      @element.traverse do |el|
+        next unless el.is_a?(Nokogiri::XML::Element)
+        block.call NokogiriSelectorVisitor.new(el)
+      end
+    end
+  end
+
   # Array of {SubSelector}
   class SubSelectors < Array
     # @return [Symbol]
@@ -175,24 +253,43 @@ module Habaki
       select { |sub_sel| sub_sel.attribute_selector? }
     end
 
-    # @return [Boolean, nil]
+    # @param [String] name
+    # @return [Boolean]
     def tag_match?(name)
-      tag_selector&.tag_match?(name)
+      tag_selector ? tag_selector.tag_match?(name) : true
     end
 
-    # @return [Boolean, nil]
+    # @param [String] name
+    # @return [Boolean]
     def class_match?(name)
-      class_selector&.class_match?(name)
+      class_selector ? class_selector.class_match?(name) : true
     end
 
-    # @return [Boolean, nil]
+    # @param [String] name
+    # @return [Boolean]
     def id_match?(name)
-      id_selector&.id_match?(name)
+      id_selector ? id_selector.id_match?(name) : true
     end
 
-    # @return [Boolean, nil]
-    def attribute_match?(name, val)
-      attribute_selectors.length > 0 ? attribute_selectors.inject(true) { |res, attr| res && attr.attribute_match?(name, val) } : nil
+    # @return [Boolean]
+    def attributes_match?(element)
+      if attribute_selectors.length > 0
+        match = true
+        attribute_selectors.each do |attr|
+          element_attr = element.attr(attr.attribute.local)
+          match &&= element_attr ? attr.attribute_value_match?(element_attr) : false
+        end
+        match
+      else
+        true
+      end
+    end
+
+    # does element match with this sub selector ?
+    # @param [SelectorVisitor] element
+    # @return [Boolean]
+    def match?(element)
+      tag_match?(element.tag_name) && class_match?(element.class_name) && id_match?(element.id_name) && attributes_match?(element)
     end
 
     # @api private
@@ -224,6 +321,68 @@ module Habaki
       @sub_selectors = []
     end
 
+    # does element match with this selector ?
+    # @param [SelectorVisitor] element
+    # @return [Boolean]
+    def match?(element)
+      return false if @sub_selectors.length == 0
+
+      rev_sub_selectors = @sub_selectors.reverse
+      match = true
+
+      current_sub_selector = rev_sub_selectors.first
+      match &&= current_sub_selector.match?(element)
+
+      if rev_sub_selectors.length > 1 && match
+        parent_element = element.parent
+        previous_element = element.previous
+
+        rev_sub_selectors[1..-1].each do |sub_selector|
+          case current_sub_selector.relation
+          when :descendant
+            sub_match = false
+            while parent_element do
+              sub_match = sub_selector.match?(parent_element)
+              parent_element = parent_element.parent
+              break if sub_match
+            end
+            match &&= sub_match
+          when :child
+            if parent_element
+              sub_match = sub_selector.match?(parent_element)
+              match &&= sub_match
+            end
+          when :direct_adjacent
+            if previous_element
+              sub_match = sub_selector.match?(previous_element)
+              match &&= sub_match
+            end
+          when :indirect_adjacent
+            sub_match = false
+            while previous_element do
+              sub_match = sub_selector.match?(previous_element)
+              previous_element = previous_element.previous
+              break if sub_match
+            end
+            match &&= sub_match
+          end
+          current_sub_selector = sub_selector
+        end
+      end
+      match
+    end
+
+    # select elements for this selector
+    # @param [SelectorVisitor]
+    # @reutnr [Array<SelectorVisitor>]
+    def select(element)
+      match_elements = []
+      element.traverse do |el|
+        match_elements << el if match?(el)
+      end
+      match_elements
+    end
+
     # @api private
     # @param [Katana::Selector] sel
     def read(sel)
@@ -248,8 +407,8 @@ module Habaki
         cur_sel = cur_sel.tag_history
       end
 
-      sub_sels << cur_sub_sel
       cur_sub_sel.relation = cur_sel.relation if cur_sel.relation != :sub_selector
+      sub_sels << cur_sub_sel
 
       if cur_sel.relation != :sub_selector
         sub_sels = rec_sub_sel(cur_sel.tag_history) + sub_sels
