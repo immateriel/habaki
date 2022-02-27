@@ -49,7 +49,7 @@ module Habaki
     # @param [String] data
     # @return [Declarations]
     def self.parse(data)
-      decls = Declarations.new
+      decls = self.new
       decls.parse(data)
       decls
     end

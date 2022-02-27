@@ -1,13 +1,16 @@
 module Habaki
   class Rule < Node
+    # @return [Array, nil]
     def selectors
       nil
     end
 
+    # @return [Array, nil]
     def declarations
       nil
     end
 
+    # @return [Array, nil]
     def rules
       nil
     end
@@ -103,6 +106,13 @@ module Habaki
     def initialize
       @selectors = Selectors.new
       @declarations = Declarations.new
+    end
+
+    # select elements for this selector
+    # @param [SelectorVisitor] element
+    # @return [Array<SelectorVisitor>]
+    def matches(element)
+      selectors.matches(element)
     end
 
     # @api private

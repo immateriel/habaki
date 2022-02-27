@@ -39,6 +39,12 @@ module Habaki
       @unit = unit
     end
 
+    # is dimension absolute ?
+    # @return [Boolean]
+    def absolute?
+      [:cm, :mm, :in, :pt, :pc].include?(@unit)
+    end
+
     # @api private
     # @return [void]
     def read(val)

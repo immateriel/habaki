@@ -58,13 +58,8 @@ class TestSelector < Minitest::Test
     <div>blue text</div>
     </html>
     }
-    stylesheet = Habaki::Stylesheet.new
-    stylesheet.parse(css)
-    selector = stylesheet.rules.first.selectors.first
 
-    found_elements = selector.select(Habaki::NokogiriSelectorVisitor.new(Nokogiri::HTML.parse(html)))
-    assert_equal 1, found_elements.length
-    assert_equal "blue text", found_elements.first.element.text
+    assert_selector_found(css, html, "blue text")
   end
 
   def test_html_class
@@ -301,9 +296,8 @@ class TestSelector < Minitest::Test
   def select_elements(css, html)
     stylesheet = Habaki::Stylesheet.new
     stylesheet.parse(css)
-    selector = stylesheet.rules.first.selectors.first
-
-    selector.select(Habaki::NokogiriSelectorVisitor.new(Nokogiri::HTML.parse(html)))
+    rule = stylesheet.rules.first
+    rule.matches(Habaki::NokogiriSelectorVisitor.new(Nokogiri::HTML.parse(html)))
   end
 
   def assert_selector_found(css, html, text)

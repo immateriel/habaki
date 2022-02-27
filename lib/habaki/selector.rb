@@ -294,6 +294,35 @@ module Habaki
       id_selector ? id_selector.id_match?(name) : true
     end
 
+    # does element match with this sub selector ?
+    # @param [SelectorVisitor] element
+    # @return [Boolean]
+    def match?(element)
+      tag_match?(element.tag_name) && class_match?(element.class_name) && id_match?(element.id_name) &&
+        attributes_match?(element) && pseudo_match?(element)
+    end
+
+    # @api private
+    def string(indent = 0)
+      str = ""
+      case @relation
+      when :descendant
+        str += " "
+      when :child
+        str += " > "
+      when :direct_adjacent
+        str += " + "
+      when :indirect_adjacent
+        str += " ~ "
+      end
+      each do |sub_sel|
+        str += sub_sel.string
+      end
+      str
+    end
+
+    private
+
     # @return [Boolean]
     def attributes_match?(element)
       if attribute_selectors.length > 0
@@ -308,6 +337,7 @@ module Habaki
       end
     end
 
+    # @return [Boolean]
     def pseudo_match?(element)
       match = true
       each do |sub_sel|
@@ -330,17 +360,17 @@ module Habaki
           arg = sub_sel.argument.split("+")
           case arg[0]
           when "odd"
-            match &&= ((parent_element&.children.index(element)+1) % 2 == 1)
+            match &&= ((parent_element&.children.index(element) + 1) % 2 == 1)
           when "even"
-            match &&= ((parent_element&.children.index(element)+1) % 2 == 0)
+            match &&= ((parent_element&.children.index(element) + 1) % 2 == 0)
           when /^\d+$/
             match &&= parent_element&.children[sub_sel.argument.to_i - 1] == element
           when "n"
-            match &&= ((parent_element&.children.index(element)+1) % 1) == (arg[1]&.to_i||0)
+            match &&= ((parent_element&.children.index(element) + 1) % 1) == (arg[1]&.to_i || 0)
           when /n$/
-            match &&= ((parent_element&.children.index(element)+1) % arg[0].sub("n","").to_i) == (arg[1]&.to_i||0)
+            match &&= ((parent_element&.children.index(element) + 1) % arg[0].sub("n", "").to_i) == (arg[1]&.to_i || 0)
           else
-            # invalid ?
+            # TODO "of type"
             match &&= false
           end
         else
@@ -348,32 +378,6 @@ module Habaki
         end
       end
       match
-    end
-
-    # does element match with this sub selector ?
-    # @param [SelectorVisitor] element
-    # @return [Boolean]
-    def match?(element)
-      tag_match?(element.tag_name) && class_match?(element.class_name) && id_match?(element.id_name) && attributes_match?(element) && pseudo_match?(element)
-    end
-
-    # @api private
-    def string(indent = 0)
-      str = ""
-      case @relation
-      when :descendant
-        str += " "
-      when :child
-        str += " > "
-      when :direct_adjacent
-        str += " + "
-      when :indirect_adjacent
-        str += " ~ "
-      end
-      each do |sub_sel|
-        str += sub_sel.string
-      end
-      str
     end
   end
 
@@ -438,9 +442,9 @@ module Habaki
     end
 
     # select elements for this selector
-    # @param [SelectorVisitor]
-    # @reutnr [Array<SelectorVisitor>]
-    def select(element)
+    # @param [SelectorVisitor] element
+    # @return [Array<SelectorVisitor>]
+    def matches(element)
       match_elements = []
       element.traverse do |el|
         match_elements << el if match?(el)
@@ -485,6 +489,32 @@ module Habaki
   # Array of {Selectors}
   class Selectors < Array
     extend NodeReader
+
+    # parse selectors
+    # @param [String] data
+    # @return [Declarations]
+    def self.parse(data)
+      sels = self.new
+      sels.parse(data)
+      sels
+    end
+
+    # parse selectors
+    # @param [String] data
+    # @return [void]
+    def parse(data)
+      out = Katana.parse_selectors(data)
+      if out.selectors
+        read(out.selectors)
+      end
+    end
+
+    # select elements for this selector
+    # @param [SelectorVisitor] element
+    # @return [Array<SelectorVisitor>]
+    def matches(element)
+      flat_map{|selector| selector.matches(element)}.uniq
+    end
 
     # @api private
     # @param [Katana::Array<Katana::Selector>] sels

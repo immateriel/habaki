@@ -49,6 +49,29 @@ VALUE rb_output_declarations(VALUE self)
 }
 
 /*
+ * @return [Katana::Array<Katana::Selector>, nil]
+ */
+VALUE rb_output_selectors(VALUE self)
+{
+  KatanaOutput *c_output;
+  Data_Get_Struct(self, KatanaOutput, c_output);
+
+  if (c_output->selectors)
+  {
+    VALUE array = Data_Wrap_Struct(rb_KArray, NULL, NULL, c_output->selectors);
+
+    VALUE sing = rb_singleton_class(array);
+    rb_define_method(sing, "each", rb_selector_each, 0);
+
+    return array;
+  }
+  else
+  {
+    return Qnil;
+  }
+}
+
+/*
  * @return [Katana::Array<Katana::Error>]
  */
 VALUE rb_output_errors(VALUE self)
@@ -192,6 +215,18 @@ VALUE rb_parse_inline(VALUE self, VALUE data)
   return Data_Wrap_Struct(rb_Output, NULL, output_free, output);
 }
 
+/*
+ * parse CSS selector from string
+ * @param [String] data
+ * @return [Katana::Output]
+ */
+VALUE rb_parse_selectors(VALUE self, VALUE data)
+{
+  KatanaOutput *output = katana_parse(RSTRING_PTR(data), RSTRING_LEN(data), KatanaParserModeSelector);
+
+  return Data_Wrap_Struct(rb_Output, NULL, output_free, output);
+}
+
 void Init_katana()
 {
   /* Low-level parser */
@@ -201,6 +236,7 @@ void Init_katana()
   rb_define_method(rb_Output, "dump", rb_output_dump, 0);
   rb_define_method(rb_Output, "stylesheet", rb_output_stylesheet, 0);
   rb_define_method(rb_Output, "declarations", rb_output_declarations, 0);
+  rb_define_method(rb_Output, "selectors", rb_output_selectors, 0);
   rb_define_method(rb_Output, "errors", rb_output_errors, 0);
 
   // Array
@@ -228,4 +264,5 @@ void Init_katana()
   // Module method
   rb_define_singleton_method(rb_Katana, "parse", rb_parse, 1);
   rb_define_singleton_method(rb_Katana, "parse_inline", rb_parse_inline, 1);
+  rb_define_singleton_method(rb_Katana, "parse_selectors", rb_parse_selectors, 1);
 }
