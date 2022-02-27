@@ -44,7 +44,7 @@ module Habaki
     # @return [Boolean]
     def tag_match?(name)
       return nil unless @match == :tag
-      @tag.local == name
+      @tag.local == name || @tag.local == "*"
     end
 
     # class match
@@ -442,11 +442,11 @@ module Habaki
     end
 
     # select elements for this selector
-    # @param [SelectorVisitor] element
+    # @param [SelectorVisitor] root
     # @return [Array<SelectorVisitor>]
-    def matches(element)
+    def matches(root)
       match_elements = []
-      element.traverse do |el|
+      root.traverse do |el|
         match_elements << el if match?(el)
       end
       match_elements
@@ -510,10 +510,10 @@ module Habaki
     end
 
     # select elements for this selector
-    # @param [SelectorVisitor] element
+    # @param [SelectorVisitor] root
     # @return [Array<SelectorVisitor>]
-    def matches(element)
-      flat_map{|selector| selector.matches(element)}.uniq
+    def matches(root)
+      flat_map{|selector| selector.matches(root)}.uniq
     end
 
     # @api private
