@@ -185,6 +185,28 @@ li:nth-last-child(3n+2) {color: green; }})
     assert_equal css, Habaki::Declarations.parse(css).string
   end
 
+  def test_position
+    css = %{body {font-size:12px; color: black;}
+p {text-indent: 1em;}
+a {color: blue}
+}
+    stylesheet = Habaki::Stylesheet.parse(css)
+    assert_equal 1, stylesheet.rules[0].selectors.first.sub_selectors.first.first.position.line
+    assert_equal 6, stylesheet.rules[0].selectors.first.sub_selectors.first.first.position.column
+    assert_equal 2, stylesheet.rules[1].selectors.first.sub_selectors.first.first.position.line
+    assert_equal 3, stylesheet.rules[1].selectors.first.sub_selectors.first.first.position.column
+    assert_equal 3, stylesheet.rules[2].selectors.first.sub_selectors.first.first.position.line
+    assert_equal 3, stylesheet.rules[2].selectors.first.sub_selectors.first.first.position.column
+
+    assert_equal 1, stylesheet.rules[0].declarations.first.position.line
+    assert_equal 22, stylesheet.rules[0].declarations.first.position.column
+    assert_equal 36, stylesheet.rules[0].declarations.last.position.column
+    assert_equal 2, stylesheet.rules[1].declarations.first.position.line
+    assert_equal 21, stylesheet.rules[1].declarations.first.position.column
+    assert_equal 3, stylesheet.rules[2].declarations.first.position.line
+    assert_equal 16, stylesheet.rules[2].declarations.first.position.column
+  end
+
   def test_error
     css = %{a,{ }
 div {color: green; }
@@ -192,7 +214,9 @@ div {color: green; }
     stylesheet = Habaki::Stylesheet.parse(css)
     assert_equal 2, stylesheet.errors.length
     assert_equal 1, stylesheet.errors[0].line
+    assert_equal 3, stylesheet.errors[0].column
     assert_equal 3, stylesheet.errors[1].line
+    assert_equal 16, stylesheet.errors[1].column
     assert_equal %{div {color: green; }
 .inv {}}, stylesheet.string
   end

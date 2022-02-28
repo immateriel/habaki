@@ -29,7 +29,7 @@ module Habaki
 
     # @return [Integer]
     def column
-      @position.line
+      @position.column
     end
 
     # @api private
