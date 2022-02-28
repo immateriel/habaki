@@ -120,6 +120,17 @@ module Habaki
   end
 
   class Url < Value
+    # is url of data type ?
+    # @return [Boolean]
+    def data_uri?
+      @data.start_with?("data:")
+    end
+
+    # return [String]
+    def uri
+      @data
+    end
+
     # @api private
     # @return [String]
     def string(indent = 0)
@@ -133,6 +144,15 @@ module Habaki
   # Array of {Values}
   class Values < Array
     extend NodeReader
+
+    # each value with optional class type
+    # @param [Class] klass
+    # @return [void]
+    def each_value(klass = nil, &block)
+      each do |value|
+        block.call value if !klass || value.is_a?(klass)
+      end
+    end
 
     # remove value taking care of operator in list
     # @param [Value] value
