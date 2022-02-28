@@ -105,7 +105,7 @@ module Habaki
     # @param [Katana::Value] val
     # @return [void]
     def read(val)
-      @data = val.value.name.sub("(","")
+      @data = val.value.name.sub("(", "")
       @args = Values.new
       if val.value.args
         @args = Values.read(val.value.args)
@@ -133,6 +133,21 @@ module Habaki
   # Array of {Values}
   class Values < Array
     extend NodeReader
+
+    # remove value taking care of operator in list
+    # @param [Value] value
+    # @return [void]
+    def remove_value(value)
+      idx = index(value)
+      prev_val = at(idx - 1)
+      next_val = at(idx + 1)
+      if prev_val&.is_a?(Operator)
+        delete(prev_val)
+      elsif next_val&.is_a?(Operator)
+        delete(next_val)
+      end
+      delete(value)
+    end
 
     # @api private
     # @param [Katana::Array<Katana::Value>] vals

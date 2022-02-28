@@ -12,6 +12,11 @@ module Habaki
       @medias = MediaQueries.new
     end
 
+    # @return [Habaki::Stylesheet]
+    def stylesheet(base_dir: "")
+      Stylesheet.parse_file(base_dir+@href)
+    end
+
     # @api private
     # @param [Katana::ImportRule] rule
     # @return [void]

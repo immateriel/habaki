@@ -22,6 +22,30 @@ class TestParserWriter < Minitest::Test
     assert_equal :px, stylesheet.rules.first.declarations.find_by_property("font-size").value.unit
   end
 
+  def test_val_del
+    css = %{@font-face {src: url(font.ttf), url(font.otf), url(font.woff);}}
+    stylesheet = Habaki::Stylesheet.parse(css)
+    decl = stylesheet.rules.font_faces.first.declarations.first
+    decl.values.remove_value(decl.values.last)
+    assert_equal %{@font-face {src: url(font.ttf),url(font.otf); }}, stylesheet.to_s
+
+    stylesheet = Habaki::Stylesheet.parse(css)
+    decl = stylesheet.rules.font_faces.first.declarations.first
+    decl.values.remove_value(decl.values[2])
+    assert_equal %{@font-face {src: url(font.ttf),url(font.woff); }}, stylesheet.to_s
+
+    stylesheet = Habaki::Stylesheet.parse(css)
+    decl = stylesheet.rules.font_faces.first.declarations.first
+    decl.values.remove_value(decl.values.first)
+    assert_equal %{@font-face {src: url(font.otf),url(font.woff); }}, stylesheet.to_s
+
+    # array delete does not manage operators
+    stylesheet = Habaki::Stylesheet.parse(css)
+    decl = stylesheet.rules.font_faces.first.declarations.first
+    decl.values.delete(decl.values.last)
+    assert_equal %{@font-face {src: url(font.ttf),url(font.otf),; }}, stylesheet.to_s
+  end
+
   def test_decl_del
     css = %{
     a {color: blue; text-decoration: underline;}
@@ -75,6 +99,11 @@ class TestParserWriter < Minitest::Test
     assert_identical_css(%{div {background-image: url(image.png); }})
     assert_identical_css(%{div {background-image: url("image space.png"); }})
     assert_identical_css(%{div {background-image: url(); }})
+  end
+
+  def test_important
+    assert_identical_css(%{p {color: blue !important; }})
+    assert_equal %{p {color: blue !important; }}, Habaki::Stylesheet.parse(%{p {color: blue ! important; }}).to_s
   end
 
   def test_attr
