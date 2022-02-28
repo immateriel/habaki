@@ -37,13 +37,13 @@ module Habaki
       select { |rule| rule.is_a?(StyleRule) }
     end
 
-    # traverse rules matching with Visitor::Element
+    # traverse rules matching with {Visitor::Element}
     # @param [Visitor::Element] element
     # @yieldparam [Rule] rule
     # @return [void]
     def each_matching_rule(element, &block)
       each do |rule|
-        block.call rule if rule.matches(element).include?(element)
+        block.call rule if rule.match?(element)
       end
     end
 
@@ -58,7 +58,7 @@ module Habaki
       matching_rules
     end
 
-    # traverse matching declarations for Visitor::Element with inherit
+    # traverse matching declarations for {Visitor::Element} with inherit
     # @param [String] property
     # @param [Visitor::Element] element
     # @yieldparam [Declaration] declaration
@@ -68,8 +68,6 @@ module Habaki
       cur_element = element
       while cur_element do
         each_matching_rule(cur_element) do |rule|
-          next unless rule.declarations
-
           decl = rule.declarations.find_by_property(property)
           if decl && decl.value.data != "inherit"
             found = true
@@ -82,7 +80,7 @@ module Habaki
       end
     end
 
-    # find matching declarations for Visitor::Element with inherit
+    # find matching declarations for {Visitor::Element} with inherit
     # @param [String] property
     # @param [Visitor::Element] element
     # @return [Array<Declaration>]

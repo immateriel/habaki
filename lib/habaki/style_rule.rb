@@ -11,11 +11,11 @@ module Habaki
       @declarations = Declarations.new
     end
 
-    # select elements for this selector
+    # does element match with rule ?
     # @param [Visitor::Element] element
-    # @return [Array<Visitor::Element>]
-    def matches(element)
-      selectors.matches(element)
+    # @return [Boolean]
+    def match?(element)
+      selectors.match?(element)
     end
 
     # @api private

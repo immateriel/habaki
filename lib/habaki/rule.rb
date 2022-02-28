@@ -36,9 +36,8 @@ module Habaki
       nil
     end
 
-    # @return [Array]
-    def matches(element)
-      []
+    def match?(element)
+      false
     end
   end
 end

@@ -348,7 +348,11 @@ div.rd {color: red;}
   def select_elements(css, html)
     stylesheet = Habaki::Stylesheet.parse(css)
     rule = stylesheet.rules.first
-    rule.matches(Habaki::Visitor::NokogiriElement.new(Nokogiri::HTML.parse(html)))
+    elements = []
+    Habaki::Visitor::NokogiriElement.new(Nokogiri::HTML.parse(html)).traverse do |el|
+      elements << el if rule.match?(el)
+    end
+    elements
   end
 
   def assert_selector_found(css, html, text)

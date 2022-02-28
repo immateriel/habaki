@@ -24,11 +24,14 @@ module Habaki
       end
     end
 
-    # select elements for this selector
-    # @param [Visitor::Element] root
-    # @return [Array<Visitor::Element>]
-    def matches(root)
-      flat_map{|selector| selector.matches(root)}.uniq
+    # does element match with on of these selectors ?
+    # @param [Visitor::Element] element
+    # @return [Boolean]
+    def match?(element)
+      each do |selector|
+        return true if selector.match?(element)
+      end
+      false
     end
 
     # @api private

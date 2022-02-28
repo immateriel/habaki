@@ -59,17 +59,6 @@ module Habaki
       match
     end
 
-    # select elements for this selector
-    # @param [Visitor::Element] root
-    # @return [Array<Visitor::Element>]
-    def matches(root)
-      match_elements = []
-      root.traverse do |el|
-        match_elements << el if match?(el)
-      end
-      match_elements
-    end
-
     # @api private
     # @param [Katana::Selector] sel
     def read(sel)

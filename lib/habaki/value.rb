@@ -126,7 +126,7 @@ module Habaki
       @data.start_with?("data:")
     end
 
-    # return [String]
+    # @return [String]
     def uri
       @data
     end
@@ -145,7 +145,7 @@ module Habaki
   class Values < Array
     extend NodeReader
 
-    # each value with optional class type
+    # traverse values with optional class type
     # @param [Class] klass
     # @return [void]
     def each_value(klass = nil, &block)
