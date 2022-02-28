@@ -93,6 +93,8 @@ module Habaki
     # @param [String] data
     # @return [void]
     def parse!(data)
+      return unless data
+
       read(Katana.parse(data))
     end
 

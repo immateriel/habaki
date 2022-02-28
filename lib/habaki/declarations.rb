@@ -16,6 +16,8 @@ module Habaki
     # @param [String] data
     # @return [void]
     def parse!(data)
+      return unless data
+
       out = Katana.parse_inline(data)
       if out.declarations
         read(out.declarations)

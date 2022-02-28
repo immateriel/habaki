@@ -5,6 +5,13 @@ class TestParserWriter < Minitest::Test
   def setup
   end
 
+  def test_empty
+    stylesheet = Habaki::Stylesheet.parse("")
+    assert_equal 0, stylesheet.rules.length
+    stylesheet = Habaki::Stylesheet.parse(nil)
+    assert_equal 0, stylesheet.rules.length
+  end
+
   def test_decl
     css = %{
     a {color: blue; text-decoration: underline; font-size: 16px; }
@@ -62,7 +69,12 @@ class TestParserWriter < Minitest::Test
     end
     stylesheet.compact!
     assert_equal 2, stylesheet.rules.medias.select{|media| media.match_type?("print")}.length
+  end
 
+  def test_url
+    assert_identical_css(%{div {background-image: url(image.png); }})
+    assert_identical_css(%{div {background-image: url("image space.png"); }})
+    assert_identical_css(%{div {background-image: url(); }})
   end
 
   def test_attr
