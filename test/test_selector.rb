@@ -10,8 +10,7 @@ class TestSelector < Minitest::Test
     css = %{
     a {color: blue;}
     }
-    stylesheet = Habaki::Stylesheet.new
-    stylesheet.parse(css)
+    stylesheet = Habaki::Stylesheet.parse(css)
     selectors = stylesheet.rules.first.selectors.first.sub_selectors.first
     assert selectors.tag_match?("a")
     refute selectors.tag_match?("h1")
@@ -21,8 +20,7 @@ class TestSelector < Minitest::Test
     css = %{
     .l {color: blue;}
     }
-    stylesheet = Habaki::Stylesheet.new
-    stylesheet.parse(css)
+    stylesheet = Habaki::Stylesheet.parse(css)
     selector = stylesheet.rules.first.selectors.first.sub_selectors.first
     assert selector.class_match?("l")
     refute selector.class_match?("ll")
@@ -32,8 +30,7 @@ class TestSelector < Minitest::Test
     css = %{
     a.l {color: blue;}
     }
-    stylesheet = Habaki::Stylesheet.new
-    stylesheet.parse(css)
+    stylesheet = Habaki::Stylesheet.parse(css)
     selector = stylesheet.rules.first.selectors.first.sub_selectors.first
     assert selector.tag_match?("a") && selector.class_match?("l")
   end
@@ -42,8 +39,7 @@ class TestSelector < Minitest::Test
     css = %{
     #l {color: blue;}
     }
-    stylesheet = Habaki::Stylesheet.new
-    stylesheet.parse(css)
+    stylesheet = Habaki::Stylesheet.parse(css)
     selector = stylesheet.rules.first.selectors.first.sub_selectors.first
     assert selector.id_match?("l")
     refute selector.id_match?("ll")
@@ -300,7 +296,8 @@ class TestSelector < Minitest::Test
   end
 
   def test_matching_rules
-    css = %{div.bl {color: blue;}
+    css = %{@font-face {font-family: TestFont}
+div.bl {color: blue;}
 p {font-size:12px}
 a {text-decoration: underline}
 p span {color: red;}
@@ -315,11 +312,11 @@ p span {color: red;}
     stylesheet = Habaki::Stylesheet.parse(css)
     doc = Nokogiri::HTML.parse(html)
     el = doc.root.search("div")[1]
-    assert_equal 0, stylesheet.matching_rules(Habaki::NokogiriSelectorVisitor.new(el)).length
+    assert_equal 0, stylesheet.find_matching_rules(Habaki::Visitor::NokogiriElement.new(el)).length
     el = doc.root.search("div")[0]
-    assert_equal 1, stylesheet.matching_rules(Habaki::NokogiriSelectorVisitor.new(el)).length
+    assert_equal 1, stylesheet.find_matching_rules(Habaki::Visitor::NokogiriElement.new(el)).length
     el = doc.root.search("span")[1]
-    assert_equal 1, stylesheet.matching_rules(Habaki::NokogiriSelectorVisitor.new(el)).length
+    assert_equal 1, stylesheet.find_matching_rules(Habaki::Visitor::NokogiriElement.new(el)).length
   end
 
   def test_mini_rendering
@@ -336,13 +333,13 @@ div.rd {color: red;}
     stylesheet = Habaki::Stylesheet.parse(css)
     doc = Nokogiri::HTML.parse(html)
     el = doc.root.search("em")[0]
-    decl = stylesheet.find_declaration("color", Habaki::NokogiriSelectorVisitor.new(el))
+    decl = stylesheet.find_matching_declaration("color", Habaki::Visitor::NokogiriElement.new(el))
     assert_equal "grey", decl&.value&.data
     el = doc.root.search("em")[1]
-    decl = stylesheet.find_declaration("color", Habaki::NokogiriSelectorVisitor.new(el))
+    decl = stylesheet.find_matching_declaration("color", Habaki::Visitor::NokogiriElement.new(el))
     assert_equal "red", decl&.value&.data
     el = doc.root.search("span")[0]
-    decl = stylesheet.find_declaration("color", Habaki::NokogiriSelectorVisitor.new(el))
+    decl = stylesheet.find_matching_declaration("color", Habaki::Visitor::NokogiriElement.new(el))
     assert_equal "blue", decl&.value&.data
   end
 
@@ -351,7 +348,7 @@ div.rd {color: red;}
   def select_elements(css, html)
     stylesheet = Habaki::Stylesheet.parse(css)
     rule = stylesheet.rules.first
-    rule.matches(Habaki::NokogiriSelectorVisitor.new(Nokogiri::HTML.parse(html)))
+    rule.matches(Habaki::Visitor::NokogiriElement.new(Nokogiri::HTML.parse(html)))
   end
 
   def assert_selector_found(css, html, text)

@@ -756,7 +756,7 @@ supports_condition_in_parens:
     | '(' error error_location error_recovery closing_parenthesis maybe_space {
         // parser->reportError($3, InvalidSupportsConditionCSSError);
         // $$ = false;
-        $$ = 0;
+        YYERROR;
     }
     ;
 
@@ -786,7 +786,7 @@ supports_declaration_condition:
     | '(' maybe_space KATANA_CSS_IDENT maybe_space ':' maybe_space error error_recovery closing_parenthesis maybe_space {
         // $$ = false;
         // parser->endProperty(false, false, GeneralCSSError);        
-        $$ = 0;
+        YYERROR;
     }
     ;
 

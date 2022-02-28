@@ -9,8 +9,7 @@ class TestParserWriter < Minitest::Test
     css = %{
     a {color: blue; text-decoration: underline; font-size: 16px; }
     }
-    stylesheet = Habaki::Stylesheet.new
-    stylesheet.parse(css)
+    stylesheet = Habaki::Stylesheet.parse(css)
     assert_equal "blue", stylesheet.rules.first.declarations.find_by_property("color").value.data
     assert_equal 16.0, stylesheet.rules.first.declarations.find_by_property("font-size").value.data
     assert_equal :px, stylesheet.rules.first.declarations.find_by_property("font-size").value.unit
@@ -20,8 +19,7 @@ class TestParserWriter < Minitest::Test
     css = %{
     a {color: blue; text-decoration: underline;}
     }
-    stylesheet = Habaki::Stylesheet.new
-    stylesheet.parse(css)
+    stylesheet = Habaki::Stylesheet.parse(css)
     stylesheet.rules.first.declarations.remove_by_property("color")
     assert_equal 1, stylesheet.rules.first.declarations.length
     assert_equal "a {text-decoration: underline; }", stylesheet.string
@@ -31,8 +29,7 @@ class TestParserWriter < Minitest::Test
     css = %{
     a {color: blue; text-decoration: underline;}
     }
-    stylesheet = Habaki::Stylesheet.new
-    stylesheet.parse(css)
+    stylesheet = Habaki::Stylesheet.parse(css)
     stylesheet.rules.first.declarations.add_by_property("font-size", Habaki::Dimension.new(12, :pt))
     # arbitrary value type
     stylesheet.rules.first.declarations.add_by_property("line-height", Habaki::Value.new("14pt"))
@@ -54,8 +51,7 @@ class TestParserWriter < Minitest::Test
     @media not screen {
     p {font-size: 12pt;}
     }}
-    stylesheet = Habaki::Stylesheet.new
-    stylesheet.parse(css)
+    stylesheet = Habaki::Stylesheet.parse(css)
     assert_equal 3, stylesheet.rules.medias.select{|media| media.match_type?("print")}.length
     assert_equal 1, stylesheet.rules.medias.select{|media| media.match_type?("screen")}.length
 
@@ -150,8 +146,7 @@ a {color: black; }
     css = %{@supports (display: grid) and (not (display: inline-grid)) {
 a {color: black; }
 }}
-    stylesheet = Habaki::Stylesheet.new
-    stylesheet.parse(css)
+    stylesheet = Habaki::Stylesheet.parse(css)
     # TODO: fix double parentheses problem
     # assert_equal css, stylesheet.string
   end
@@ -194,8 +189,7 @@ li:nth-last-child(3n+2) {color: green; }})
     css = %{a,{ }
 div {color: green; }
 .inv { invalid }}
-    stylesheet = Habaki::Stylesheet.new
-    stylesheet.parse(css)
+    stylesheet = Habaki::Stylesheet.parse(css)
     assert_equal 2, stylesheet.errors.length
     assert_equal 1, stylesheet.errors[0].line
     assert_equal 3, stylesheet.errors[1].line
@@ -206,10 +200,8 @@ div {color: green; }
   private
 
   def assert_identical_css(css)
-    stylesheet = Habaki::Stylesheet.new
-    stylesheet.parse(css)
+    stylesheet = Habaki::Stylesheet.parse(css)
     assert_equal css, stylesheet.string
-
   end
 
 end

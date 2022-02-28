@@ -2879,7 +2879,7 @@ yyreduce:
                                                                               {
         // parser->reportError($3, InvalidSupportsConditionCSSError);
         // $$ = false;
-        (yyval.supportsExp) = 0;
+        YYERROR;
     }
     break;
 
@@ -2912,7 +2912,7 @@ yyreduce:
                                                                                                                         {
         // $$ = false;
         // parser->endProperty(false, false, GeneralCSSError);        
-        (yyval.supportsExp) = 0;
+        YYERROR;
     }
     break;
 

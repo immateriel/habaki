@@ -1,23 +1,4 @@
 module Habaki
-  # syntax error
-  class Error < Node
-    # @return [Integer]
-    attr_accessor :line
-    # @return [Integer]
-    attr_accessor :column
-    # @return [String]
-    attr_accessor :message
-
-    # @api private
-    # @param [Katana::Error] err
-    # @return [void]
-    def read(err)
-      @line = err.first_line
-      @column = err.first_column
-      @message = err.message
-    end
-  end
-
   # main structure
   class Stylesheet < Node
     # @return [Rules]
@@ -30,48 +11,54 @@ module Habaki
       @errors = []
     end
 
-    # traverse all rules (including media & supports)
-    def each_rule(&block)
+    # traverse rules
+    # @yieldparam [Rules] rules
+    # @return [void]
+    def each_rules(&block)
+      block.call @rules
       @rules.each do |rule|
-        block.call rule
-        if rule.rules
-          rule.rules.each do |emb_rule|
-            block.call emb_rule
-          end
+        block.call rule.rules if rule.rules
+      end
+    end
+
+    # traverse all rules (including all media & supports)
+    # TODO: add media query / supports query option
+    # @yieldparam [Rule] rules
+    # @return [void]
+    def each_rule(&block)
+      each_rules do |rules|
+        rules.each do |rule|
+          block.call rule
         end
       end
     end
 
-    # get rules matching with SelectorVisitor
-    # @param [SelectorVisitor] element
+    # get rules matching with Visitor::Element
+    # @param [Visitor::Element] element
     # @return [Array<Rule>]
-    def matching_rules(element)
+    def find_matching_rules(element)
       matching_rules = []
-      each_rule do |rule|
-        matching_rules << rule if rule.matches(element).include?(element)
+      each_rules do |rules|
+        rules.each_matching_rule(element) do |matching_rule|
+          matching_rules << matching_rule
+        end
       end
       matching_rules
     end
 
-    # find declaration for SelectorVisitor with inherit
+    # find matching declarations for Visitor::Element with inherit
     # @param [String] property
-    # @param [SelectorVisitor] element
+    # @param [Visitor::Element] element
     # @return [Declaration, nil]
-    def find_declaration(property, element)
-      cur_element = element
+    def find_matching_declaration(property, element)
       decls = []
-      while cur_element do
-        rules = matching_rules(cur_element)
-        rules.each do |rule|
-          decl = rule.declarations.find_by_property(property)
-          decls << decl if decl && decl.value.data != "inherit"
+      each_rules do |rules|
+        rules.each_matching_declaration(property, element) do |decl|
+          decls << decl
         end
-        break if decls.length > 0
-
-        cur_element = cur_element.parent
       end
 
-      # TODO: manage !important
+     # TODO: manage !important
       decls.last
     end
 
@@ -91,7 +78,7 @@ module Habaki
     # @return [Stylesheet]
     def self.parse(data)
       stylesheet = self.new
-      stylesheet.parse(data)
+      stylesheet.parse!(data)
       stylesheet
     end
 
@@ -105,14 +92,14 @@ module Habaki
     # parse from data
     # @param [String] data
     # @return [void]
-    def parse(data)
+    def parse!(data)
       read(Katana.parse(data))
     end
 
-    # parse from file
+    # parse from file and append to current stylesheet
     # @param [String] filename
     # @return [void]
-    def parse_file(filename)
+    def parse_file!(filename)
       parse(File.read(filename))
     end
 

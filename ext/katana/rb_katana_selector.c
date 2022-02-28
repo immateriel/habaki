@@ -1,3 +1,6 @@
+/*
+ * Selectors
+ */
 #include "rb_katana.h"
 
 extern VALUE rb_Katana, rb_Output, rb_KError, rb_KArray, rb_Stylesheet,
@@ -6,11 +9,52 @@ extern VALUE rb_Katana, rb_Output, rb_KError, rb_KArray, rb_Stylesheet,
     rb_PageRule, rb_FontFaceRule, rb_StyleRule, rb_ImportRule, rb_NamespaceRule, rb_CharsetRule,
     rb_Selector, rb_SelectorData, rb_Declaration, rb_Value, rb_QualifiedName, rb_ValueFunction;
 
+// QualifiedName
+
+/*
+ * @return [String, nil]
+ */
+VALUE rb_name_local(VALUE self)
+{
+  KatanaQualifiedName *c_name;
+  Data_Get_Struct(self, KatanaQualifiedName, c_name);
+  if (c_name->local)
+    return rb_str_new2(c_name->local);
+  else
+    return Qnil;
+}
+
+/*
+ * @return [String, nil]
+ */
+VALUE rb_name_prefix(VALUE self)
+{
+  KatanaQualifiedName *c_name;
+  Data_Get_Struct(self, KatanaQualifiedName, c_name);
+  if (c_name->prefix)
+    return rb_str_new2(c_name->prefix);
+  else
+    return Qnil;
+}
+
+/*
+ * @return [String, nil]
+ */
+VALUE rb_name_uri(VALUE self)
+{
+  KatanaQualifiedName *c_name;
+  Data_Get_Struct(self, KatanaQualifiedName, c_name);
+  if (c_name->uri)
+    return rb_str_new2(c_name->uri);
+  else
+    return Qnil;
+}
+
 // Selector
 
 /*
-* @return [Symbol]
-*/
+ * @return [Symbol]
+ */
 VALUE rb_selector_specificity(VALUE self)
 {
   KatanaSelector *c_sel;
@@ -19,8 +63,8 @@ VALUE rb_selector_specificity(VALUE self)
 }
 
 /*
-* @return [Symbol]
-*/
+ * @return [Symbol]
+ */
 VALUE rb_selector_match(VALUE self)
 {
   ID id;
@@ -78,8 +122,8 @@ VALUE rb_selector_match(VALUE self)
 }
 
 /*
-* @return [Symbol]
-*/
+ * @return [Symbol]
+ */
 VALUE rb_selector_relation(VALUE self)
 {
   ID id;
@@ -116,8 +160,8 @@ VALUE rb_selector_relation(VALUE self)
 }
 
 /*
-* @return [Symbol]
-*/
+ * @return [Symbol]
+ */
 VALUE rb_selector_pseudo(VALUE self)
 {
   ID id;
@@ -379,8 +423,8 @@ VALUE rb_selector_pseudo(VALUE self)
 }
 
 /*
-* @return [Katana::QualifiedName, nil]
-*/
+ * @return [Katana::QualifiedName, nil]
+ */
 VALUE rb_selector_tag(VALUE self)
 {
   KatanaSelector *c_sel;
@@ -392,8 +436,8 @@ VALUE rb_selector_tag(VALUE self)
 }
 
 /*
-* @return [Katana::SelectorData, nil]
-*/
+ * @return [Katana::SelectorData, nil]
+ */
 VALUE rb_selector_data(VALUE self)
 {
   KatanaSelector *c_sel;
@@ -405,8 +449,8 @@ VALUE rb_selector_data(VALUE self)
 }
 
 /*
-* @return [Katana::Selector, nil]
-*/
+ * @return [Katana::Selector, nil]
+ */
 VALUE rb_selector_tag_history(VALUE self)
 {
   KatanaSelector *c_sel;
@@ -420,8 +464,8 @@ VALUE rb_selector_tag_history(VALUE self)
 // SelectorData
 
 /*
-* @return [String, nil]
-*/
+ * @return [String, nil]
+ */
 VALUE rb_selector_data_value(VALUE self)
 {
   KatanaSelectorRareData *c_sel;
@@ -433,8 +477,8 @@ VALUE rb_selector_data_value(VALUE self)
 }
 
 /*
-* @return [Katana::QualifiedName, nil]
-*/
+ * @return [Katana::QualifiedName, nil]
+ */
 VALUE rb_selector_data_attr(VALUE self)
 {
   KatanaSelectorRareData *c_sel;
@@ -446,8 +490,8 @@ VALUE rb_selector_data_attr(VALUE self)
 }
 
 /*
-* @return [String, nil]
-*/
+ * @return [String, nil]
+ */
 VALUE rb_selector_data_argument(VALUE self)
 {
   KatanaSelectorRareData *c_sel;
@@ -459,8 +503,8 @@ VALUE rb_selector_data_argument(VALUE self)
 }
 
 /*
-* @return [Katana::Array, nil]
-*/
+ * @return [Katana::Array, nil]
+ */
 VALUE rb_selector_data_selectors(VALUE self)
 {
   KatanaSelectorRareData *c_sel;
@@ -481,7 +525,14 @@ VALUE rb_selector_data_selectors(VALUE self)
   }
 }
 
-void init_katana_selector() {
+void init_katana_selector()
+{
+  // QualifiedName
+  rb_QualifiedName = rb_define_class_under(rb_Katana, "QualifiedName", rb_cObject);
+  rb_define_method(rb_QualifiedName, "local", rb_name_local, 0);
+  rb_define_method(rb_QualifiedName, "prefix", rb_name_prefix, 0);
+  rb_define_method(rb_QualifiedName, "uri", rb_name_uri, 0);
+
   // SelectorData
   rb_SelectorData = rb_define_class_under(rb_Katana, "SelectorData", rb_cObject);
   // TODO: bits

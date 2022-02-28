@@ -1,3 +1,6 @@
+/*
+ * Declarations and values
+ */
 #include "rb_katana.h"
 
 extern VALUE rb_Katana, rb_Output, rb_KError, rb_KArray, rb_Stylesheet,
@@ -382,47 +385,6 @@ VALUE rb_value_function_args(VALUE self)
         return Qnil;
 }
 
-// QualifiedName
-
-/*
- * @return [String, nil]
- */
-VALUE rb_name_local(VALUE self)
-{
-    KatanaQualifiedName *c_name;
-    Data_Get_Struct(self, KatanaQualifiedName, c_name);
-    if (c_name->local)
-        return rb_str_new2(c_name->local);
-    else
-        return Qnil;
-}
-
-/*
- * @return [String, nil]
- */
-VALUE rb_name_prefix(VALUE self)
-{
-    KatanaQualifiedName *c_name;
-    Data_Get_Struct(self, KatanaQualifiedName, c_name);
-    if (c_name->prefix)
-        return rb_str_new2(c_name->prefix);
-    else
-        return Qnil;
-}
-
-/*
- * @return [String, nil]
- */
-VALUE rb_name_uri(VALUE self)
-{
-    KatanaQualifiedName *c_name;
-    Data_Get_Struct(self, KatanaQualifiedName, c_name);
-    if (c_name->uri)
-        return rb_str_new2(c_name->uri);
-    else
-        return Qnil;
-}
-
 void init_katana_declaration()
 {
     // Declaration
@@ -449,10 +411,4 @@ void init_katana_declaration()
     rb_ValueFunction = rb_define_class_under(rb_Katana, "ValueFunction", rb_cObject);
     rb_define_method(rb_ValueFunction, "name", rb_value_function_name, 0);
     rb_define_method(rb_ValueFunction, "args", rb_value_function_args, 0);
-
-    // QualifiedName
-    rb_QualifiedName = rb_define_class_under(rb_Katana, "QualifiedName", rb_cObject);
-    rb_define_method(rb_QualifiedName, "local", rb_name_local, 0);
-    rb_define_method(rb_QualifiedName, "prefix", rb_name_prefix, 0);
-    rb_define_method(rb_QualifiedName, "uri", rb_name_uri, 0);
 }
