@@ -3,7 +3,7 @@
  */
 #include "rb_katana.h"
 
-extern VALUE rb_Katana, rb_Output, rb_KError, rb_KArray, rb_Stylesheet,
+extern VALUE rb_Katana, rb_Output, rb_KError, rb_KPosition, rb_KArray, rb_Stylesheet,
     rb_MediaRule, rb_MediaQuery, rb_MediaQueryExp,
     rb_SupportsRule, rb_SupportsExp,
     rb_PageRule, rb_FontFaceRule, rb_StyleRule, rb_ImportRule, rb_NamespaceRule, rb_CharsetRule,
@@ -36,6 +36,7 @@ VALUE rb_declaration_important(VALUE self)
     else
         return Qfalse;
 }
+
 
 /*
  * @return [String, nil]
@@ -71,6 +72,16 @@ VALUE rb_declaration_values(VALUE self)
     {
         return Qnil;
     }
+}
+
+/*
+ * @return [SourcePosition]
+ */
+VALUE rb_declaration_position(VALUE self)
+{
+    KatanaDeclaration *c_decl;
+    Data_Get_Struct(self, KatanaDeclaration, c_decl);
+    return Data_Wrap_Struct(rb_KPosition, NULL, NULL, &c_decl->position);
 }
 
 // Value
@@ -392,6 +403,8 @@ void init_katana_declaration()
     rb_define_method(rb_Declaration, "property", rb_declaration_prop, 0);
     rb_define_method(rb_Declaration, "important", rb_declaration_important, 0);
     rb_define_method(rb_Declaration, "values", rb_declaration_values, 0);
+
+    rb_define_method(rb_Declaration, "position", rb_declaration_position, 0);
     rb_define_method(rb_Declaration, "raw", rb_declaration_raw, 0);
 
     // Declaration

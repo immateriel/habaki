@@ -16,6 +16,9 @@ module Habaki
     # @return [Selectors]
     attr_accessor :selectors
 
+    # @return [SourcePosition]
+    attr_accessor :position
+
     # is this selector on attribute ?
     # @return [Boolean]
     def attribute_selector?
@@ -82,6 +85,8 @@ module Habaki
       @argument = sel.data.argument
 
       @selectors = Selectors.read(sel.data.selectors) if sel.data.selectors
+
+      @position = SourcePosition.new(sel.position.line, sel.position.column)
     end
 
     # @api private

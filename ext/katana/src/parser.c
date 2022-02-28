@@ -118,6 +118,13 @@ static void output_init(KatanaParser* parser, KatanaParserMode mode)
     parser->output = output;
 }
 
+static void set_position(KatanaParser* parser, KatanaSourcePosition *position)
+{
+    yyscan_t *scanner = *parser->scanner;
+    position->line = katanaget_lineno(scanner);
+    position->column = katanaget_column(scanner);
+}
+
 void katana_destroy_output(KatanaOutput* output)
 {
     if ( NULL == output )
@@ -821,13 +828,22 @@ void katana_value_list_steal_values(KatanaParser* parser, KatanaArray* values, K
 }
 
 
-bool katana_new_declaration(KatanaParser* parser, KatanaParserString* name, bool important, KatanaArray* values)
+KatanaDeclaration *katana_new_declaration(KatanaParser* parser, KatanaParserString* name, bool important, KatanaArray* values)
 {
     KatanaDeclaration * decl = katana_parser_allocate(parser, sizeof(KatanaDeclaration));
+
+    set_position(parser, &decl->position);
+
     decl->property = katana_string_to_characters(parser, name);
     decl->important = important;
     decl->values = values;
     decl->raw = katana_stringify_value_list(parser, values);
+    
+    return decl;
+}
+
+bool katana_add_declaration(KatanaParser* parser, KatanaDeclaration *decl)
+{
     katana_array_add(parser, decl, parser->parsed_declarations);
     
     return true;
@@ -1101,6 +1117,9 @@ void katana_destroy_rare_data(KatanaParser* parser, KatanaSelectorRareData* e)
 KatanaSelector* katana_new_selector(KatanaParser* parser)
 {
     KatanaSelector* selector = katana_parser_allocate(parser, sizeof(KatanaSelector));
+
+    set_position(parser, &selector->position);
+
     selector->data = katana_new_rare_data(parser);
     selector->tag = NULL;
     selector->match = 0;

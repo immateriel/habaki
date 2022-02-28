@@ -1,6 +1,6 @@
 #include "rb_katana.h"
 
-VALUE rb_Katana, rb_Output, rb_KError, rb_KArray, rb_Stylesheet,
+VALUE rb_Katana, rb_Output, rb_KError, rb_KPosition, rb_KArray, rb_Stylesheet,
     rb_MediaRule, rb_MediaQuery, rb_MediaQueryExp,
     rb_SupportsRule, rb_SupportsExp,
     rb_PageRule, rb_FontFaceRule, rb_StyleRule, rb_ImportRule, rb_NamespaceRule, rb_CharsetRule,
@@ -71,6 +71,28 @@ VALUE rb_output_selectors(VALUE self)
   }
 }
 
+// Position
+
+/*
+ * @return [Integer]
+ */
+VALUE rb_position_line(VALUE self)
+{
+    KatanaSourcePosition *c_pos;
+    Data_Get_Struct(self, KatanaSourcePosition, c_pos);
+    return INT2NUM(c_pos->line);
+}
+
+/*
+ * @return [Integer]
+ */
+VALUE rb_position_column(VALUE self)
+{
+    KatanaSourcePosition *c_pos;
+    Data_Get_Struct(self, KatanaSourcePosition, c_pos);
+    return INT2NUM(c_pos->column);
+}
+
 /*
  * @return [Katana::Array<Katana::Error>]
  */
@@ -95,6 +117,7 @@ VALUE rb_output_dump(VALUE self)
   katana_dump_output(c_output);
   return Qnil;
 }
+
 
 // Array
 /*
@@ -243,6 +266,11 @@ void Init_katana()
   rb_KArray = rb_define_class_under(rb_Katana, "Array", rb_cObject);
   rb_include_module(rb_KArray, rb_mEnumerable);
   rb_define_method(rb_KArray, "length", rb_array_length, 0);
+
+  // Source position
+  rb_KPosition = rb_define_class_under(rb_Katana, "SourcePosition", rb_cObject);
+  rb_define_method(rb_KPosition, "line", rb_position_line, 0);
+  rb_define_method(rb_KPosition, "column", rb_position_column, 0);
 
   // Error
   rb_KError = rb_define_class_under(rb_Katana, "Error", rb_cObject);

@@ -7,6 +7,9 @@ module Habaki
     # @return [Boolean]
     attr_accessor :important
 
+    # @return [SourcePosition]
+    attr_accessor :position
+
     def initialize(property = nil, important = false)
       @property = property
       @important = important
@@ -26,6 +29,7 @@ module Habaki
       @property = decl.property
       @important = decl.important
       @values = Values.read(decl.values)
+      @position = SourcePosition.new(decl.position.line, decl.position.column)
     end
 
     # @api private

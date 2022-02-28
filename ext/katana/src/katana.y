@@ -777,11 +777,7 @@ supports_declaration_condition:
         //$$ = 0;
         $$ = katana_new_supports_exp(parser, KatanaSupportsOperatorNone);
 
-        $$->decl = katana_parser_allocate(parser, sizeof(KatanaDeclaration));
-
-        $$->decl->property = katana_string_to_characters(parser, &$3);
-        $$->decl->values = $7;
-        $$->decl->important = false;
+        $$->decl = katana_new_declaration(parser, &$3, false, $7);
     }
     | '(' maybe_space KATANA_CSS_IDENT maybe_space ':' maybe_space error error_recovery closing_parenthesis maybe_space {
         // $$ = false;
@@ -1536,7 +1532,7 @@ declaration:
         $$ = false;
         bool isPropertyParsed = false;
         // unsigned int oldParsedProperties = parser->parsedProperties->length;
-        (yyval.boolean) = katana_new_declaration(parser, &$1, $6, $5);
+        (yyval.boolean) = katana_add_declaration(parser, katana_new_declaration(parser, &$1, $6, $5));
         if (!(yyval.boolean)) {
             // parser->rollbackLastProperties(parser->m_parsedProperties.size() - oldParsedProperties);
             katana_parser_report_error(parser, $4, "InvalidPropertyValueCSSError");

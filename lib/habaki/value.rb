@@ -12,7 +12,6 @@ module Habaki
     # @return [void]
     def read(val)
       @data = val.value
-      self
     end
 
     # @api private

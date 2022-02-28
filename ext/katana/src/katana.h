@@ -257,6 +257,14 @@ typedef enum {
 
 typedef enum { KatanaParseError } KatanaErrorType;
 
+/**
+ *  Positon, for error debug
+ */
+typedef struct {
+    unsigned int line;
+    unsigned int column;
+} KatanaSourcePosition;
+
 typedef struct {
     const char* local; // tag local name
     const char* prefix; // namesapce identifier
@@ -409,6 +417,8 @@ typedef struct {
 } KatanaSelectorRareData;
 
 typedef struct KatanaSelector {
+    KatanaSourcePosition position;
+
     size_t specificity;
     KatanaSelectorMatch match;
     KatanaPseudoType pseudo;
@@ -421,6 +431,8 @@ typedef struct KatanaSelector {
 unsigned katana_calc_specificity_for_selector(KatanaSelector* selector);
 
 typedef struct {
+    KatanaSourcePosition position;
+
 	// property name
     const char* property;
 	

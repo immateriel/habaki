@@ -3,7 +3,7 @@
  */
 #include "rb_katana.h"
 
-extern VALUE rb_Katana, rb_Output, rb_KError, rb_KArray, rb_Stylesheet,
+extern VALUE rb_Katana, rb_Output, rb_KError, rb_KPosition, rb_KArray, rb_Stylesheet,
     rb_MediaRule, rb_MediaQuery, rb_MediaQueryExp,
     rb_SupportsRule, rb_SupportsExp,
     rb_PageRule, rb_FontFaceRule, rb_StyleRule, rb_ImportRule, rb_NamespaceRule, rb_CharsetRule,
@@ -461,6 +461,16 @@ VALUE rb_selector_tag_history(VALUE self)
     return Qnil;
 }
 
+/*
+ * @return [SourcePosition]
+ */
+VALUE rb_selector_position(VALUE self)
+{
+  KatanaSelector *c_sel;
+  Data_Get_Struct(self, KatanaSelector, c_sel);
+  return Data_Wrap_Struct(rb_KPosition, NULL, NULL, &c_sel->position);
+}
+
 // SelectorData
 
 /*
@@ -550,4 +560,5 @@ void init_katana_selector()
   rb_define_method(rb_Selector, "pseudo", rb_selector_pseudo, 0);
   rb_define_method(rb_Selector, "data", rb_selector_data, 0);
   rb_define_method(rb_Selector, "tag_history", rb_selector_tag_history, 0);
+  rb_define_method(rb_Selector, "position", rb_selector_position, 0);
 }

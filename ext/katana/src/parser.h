@@ -152,7 +152,8 @@ KatanaRule* katana_new_style_rule(KatanaParser* parser, KatanaArray* selectors);
 void katana_start_declaration(KatanaParser* parser);
 void katana_end_declaration(KatanaParser* parser, bool flag, bool ended);
 void katana_set_current_declaration(KatanaParser* parser, KatanaParserString* tag);
-bool katana_new_declaration(KatanaParser* parser, KatanaParserString* name, bool important, KatanaArray* values);
+KatanaDeclaration *katana_new_declaration(KatanaParser* parser, KatanaParserString* name, bool important, KatanaArray* values);
+bool katana_add_declaration(KatanaParser* parser, KatanaDeclaration *decl);
 void katana_parser_clear_declarations(KatanaParser* parser);
 
 

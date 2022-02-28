@@ -35,15 +35,6 @@ extern "C" {
 struct KatanaInternalParser;
 
 /**
- *  Positon, for error debug
- */
-typedef struct {
-    unsigned int line;
-    unsigned int column;
-    unsigned int offset;
-} KatanaSourcePosition;
-
-/**
  *  String
  */
 typedef struct {
