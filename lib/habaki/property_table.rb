@@ -89,7 +89,7 @@ module Habaki
         Tree.tree_data.each do |k, v|
           @properties[k] = Tree.parse(v)
         end
-        flatten!
+        #flatten!
       end
 
       def self.tree
@@ -152,7 +152,7 @@ module Habaki
             prev_node = current_node
             current_node = Node.new(:and)
             current_node.parent = prev_node
-            current_node.occurence = 0..n
+            current_node.occurence = 1..1
           when scanner.scan(/([a-zA-Z-]+)\(/)
             prev_node = current_node
             current_node = Node.new(:function, scanner[1])
@@ -166,13 +166,22 @@ module Habaki
           when scanner.scan(/\+/)
             prev_node = current_node.children.last
             prev_node.occurence = 1..n
-          when scanner.scan(/\{(\d),(\d)\}/)
-            prev_node = current_node.children.last
-            prev_node.occurence = (scanner[1].to_i)..(scanner[2].to_i)
           when scanner.scan(/\{(\d)\}/)
             prev_node = current_node.children.last
             prev_node.occurence = (scanner[1].to_i)..(scanner[1].to_i)
+          when scanner.scan(/\{(\d),(\d)\}/)
+              prev_node = current_node.children.last
+              prev_node.occurence = (scanner[1].to_i)..(scanner[2].to_i)
           when scanner.scan(/\]/)
+            if current_node.type == :and
+              occ_min = 0
+              occ_max = 0
+              current_node.children.each do |child|
+                occ_min += child.occurence.begin
+                occ_max += child.occurence.end
+              end
+              current_node.occurence = Range.new(occ_min, occ_max)
+            end
             prev_node = current_node
             current_node = current_node.parent
             current_node.push_children prev_node
@@ -187,7 +196,7 @@ module Habaki
           when scanner.scan(/<([a-zA-Z-]+)>/)
             current_node.push_children Node.new(:type, scanner[1])
           when scanner.scan(/([a-zA-Z-]+)/)
-            current_node.push_children Node.new(:ident, scanner[1]) if scanner[1] != "inherit"
+            current_node.push_children Node.new(:ident, scanner[1]) #if scanner[1] != "inherit"
           when scanner.scan(/([0-9]+)/)
             current_node.push_children Node.new(:number, scanner[1].to_i)
           when scanner.scan(/'([a-zA-Z-]+)'/)
@@ -223,27 +232,31 @@ module Habaki
 
     class Matcher
       attr_accessor :matches
+      attr_accessor :debug
 
       def initialize(declaration)
         @declaration = declaration
         @tree = Tree.tree
         @reference = nil
         @matches = []
+        @debug = false
       end
 
       # @return [Boolean]
       def match?
         @idx = 0
         node = @tree.properties[@declaration.property]
-        # puts "MATCH #{node} (#{node.type}) WITH #{@declaration.to_s}"
+        return false unless node
+
+        puts "MATCH #{node} (#{node.type}) WITH #{@declaration.to_s}" if @debug
         @reference = @declaration.property
         res = rec_match(node)
         @matches.compact!
         @matches.each_with_index do |match, idx|
           match.value = @declaration.values[idx]
         end
-        # puts "#{res}, #{@idx} / #{@declaration.values.length}"
-        res && @idx >= @declaration.values.length
+        puts "MATCH? #{res}, #{@idx} / #{count_values}" if @debug
+        res && @idx >= count_values
       end
 
       private
@@ -288,67 +301,88 @@ module Habaki
         @matches[@idx] = Match.new(@reference, node) if res && !@matches[@idx]
       end
 
+      def count_values
+        @declaration.values.length
+      end
+
       def rec_match(node)
         value = @declaration.values[@idx]
         return false unless value
 
         resolved_node = resolve_node(node)
 
-        #puts "[#{@idx}] #{value} => #{resolved_node} (#{resolved_node.type})"
+        match = false
+        loop = resolved_node.occurence.end > count_values ? count_values : resolved_node.occurence.end - resolved_node.occurence.begin + 1
 
-        case resolved_node.type
-        when :or_and
-          resolved_node.children.inject(false) do |result, child|
-            res = rec_match(child)
-            save_state(child, res)
-            result ||= res
-          end
-        when :and
-          founds = 0
-          resolved_node.children.each do |child|
-            res = rec_match(child)
-            save_state(child, res)
-            founds += 1 if res
-          end
-          resolved_node.occurence.include?(founds)
-        when :or
-          res = false
-          resolved_node.children.each do |child|
-            res = rec_match(child)
-            save_state(child, res)
-            break if res
-          end
-          res
-        when :number
-          match_value_class_and_data(value, Habaki::Number, resolved_node)
-        when :type
-          case resolved_node.value
-          when "percentage"
-            match_value_class(value, Habaki::Percentage)
-          when "length"
-            match_value_class(value, Habaki::Dimension)
-          when "angle"
-            match_value_class(value, Habaki::Angle)
-          when "number"
-            match_value_class(value, Habaki::Number)
-          when "string"
-            match_value_class(value, Habaki::String) || match_value_class(value, Habaki::Ident)
-          when "uri"
-            match_value_class(value, Habaki::Url)
-          when "hexcolor"
-            match_value_class(value, Habaki::HexColor)
-          else
-            false
-          end
-        when :ident
-          match_value_class_and_data(value, Habaki::Ident, resolved_node)
-        when :function
-          match_value_class_and_data(value, Habaki::Function, resolved_node)
-        when :token
-          match_value_class_and_data(value, Habaki::Operator, resolved_node)
-        else
-          false
+        puts "[#{@idx}/#{count_values}] #{resolved_node.occurence}/#{loop} #{value} => #{resolved_node} (#{resolved_node.type})" if @debug
+
+        loop.times do |i|
+          occ_match =
+            case resolved_node.type
+            when :or_and
+              res = false
+              resolved_node.children.each do |child|
+                tres = rec_match(child)
+                save_state(child, tres)
+                res ||= tres
+              end
+              res
+            when :and
+              founds = 0
+              resolved_node.children.each do |child|
+                res = rec_match(child)
+                save_state(child, res)
+                puts "AND CHILD #{child.occurence} #{child}" if @debug
+                founds += 1 if res
+              end
+              puts "AND #{founds} #{resolved_node.occurence} #{resolved_node.occurence.include?(founds)} #{resolved_node}" if @debug
+              resolved_node.occurence.include?(founds)
+            when :or
+              res = false
+              resolved_node.children.each do |child|
+                tres = rec_match(child)
+                save_state(child, tres)
+                res ||= tres
+                break if tres
+              end
+              res
+            when :number
+              match_value_class_and_data(value, Habaki::Number, resolved_node)
+            when :type
+              case resolved_node.value
+              when "percentage"
+                match_value_class(value, Habaki::Percentage)
+              when "length"
+                # 0 is acceptable too
+                match_value_class(value, Habaki::Dimension) || (match_value_class(value, Habaki::Number) && value.to_f == 0.0)
+              when "angle"
+                match_value_class(value, Habaki::Angle)
+              when "number", "integer"
+                match_value_class(value, Habaki::Number)
+              when "string"
+                match_value_class(value, Habaki::String) || match_value_class(value, Habaki::Ident)
+              when "uri"
+                match_value_class(value, Habaki::Url)
+              when "hexcolor"
+                match_value_class(value, Habaki::HexColor)
+              else
+                false
+              end
+            when :ident
+              match_value_class_and_data(value, Habaki::Ident, resolved_node)
+            when :function
+              match_value_class_and_data(value, Habaki::Function, resolved_node)
+            when :token
+              match_value_class_and_data(value, Habaki::Operator, resolved_node)
+            else
+              false
+            end
+
+          match ||= occ_match
+          puts "MATCH OCC? #{resolved_node} #{occ_match} #{match}" if @debug
+          #break if @idx > count_values  #|| !occ_match
         end
+        match
       end
 
     end
