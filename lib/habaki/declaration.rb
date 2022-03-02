@@ -26,7 +26,7 @@ module Habaki
     # @param [Katana::Declaration] decl
     # @return [void]
     def read(decl)
-      @property = decl.property
+      @property = decl.property.downcase if decl.property
       @important = decl.important
       @values = Values.read(decl.values)
       @position = SourcePosition.new(decl.position.line, decl.position.column)

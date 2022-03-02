@@ -58,7 +58,7 @@ module Habaki
       matching_rules
     end
 
-    # traverse matching declarations for {Visitor::Element} with inherit
+    # traverse matching declarations for {Visitor::Element}
     # @param [String] property
     # @param [Visitor::Element] element
     # @yieldparam [Declaration] declaration
@@ -69,27 +69,13 @@ module Habaki
       while cur_element do
         each_matching_rule(cur_element) do |rule|
           decl = rule.declarations.find_by_property(property)
-          if decl && decl.value.data != "inherit"
-            found = true
-            block.call decl
-          end
+          found = false
+          found = block.call decl if decl
         end
         break if found
 
         cur_element = cur_element.parent
       end
-    end
-
-    # find matching declarations for {Visitor::Element} with inherit
-    # @param [String] property
-    # @param [Visitor::Element] element
-    # @return [Array<Declaration>]
-    def find_matching_declarations(property, element)
-      decls = []
-      each_declaration(property, element) do |decl|
-        decls << decl
-      end
-      decls
     end
 
     # @api private

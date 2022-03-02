@@ -332,14 +332,22 @@ div.rd {color: red;}
 
     stylesheet = Habaki::Stylesheet.parse(css)
     doc = Nokogiri::HTML.parse(html)
+    decl = nil
+
     el = doc.root.search("em")[0]
-    decl = stylesheet.find_matching_declaration("color", Habaki::Visitor::NokogiriElement.new(el))
+      stylesheet.each_matching_declaration("color", Habaki::Visitor::NokogiriElement.new(el)) do |d|
+      decl = d
+    end
     assert_equal "grey", decl&.value&.data
     el = doc.root.search("em")[1]
-    decl = stylesheet.find_matching_declaration("color", Habaki::Visitor::NokogiriElement.new(el))
+    stylesheet.each_matching_declaration("color", Habaki::Visitor::NokogiriElement.new(el)) do |d|
+      decl = d
+    end
     assert_equal "red", decl&.value&.data
     el = doc.root.search("span")[0]
-    decl = stylesheet.find_matching_declaration("color", Habaki::Visitor::NokogiriElement.new(el))
+    stylesheet.each_matching_declaration("color", Habaki::Visitor::NokogiriElement.new(el)) do |d|
+      decl = d
+    end
     assert_equal "blue", decl&.value&.data
   end
 

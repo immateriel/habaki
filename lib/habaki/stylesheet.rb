@@ -46,20 +46,14 @@ module Habaki
       matching_rules
     end
 
-    # find matching declarations for Visitor::Element with inherit
+    # traverse matching declarations for Visitor::Element
     # @param [String] property
     # @param [Visitor::Element] element
     # @return [Declaration, nil]
-    def find_matching_declaration(property, element)
-      decls = []
+    def each_matching_declaration(property, element, &block)
       each_rules do |rules|
-        rules.each_matching_declaration(property, element) do |decl|
-          decls << decl
-        end
+        rules.each_matching_declaration(property, element, &block)
       end
-
-     # TODO: manage !important
-      decls.last
     end
 
     # remove all empty rules
