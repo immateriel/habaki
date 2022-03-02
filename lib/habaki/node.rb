@@ -25,4 +25,22 @@ module Habaki
       string
     end
   end
+
+  class NodeArray < Array
+    extend NodeReader
+
+    # read from low level Katana struct
+    # @return [nil]
+    def read(low) end
+
+    # @return [::String]
+    def string(indent = 0)
+      ""
+    end
+
+    # @return [::String]
+    def to_s
+      string
+    end
+  end
 end

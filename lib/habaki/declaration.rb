@@ -22,6 +22,7 @@ module Habaki
       @values.first
     end
 
+    # check validity
     # @return [Boolean]
     def check
       Habaki::PropertyTable::Matcher.new(self).match?

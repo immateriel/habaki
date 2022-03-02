@@ -73,7 +73,7 @@ module Habaki
     end
 
     # absolute value to em
-    # return [Float, nil]
+    # @return [Float, nil]
     def to_em(default_px = 16.0)
       if absolute?
         to_px / default_px
@@ -85,6 +85,7 @@ module Habaki
       end
     end
 
+    # @return [Float]
     def to_f
       @data.is_a?(Float) ? @data : 0.0
     end
@@ -129,6 +130,7 @@ module Habaki
   end
 
   class Percentage < Value
+    # @return [Float]
     def to_f
       @data
     end
@@ -141,6 +143,7 @@ module Habaki
   end
 
   class Number < Value
+    # @return [Float]
     def to_f
       @data
     end
@@ -219,9 +222,7 @@ module Habaki
   end
 
   # Array of {Values}
-  class Values < Array
-    extend NodeReader
-
+  class Values < NodeArray
     # traverse values with optional class type
     # @param [Class] klass
     # @return [void]

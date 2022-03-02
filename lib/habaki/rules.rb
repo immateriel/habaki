@@ -1,7 +1,5 @@
 module Habaki
-  class Rules < Array
-    extend NodeReader
-
+  class Rules < NodeArray
     # @return [CharsetRule, nil]
     def charset
       select { |rule| rule.is_a?(CharsetRule) }.first

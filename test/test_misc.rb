@@ -44,6 +44,12 @@ class TestMisc < Minitest::Test
     matcher = Habaki::PropertyTable::Matcher.new(Habaki::Declarations.parse("border: invalid;").first)
     refute matcher.match?
 
+    matcher = Habaki::PropertyTable::Matcher.new(Habaki::Declarations.parse("border-top: solid;").first)
+    assert matcher.match?
+
+    matcher = Habaki::PropertyTable::Matcher.new(Habaki::Declarations.parse("border-top: #CDCDCD;").first)
+    assert matcher.match?
+
     matcher = Habaki::PropertyTable::Matcher.new(Habaki::Declarations.parse("border: 1px solid #ff0000 red;").first)
     refute matcher.match?
 
@@ -65,6 +71,9 @@ class TestMisc < Minitest::Test
     matcher = Habaki::PropertyTable::Matcher.new(Habaki::Declarations.parse("margin: 0 0 1em 1em;").first)
     assert matcher.match?
 
+    matcher = Habaki::PropertyTable::Matcher.new(Habaki::Declarations.parse("background-size: 0.6in;").first)
+    assert matcher.match?
+
     # FIXME: should match
     # matcher = Habaki::PropertyTable::Matcher.new(Habaki::Declarations.parse("cursor: inherit;").first)
     # assert matcher.match?
@@ -73,7 +82,7 @@ class TestMisc < Minitest::Test
   def test_create_shorthand
     assert_shorthand_created("border-width: 1px; border-color: red; border-style: solid;",
                              "border: 1px solid red; ")
-    
+
     assert_shorthand_created(%{border-top-width: auto; border-right-width: thin; border-bottom-width: auto; border-left-width: 0px;},
                              "border-width: auto thin auto 0px; ")
 

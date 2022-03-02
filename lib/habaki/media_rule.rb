@@ -73,9 +73,7 @@ module Habaki
   end
 
   # Array of {MediaQuery}
-  class MediaQueries < Array
-    extend NodeReader
-
+  class MediaQueries < NodeArray
     # @api private
     # @param [Katana::Array<Katana::MediaQuery>] meds
     # @return [void]

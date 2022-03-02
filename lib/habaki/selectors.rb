@@ -1,8 +1,6 @@
 module Habaki
   # Array of {Selectors}
-  class Selectors < Array
-    extend NodeReader
-
+  class Selectors < NodeArray
     # parse selectors from string
     # @param [String] data
     # @return [Selectors]

@@ -184,6 +184,7 @@ module Habaki
             end
             prev_node = current_node
             current_node = current_node.parent
+            raise "DDD #{prev_node}" unless current_node
             current_node.push_children prev_node
           when scanner.scan(/\)/)
             prev_node = current_node
@@ -199,7 +200,7 @@ module Habaki
             current_node.push_children Node.new(:ident, scanner[1]) #if scanner[1] != "inherit"
           when scanner.scan(/([0-9]+)/)
             current_node.push_children Node.new(:number, scanner[1].to_i)
-          when scanner.scan(/'([a-zA-Z-]+)'/)
+          when scanner.scan(/<?'([a-zA-Z-]+)'>?/)
             current_node.push_children Node.new(:ref, scanner[1])
           when scanner.scan(/\|\|/)
             current_node.type = :or_and
@@ -240,6 +241,7 @@ module Habaki
         @reference = nil
         @matches = []
         @debug = false
+        @match = nil
       end
 
       # @return [Boolean]

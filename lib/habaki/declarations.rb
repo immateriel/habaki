@@ -266,8 +266,7 @@ module Habaki
   end
 
   # Array of {Declaration}
-  class Declarations < Array
-    extend NodeReader
+  class Declarations < NodeArray
     include Shorthand
 
     # Parse inline declarations
@@ -307,7 +306,7 @@ module Habaki
 
     # Add declaration
     # @param [String] property
-    # @param [Value, Array<Value>] value
+    # @param [Value, Values, Array<Value>] value
     # @param [Boolean] important
     # @return [void]
     def add_by_property(property, value, important = false)
