@@ -22,6 +22,11 @@ module Habaki
       @values.first
     end
 
+    # @return [Boolean]
+    def check
+      Habaki::PropertyTable::Matcher.new(self).match?
+    end
+
     # @api private
     # @param [Katana::Declaration] decl
     # @return [void]

@@ -70,10 +70,10 @@ class TestMisc < Minitest::Test
     # assert matcher.match?
   end
 
-  if false
   def test_create_shorthand
     assert_shorthand_created("border-width: 1px; border-color: red; border-style: solid;",
                              "border: 1px solid red; ")
+    
     assert_shorthand_created(%{border-top-width: auto; border-right-width: thin; border-bottom-width: auto; border-left-width: 0px;},
                              "border-width: auto thin auto 0px; ")
 
@@ -96,32 +96,29 @@ class TestMisc < Minitest::Test
 
     assert_shorthand_created(%{font-weight: 300; font-size: 12pt;
       font-family: sans-serif; line-height: 18px;
-      font-style: oblique; font-variant: small-caps;},"font: oblique small-caps 300 12pt/18px sans-serif; ")
+      font-style: oblique; font-variant: small-caps;}, "font: oblique small-caps 300 12pt/18px sans-serif; ")
 
-    assert_shorthand_created(%{font-size: 12pt;},"font-size: 12pt; ")
+    assert_shorthand_created(%{font-size: 12pt;}, "font-size: 12pt; ")
   end
 
   def test_expand_shorthand
     assert_shorthand_expanded("border: 1px solid red;", %{border-top-color: red; border-right-color: red; border-bottom-color: red; border-left-color: red;
 border-top-style: solid; border-right-style: solid; border-bottom-style: solid; border-left-style: solid;
-border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; }.gsub(/\n/," "))
+border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; }.gsub(/\n/, " "))
 
     assert_shorthand_expanded("border-width: auto thin auto 0px; ",
                               "border-top-width: auto; border-right-width: thin; border-bottom-width: auto; border-left-width: 0px; ")
 
-    assert_shorthand_expanded("font: oblique small-caps 300 12pt/18px Police,sans-serif; ",%{font-style: oblique; font-variant: small-caps; font-weight: 300; font-size: 12pt;
-line-height: 18px; font-family: Police,sans-serif; }.gsub(/\n/," "))
+    assert_shorthand_expanded("font: oblique small-caps 300 12pt/18px Police,sans-serif; ", %{font-style: oblique; font-variant: small-caps; font-weight: 300; font-size: 12pt;
+line-height: 18px; font-family: Police,sans-serif; }.gsub(/\n/, " "))
 
     assert_shorthand_expanded("list-style: katakana inside url(chess.png); ",
-                             %{list-style-type: katakana; list-style-position: inside; list-style-image: url(chess.png) ; })
+                              %{list-style-type: katakana; list-style-position: inside; list-style-image: url(chess.png); })
 
     assert_shorthand_expanded(%{background: url(starsolid.gif) repeat-y fixed #99f;},
                               "background-image: url(starsolid.gif); background-repeat: repeat-y; background-attachment: fixed; background-color: #99f; ")
+  end
 
-    #assert_shorthand_expanded(%{background: center / contain no-repeat url("../../media/examples/firefox-logo.svg"),
-    #  #eee 35% url("../../media/examples/lizard.png");}, "")
-  end
-  end
   private
 
   def assert_shorthand_expanded(from, to)

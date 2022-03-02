@@ -243,7 +243,7 @@ module Habaki
       end
 
       # @return [Boolean]
-      def match?
+      def match
         @idx = 0
         node = @tree.properties[@declaration.property]
         return false unless node
@@ -257,6 +257,11 @@ module Habaki
         end
         puts "MATCH? #{res}, #{@idx} / #{count_values}" if @debug
         res && @idx >= count_values
+      end
+
+      # @return [Boolean]
+      def match?
+        @match ||= match
       end
 
       private
@@ -354,7 +359,7 @@ module Habaki
                 match_value_class(value, Habaki::Percentage)
               when "length"
                 # 0 is acceptable too
-                match_value_class(value, Habaki::Dimension) || (match_value_class(value, Habaki::Number) && value.to_f == 0.0)
+                (match_value_class(value, Habaki::Dimension) && value.unit) || (match_value_class(value, Habaki::Number) && value.to_f == 0.0)
               when "angle"
                 match_value_class(value, Habaki::Angle)
               when "number", "integer"
