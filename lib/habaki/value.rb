@@ -75,6 +75,7 @@ module Habaki
     # absolute value to em
     # @return [Float, nil]
     def to_em(default_px = 16.0)
+      return 0.0 if default_px == 0.0
       if absolute?
         to_px / default_px
       else

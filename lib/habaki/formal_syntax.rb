@@ -204,7 +204,7 @@ module Habaki
           when scanner.scan(/\#/)
             # one or more comma separated
             prev_node = current_node.children.last
-            prev_node.children << Node.new(:token, ",")
+            prev_node.push_children(Node.new(:token, ","))
             prev_node.occurence = 1..n
           when scanner.scan(/\{(\d)\}/)
             prev_node = current_node.children.last
@@ -302,6 +302,21 @@ module Habaki
         end
       end
 
+      def resolve_function(value)
+        if value.is_a?(Habaki::Function)
+          case value.data
+          when "calc", "min", "max", "clamp"
+            Dimension.new("0",:px)
+          when "attr"
+            String.new("")
+          else
+            value
+          end
+        else
+          value
+        end
+      end
+
 
       # @return [Boolean]
       def match
@@ -355,8 +370,9 @@ module Habaki
       end
 
       def resolve_node(node)
-        return node if %w[percentage length absolute-size relative-size angle number integer string custom-ident uri hexcolor hex-color].include?(node.value)
+        return node if %w[percentage length angle number integer string custom-ident uri hexcolor hex-color].include?(node.value)
         resolved_node = node
+
         if node.type == :ref
           @reference = node.value
           resolved_node = @tree.properties[node.value]
@@ -385,7 +401,7 @@ module Habaki
       end
 
       def rec_match(node)
-        value = @declaration.values[@idx]
+        value = resolve_function(@declaration.values[@idx])
         return false unless value
 
         resolved_node = resolve_node(node)
@@ -431,7 +447,7 @@ module Habaki
               case resolved_node.value
               when "percentage"
                 match_value_class(value, Habaki::Percentage)
-              when "length", "absolute-size", "relative-size"
+              when "length"
                 # 0 is acceptable too
                 (match_value_class(value, Habaki::Dimension) && value.unit) || (match_value_class(value, Habaki::Number) && value.to_f == 0.0)
               when "angle"

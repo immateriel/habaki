@@ -35,10 +35,12 @@ class TestMisc < Minitest::Test
 
     assert_decl_match("border-top: solid;")
     assert_decl_match("border-top: #CDCDCD;")
+    assert_decl_match("border-top: 1px;")
     assert_decl_match("font-family: 'Lettrines';")
     assert_decl_match("font-family: Police, serif;")
     assert_decl_match("font-family: 'Bookman Old Style','Book Antiqua','Georgia','Century Schoolbook','Times New Roman',serif;")
     assert_decl_match("font: oblique small-caps 300 12pt/18px Police, sans-serif;")
+    assert_decl_match("font-size: smaller;")
     assert_decl_match("margin-left: -1%;")
     assert_decl_match("margin: 0 0 1em 1em;")
     assert_decl_match("background-size: 0.6in;")
@@ -51,10 +53,18 @@ class TestMisc < Minitest::Test
     assert_decl_match("background: inherit;")
     assert_decl_match("src: url(Fonts/AveriaSerif-Light.ttf);")
     assert_decl_match("border: #CCCC99 1px solid;")
+    assert_decl_match("content: 'p. ';")
+    assert_decl_match("content: 'a' 'b';")
+    assert_decl_match("content: 'a' attr(data-eq);")
+    assert_decl_match("max-width: calc(200px - 120px);")
 
     refute_decl_match("border: invalid;")
     refute_decl_match("border: 1px solid #ff0000 red;")
     refute_decl_match("background-image: url('img.png') 50% 50% no-repeat;")
+    refute_decl_match("border-size: 1px;")
+
+    # should match
+    #assert_decl_match("background-position: top;", true)
   end
 
   def test_create_shorthand
