@@ -121,8 +121,13 @@ module Habaki
             # TODO "of type"
             match &&= false
           end
-        else
+        when :not
+          match &&= !sub_sel.selectors.match?(element)
+        when :not_parsed, :unknown
           match &&= true
+        else
+          # STDERR.puts "unsupported pseudo #{sub_sel.pseudo}"
+          match &&= false
         end
       end
       match

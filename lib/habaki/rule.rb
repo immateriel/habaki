@@ -1,6 +1,9 @@
 module Habaki
   # @abstract CSS rule
   class Rule < Node
+    # @return [Stylesheet]
+    attr_accessor :stylesheet
+
     # @return [Array, nil]
     def selectors
       nil

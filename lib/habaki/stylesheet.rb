@@ -127,6 +127,11 @@ module Habaki
       @rules.read(out.stylesheet.imports)
       @rules.read(out.stylesheet.rules)
 
+      # keep reference to this stylesheet in each rule
+      each_rule do |rule|
+        rule.stylesheet = self
+      end
+
       out.errors.each do |err|
         @errors << Error.read(err)
       end
