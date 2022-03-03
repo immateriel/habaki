@@ -32,6 +32,16 @@ module Habaki
         end
       end
 
+      def occurence_from_children!
+        occ_min = 0
+        occ_max = 0
+        @children.each do |child|
+          occ_min += child.occurence.begin
+          occ_max += child.occurence.end
+        end
+        @occurence = Range.new(occ_min, occ_max)
+      end
+
       def n
         Float::INFINITY
       end
@@ -81,19 +91,31 @@ module Habaki
       end
     end
 
+    class FormalSyntaxError < StandardError
+
+    end
+
     class Tree
       attr_accessor :properties
 
       def initialize
+      end
+
+      def parse_all(data)
         @properties = {}
-        Tree.tree_data.each do |k, v|
-          @properties[k] = Tree.parse(v)
+        data.each do |k, v|
+          begin
+            @properties[k] = Tree.parse(v)
+          rescue FormalSyntaxError => e
+            # STDERR.puts("#{k}: #{e}")
+          end
         end
         #flatten!
+        self
       end
 
       def self.tree
-        @@tree ||= self.new
+        @@tree ||= self.new.parse_all(Tree.tree_data)
       end
 
       def self.tree_data
@@ -141,10 +163,11 @@ module Habaki
         Float::INFINITY
       end
 
+      # formal syntax parser
       def self.parse(str)
         current_node = Node.new(:and)
         current_node.orig = str
-        scanner = StringScanner.new(str)
+        scanner = StringScanner.new(str.gsub("∞", "N"))
 
         until scanner.eos?
           case
@@ -152,8 +175,11 @@ module Habaki
             prev_node = current_node
             current_node = Node.new(:and)
             current_node.parent = prev_node
-            current_node.occurence = 1..1
-          when scanner.scan(/([a-zA-Z-]+)\(/)
+          when scanner.scan(/<([a-zA-Z0-9-]+)\(/)
+            prev_node = current_node
+            current_node = Node.new(:function_ref, scanner[1])
+            current_node.parent = prev_node
+          when scanner.scan(/([a-zA-Z0-9-]+)\(/)
             prev_node = current_node
             current_node = Node.new(:function, scanner[1])
             current_node.parent = prev_node
@@ -166,35 +192,43 @@ module Habaki
           when scanner.scan(/\+/)
             prev_node = current_node.children.last
             prev_node.occurence = 1..n
+          when scanner.scan(/\!/)
+            # at least one required
+            prev_node = current_node.children.last
+            prev_node.occurence = 1..n
+          when scanner.scan(/\#/)
+            # one or more comma separated
+            prev_node = current_node.children.last
+            prev_node.children << Node.new(:token, ",")
+            prev_node.occurence = 1..n
           when scanner.scan(/\{(\d)\}/)
             prev_node = current_node.children.last
             prev_node.occurence = (scanner[1].to_i)..(scanner[1].to_i)
           when scanner.scan(/\{(\d),(\d)\}/)
-              prev_node = current_node.children.last
-              prev_node.occurence = (scanner[1].to_i)..(scanner[2].to_i)
+            prev_node = current_node.children.last
+            prev_node.occurence = (scanner[1].to_i)..(scanner[2].to_i)
           when scanner.scan(/\]/)
             if current_node.type == :and
-              occ_min = 0
-              occ_max = 0
-              current_node.children.each do |child|
-                occ_min += child.occurence.begin
-                occ_max += child.occurence.end
-              end
-              current_node.occurence = Range.new(occ_min, occ_max)
+              current_node.occurence_from_children!
             end
-            prev_node = current_node
-            current_node = current_node.parent
-            raise "DDD #{prev_node}" unless current_node
-            current_node.push_children prev_node
-          when scanner.scan(/\)/)
-            prev_node = current_node
-            current_node = current_node.parent
-            current_node.push_children prev_node
-          when scanner.scan(/\s?(\/)\s?/)
-            current_node.push_children Node.new(:token, "/")
-          when scanner.scan(/\s?(,)\s?/)
-            current_node.push_children Node.new(:token, ",")
-          when scanner.scan(/<([a-zA-Z-]+)>/)
+            if current_node.parent
+              prev_node = current_node
+              current_node = current_node.parent
+              current_node.push_children prev_node
+            else
+              raise FormalSyntaxError, "Formal syntax problem: #{current_node}"
+            end
+          when scanner.scan(/\)>?/)
+            if current_node.parent
+              prev_node = current_node
+              current_node = current_node.parent
+              current_node.push_children prev_node
+            else
+              raise FormalSyntaxError, "Formal syntax problem: #{current_node}"
+            end
+          when scanner.scan(/\s?(\/|,|:|;|%)\s?/)
+            current_node.push_children Node.new(:token, scanner[1])
+          when scanner.scan(/<([a-zA-Z0-9-]+)(\s\[\d,N?\d*\])?>/)
             current_node.push_children Node.new(:type, scanner[1])
           when scanner.scan(/([a-zA-Z-]+)/)
             current_node.push_children Node.new(:ident, scanner[1]) #if scanner[1] != "inherit"
@@ -202,16 +236,21 @@ module Habaki
             current_node.push_children Node.new(:number, scanner[1].to_i)
           when scanner.scan(/<?'([a-zA-Z-]+)'>?/)
             current_node.push_children Node.new(:ref, scanner[1])
+          when scanner.scan(/'(..?)'/)
+            current_node.push_children Node.new(:token, scanner[1])
           when scanner.scan(/\|\|/)
             current_node.type = :or_and
           when scanner.scan(/\|/)
             current_node.type = :or
+          when scanner.scan(/\&\&/)
+            current_node.type = :and
           else
             result = scanner.scan(/.+/)
-            puts "CANNOT PARSE #{result}"
+            raise FormalSyntaxError, "Cannot parse formal syntax: #{result}"
           end
           scanner.scan(/\s+/)
         end
+        current_node.occurence_from_children!
         current_node
       end
     end
@@ -291,6 +330,7 @@ module Habaki
       end
 
       def resolve_node(node)
+        return node if %w[percentage length length-percentage absolute-size relative-size angle number integer string custom-ident uri hexcolor hex-color].include?(node.value)
         resolved_node = node
         if node.type == :ref
           @reference = node.value
@@ -298,9 +338,16 @@ module Habaki
         end
 
         if node.type == :type
+          @reference = "font-variant" if node.value.start_with?("font-variant") # FIXME: dirty hack
           alias_node = @tree.properties["<#{node.value}>"]
           resolved_node = alias_node if alias_node
         end
+
+        if node.type == :function_ref
+          alias_node = @tree.properties["<#{node.value}()>"]
+          resolved_node = alias_node if alias_node
+        end
+
         resolved_node
       end
 
@@ -359,18 +406,18 @@ module Habaki
               case resolved_node.value
               when "percentage"
                 match_value_class(value, Habaki::Percentage)
-              when "length"
+              when "length", "length-percentage", "absolute-size", "relative-size"
                 # 0 is acceptable too
                 (match_value_class(value, Habaki::Dimension) && value.unit) || (match_value_class(value, Habaki::Number) && value.to_f == 0.0)
               when "angle"
                 match_value_class(value, Habaki::Angle)
               when "number", "integer"
                 match_value_class(value, Habaki::Number)
-              when "string"
+              when "string", "custom-ident"
                 match_value_class(value, Habaki::String) || match_value_class(value, Habaki::Ident)
-              when "uri"
+              when "uri", "url"
                 match_value_class(value, Habaki::Url)
-              when "hexcolor"
+              when "hexcolor", "hex-color"
                 match_value_class(value, Habaki::HexColor)
               else
                 false
@@ -386,7 +433,7 @@ module Habaki
             end
 
           match ||= occ_match
-          puts "MATCH OCC? #{resolved_node} #{occ_match} #{match}" if @debug
+          puts "MATCH OCC? #{value} : #{resolved_node} #{occ_match} #{match}" if @debug
           #break if @idx > count_values  #|| !occ_match
         end
         match

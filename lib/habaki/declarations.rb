@@ -21,7 +21,7 @@ module Habaki
       expand_border_shorthand!
       expand_dimensions_shorthand!
       expand_font_shorthand!
-      expand_background_shorthand!
+      # expand_background_shorthand!
       expand_list_style_shorthand!
     end
 
@@ -131,7 +131,7 @@ module Habaki
 
     # Create shorthand declarations (e.g. +margin+ or +font+) whenever possible.
     def create_shorthand!
-      create_background_shorthand!
+      # create_background_shorthand!
       create_dimensions_shorthand!
       # border must be shortened after dimensions
       create_border_shorthand!
@@ -240,7 +240,20 @@ module Habaki
     # tries to convert them into a shorthand CSS <tt>font</tt> property.  All
     # font properties must be present in order to create a shorthand declaration.
     def create_font_shorthand! # :nodoc:
-      create_shorthand_properties!("font", true)
+      #create_shorthand_properties!("font", true)
+      properties = %w[font-style font-variant font-weight font-size line-height font-family]
+
+      values = []
+      properties.each do |prop|
+        decl = find_by_property(prop)
+        return unless decl
+
+        values << Habaki::Operator.new("/") if prop == "line-height"
+        values += decl.values
+      end
+
+      properties.each { |p| remove_by_property(p) }
+      add_by_property("font", values)
     end
 
     # Looks for long format CSS list-style properties (e.g. <tt>list-style-type</tt>) and
