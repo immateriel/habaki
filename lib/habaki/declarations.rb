@@ -112,7 +112,7 @@ module Habaki
     def expand_shorthand_properties!(property)
       return unless (declaration = find_by_property(property))
 
-      matcher = PropertyTable::Matcher.new(declaration)
+      matcher = FormalSyntax::Matcher.new(declaration)
       return unless matcher.match?
 
       props = {}
@@ -144,7 +144,7 @@ module Habaki
       properties_to_delete = []
 
       new_values = []
-      PropertyTable::Tree.tree.property(shorthand_property).traverse do |node|
+      FormalSyntax::Tree.tree.property(shorthand_property).traverse do |node|
         case node.type
         when :ref
           decl = find_by_property(node.value)

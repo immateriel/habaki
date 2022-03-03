@@ -25,7 +25,7 @@ module Habaki
     # check validity
     # @return [Boolean]
     def check
-      Habaki::PropertyTable::Matcher.new(self).match?
+      Habaki::FormalSyntax::Matcher.new(self).match?
     end
 
     # @api private

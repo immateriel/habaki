@@ -987,3 +987,9 @@ word-wrap: normal | break-word
 writing-mode: horizontal-tb | vertical-rl | vertical-lr | sideways-rl | sideways-lr
 z-index: auto | <integer>
 zoom: normal | reset | <number> | <percentage>
+
+src: "[ <url> [ format( <string># ) ]? | local( <family-name> ) ]#"
+-epub-hyphens: "none | manual | auto"
+-epub-line-break: "auto | loose | normal | strict"
+-epub-text-align-last: "auto | start | end | left | right | center | justify"
+-epub-word-break: "normal | keep-all | break-all"

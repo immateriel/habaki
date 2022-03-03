@@ -3,7 +3,7 @@ require 'yaml'
 
 module Habaki
   # property pattern matching
-  module PropertyTable
+  module FormalSyntax
     class Node
       attr_accessor :parent
       attr_accessor :children
@@ -13,11 +13,11 @@ module Habaki
 
       attr_accessor :orig
 
-      def initialize(type = nil, value = nil)
+      def initialize(type = nil, value = nil, children = [], occurence = 1..1)
         @type = type
         @value = value
-        @children = []
-        @occurence = 1..1
+        @children = children
+        @occurence = occurence
       end
 
       def push_children(child)
@@ -33,13 +33,18 @@ module Habaki
       end
 
       def occurence_from_children!
-        occ_min = 0
-        occ_max = 0
-        @children.each do |child|
-          occ_min += child.occurence.begin
-          occ_max += child.occurence.end
+        case @type
+        when :and
+          occ_min = 0
+          occ_max = 0
+          @children.each do |child|
+            occ_min += child.occurence.begin
+            occ_max += child.occurence.end
+          end
+          @occurence = Range.new(occ_min, occ_max)
+        when :or_and
+          @occurence = Range.new(1, @children.length)
         end
-        @occurence = Range.new(occ_min, occ_max)
       end
 
       def n
@@ -119,7 +124,7 @@ module Habaki
       end
 
       def self.tree_data
-        @@tree_data ||= YAML.load_file(File.join(File.dirname(__FILE__), '../../data/property_table.yml')).freeze
+        @@tree_data ||= YAML.load_file(File.join(File.dirname(__FILE__), '../../data/formal_syntax.yml')).freeze
       end
 
       def property(prop)
@@ -208,9 +213,7 @@ module Habaki
             prev_node = current_node.children.last
             prev_node.occurence = (scanner[1].to_i)..(scanner[2].to_i)
           when scanner.scan(/\]/)
-            if current_node.type == :and
-              current_node.occurence_from_children!
-            end
+            current_node.occurence_from_children!
             if current_node.parent
               prev_node = current_node
               current_node = current_node.parent
@@ -283,21 +286,43 @@ module Habaki
         @match = nil
       end
 
+      def calc_occurence(node)
+        resolved_node = resolve_node(node)
+        if resolved_node.type == :or
+          occ_min = resolved_node.occurence.begin
+          occ_max = resolved_node.occurence.end
+          resolved_node.children.each do |child|
+            r_occ = calc_occurence(child)
+            #occ_min += r_occ.begin
+            occ_max += r_occ.end
+          end
+          Range.new(occ_min, occ_max)
+        else
+          resolved_node.occurence
+        end
+      end
+
+
       # @return [Boolean]
       def match
         @idx = 0
         node = @tree.properties[@declaration.property]
         return false unless node
 
-        puts "MATCH #{node} (#{node.type}) WITH #{@declaration.to_s}" if @debug
+        #puts "MAX #{node} #{node.occurence} -> #{calc_occurence(node)}"
+        puts "MATCH #{node} (#{node.type}) #{node.occurence} WITH #{@declaration.to_s}" if @debug
         @reference = @declaration.property
+        # always add inherit keyword
+        return true if @declaration.value&.is_a?(Habaki::Ident) && @declaration.value.to_s == "inherit"
+
         res = rec_match(node)
         @matches.compact!
         @matches.each_with_index do |match, idx|
           match.value = @declaration.values[idx]
         end
-        puts "MATCH? #{res}, #{@idx} / #{count_values}" if @debug
-        res && @idx >= count_values
+
+        puts "MATCH? #{res} #{node.occurence}, #{@idx} / #{count_values}" if @debug
+        res && calc_occurence(node).include?(@idx) && @idx >= count_values
       end
 
       # @return [Boolean]
@@ -330,7 +355,7 @@ module Habaki
       end
 
       def resolve_node(node)
-        return node if %w[percentage length length-percentage absolute-size relative-size angle number integer string custom-ident uri hexcolor hex-color].include?(node.value)
+        return node if %w[percentage length absolute-size relative-size angle number integer string custom-ident uri hexcolor hex-color].include?(node.value)
         resolved_node = node
         if node.type == :ref
           @reference = node.value
@@ -366,7 +391,7 @@ module Habaki
         resolved_node = resolve_node(node)
 
         match = false
-        loop = resolved_node.occurence.end > count_values ? count_values : resolved_node.occurence.end - resolved_node.occurence.begin + 1
+        loop = resolved_node.occurence.end > count_values ? count_values : (resolved_node.occurence.end - resolved_node.occurence.begin + 1)
 
         puts "[#{@idx}/#{count_values}] #{resolved_node.occurence}/#{loop} #{value} => #{resolved_node} (#{resolved_node.type})" if @debug
 
@@ -386,10 +411,10 @@ module Habaki
               resolved_node.children.each do |child|
                 res = rec_match(child)
                 save_state(child, res)
-                puts "AND CHILD #{child.occurence} #{child}" if @debug
+                # puts "AND CHILD #{child.occurence} #{child}" if @debug
                 founds += 1 if res
               end
-              puts "AND #{founds} #{resolved_node.occurence} #{resolved_node.occurence.include?(founds)} #{resolved_node}" if @debug
+              # puts "AND #{founds} #{resolved_node.occurence} #{resolved_node.occurence.include?(founds)} #{resolved_node}" if @debug
               resolved_node.occurence.include?(founds)
             when :or
               res = false
@@ -406,7 +431,7 @@ module Habaki
               case resolved_node.value
               when "percentage"
                 match_value_class(value, Habaki::Percentage)
-              when "length", "length-percentage", "absolute-size", "relative-size"
+              when "length", "absolute-size", "relative-size"
                 # 0 is acceptable too
                 (match_value_class(value, Habaki::Dimension) && value.unit) || (match_value_class(value, Habaki::Number) && value.to_f == 0.0)
               when "angle"
@@ -433,8 +458,7 @@ module Habaki
             end
 
           match ||= occ_match
-          puts "MATCH OCC? #{value} : #{resolved_node} #{occ_match} #{match}" if @debug
-          #break if @idx > count_values  #|| !occ_match
+          puts " MATCH OCC? #{i}/#{loop} #{value} : #{resolved_node} #{occ_match} #{match}" if @debug
         end
         match
       end

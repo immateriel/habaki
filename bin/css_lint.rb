@@ -11,7 +11,7 @@ end
 stylesheet.each_rule do |rule|
   rule.each_declaration do |declaration|
     unless declaration.check
-      prop_node = Habaki::PropertyTable::Tree.tree.property(declaration.property)
+      prop_node = Habaki::FormalSyntax::Tree.tree.property(declaration.property)
       if prop_node
       STDERR.puts %{WARNING(#{declaration.position.line}:#{declaration.position.column}): "#{declaration}" does not match "#{prop_node}"}
       else

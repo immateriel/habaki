@@ -43,15 +43,18 @@ class TestMisc < Minitest::Test
     assert_decl_match("margin: 0 0 1em 1em;")
     assert_decl_match("background-size: 0.6in;")
     assert_decl_match("list-style: katakana inside url(chess.png); ")
-
-    # FIXME: should match
-    # assert_decl_match("src: url(Fonts/AveriaSerif-Light.ttf);")
-    # assert_decl_match("border: #CCCC99 1px solid;")
-    # assert_decl_match("max-width: 100%;")
-    # assert_decl_match("cursor: inherit;")
+    assert_decl_match("max-width: 100%;")
+    assert_decl_match("border: #CCCC99;")
+    assert_decl_match("color: inherit;")
+    assert_decl_match(%{background: center / contain no-repeat url("../../media/examples/firefox-logo.svg"), #eee 35% url("../../media/examples/lizard.png");})
+    assert_decl_match("cursor: inherit;")
+    assert_decl_match("background: inherit;")
+    assert_decl_match("src: url(Fonts/AveriaSerif-Light.ttf);")
+    assert_decl_match("border: #CCCC99 1px solid;")
 
     refute_decl_match("border: invalid;")
-    # refute_decl_match(Habaki::Declarations.parse("border: 1px solid #ff0000 red;")
+    refute_decl_match("border: 1px solid #ff0000 red;")
+    refute_decl_match("background-image: url('img.png') 50% 50% no-repeat;")
   end
 
   def test_create_shorthand
@@ -106,15 +109,19 @@ line-height: 18px; font-family: Police,sans-serif; }.gsub(/\n/, " "))
   private
 
   def assert_decl_match(decl, debug = false)
-    matcher = Habaki::PropertyTable::Matcher.new(Habaki::Declarations.parse(decl).first)
+    matcher = Habaki::FormalSyntax::Matcher.new(Habaki::Declarations.parse(decl).first)
     matcher.debug = debug
-    assert matcher.match?
+    match = matcher.match?
+    puts matcher.matches if debug
+    assert match
   end
 
   def refute_decl_match(decl, debug = false)
-    matcher = Habaki::PropertyTable::Matcher.new(Habaki::Declarations.parse(decl).first)
+    matcher = Habaki::FormalSyntax::Matcher.new(Habaki::Declarations.parse(decl).first)
     matcher.debug = debug
-    refute matcher.match?
+    match = matcher.match?
+    puts matcher.matches if debug
+    refute match
   end
 
   def assert_shorthand_expanded(from, to)

@@ -1,6 +1,6 @@
 require 'katana/katana'
 
-require 'habaki/property_table'
+require 'habaki/formal_syntax'
 
 require 'habaki/node'
 require 'habaki/value'
