@@ -97,9 +97,9 @@ module Habaki
     end
 
     class FormalSyntaxError < StandardError
-
     end
 
+    # format syntax tree parser
     class Tree
       attr_accessor :properties
 
@@ -258,9 +258,13 @@ module Habaki
       end
     end
 
+    # formal syntax matcher result
     class Match
+      # @return [String]
       attr_accessor :reference
+      # @return [FormalSyntax::Node]
       attr_accessor :node
+      # @return [Value]
       attr_accessor :value
 
       def initialize(ref, node)
@@ -269,14 +273,17 @@ module Habaki
       end
 
       def to_s
-        "#{@reference} {#{@node} => #{@value}}"
+        "#{@reference}: <#{@node.type} #{@node.value}> => <#{@value.class} #{@value}>"
       end
     end
 
+    # formal syntax matcher
     class Matcher
+      # @return [Array<Match>]
       attr_accessor :matches
       attr_accessor :debug
 
+      # @param [Declaration] declaration
       def initialize(declaration)
         @declaration = declaration
         @tree = Tree.tree
@@ -285,38 +292,6 @@ module Habaki
         @debug = false
         @match = nil
       end
-
-      def calc_occurence(node)
-        resolved_node = resolve_node(node)
-        if resolved_node.type == :or
-          occ_min = resolved_node.occurence.begin
-          occ_max = resolved_node.occurence.end
-          resolved_node.children.each do |child|
-            r_occ = calc_occurence(child)
-            #occ_min += r_occ.begin
-            occ_max += r_occ.end
-          end
-          Range.new(occ_min, occ_max)
-        else
-          resolved_node.occurence
-        end
-      end
-
-      def resolve_function(value)
-        if value.is_a?(Habaki::Function)
-          case value.data
-          when "calc", "min", "max", "clamp"
-            Dimension.new("0",:px)
-          when "attr"
-            String.new("")
-          else
-            value
-          end
-        else
-          value
-        end
-      end
-
 
       # @return [Boolean]
       def match
@@ -346,6 +321,37 @@ module Habaki
       end
 
       private
+
+      def calc_occurence(node)
+        resolved_node = resolve_node(node)
+        if resolved_node.type == :or
+          occ_min = resolved_node.occurence.begin
+          occ_max = resolved_node.occurence.end
+          resolved_node.children.each do |child|
+            r_occ = calc_occurence(child)
+            #occ_min += r_occ.begin
+            occ_max += r_occ.end
+          end
+          Range.new(occ_min, occ_max)
+        else
+          resolved_node.occurence
+        end
+      end
+
+      def resolve_function(value)
+        if value.is_a?(Habaki::Function)
+          case value.data
+          when "calc", "min", "max", "clamp"
+            Length.new("0", :px)
+          when "attr"
+            String.new("")
+          else
+            value
+          end
+        else
+          value
+        end
+      end
 
       def next_value
         @idx += 1
@@ -449,7 +455,7 @@ module Habaki
                 match_value_class(value, Habaki::Percentage)
               when "length"
                 # 0 is acceptable too
-                (match_value_class(value, Habaki::Dimension) && value.unit) || (match_value_class(value, Habaki::Number) && value.to_f == 0.0)
+                (match_value_class(value, Habaki::Length) && value.unit) || (match_value_class(value, Habaki::Number) && value.to_f == 0.0)
               when "angle"
                 match_value_class(value, Habaki::Angle)
               when "number", "integer"

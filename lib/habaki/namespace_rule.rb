@@ -14,18 +14,17 @@ module Habaki
       @uri = uri
     end
 
-    # @api private
-    # @param [Katana::NamespaceRule] rule
-    # @return [void]
-    def read(rule)
-      @prefix = rule.prefix
-      @uri = rule.uri
-    end
-
-    # @api private
     # @return [String]
     def string(indent = 0)
       "@namespace #{@prefix.length > 0 ? "#{@prefix} " : ""}\"#{@uri}\";"
+    end
+
+    # @api private
+    # @param [Katana::NamespaceRule] rule
+    # @return [void]
+    def read_from_katana(rule)
+      @prefix = rule.prefix
+      @uri = rule.uri
     end
   end
 end

@@ -25,7 +25,7 @@ module Habaki
       @match.to_s.start_with?("attribute_")
     end
 
-    # tag match
+    # does selector match tag ?
     # @param [String] name
     # @return [Boolean]
     def tag_match?(name)
@@ -33,7 +33,7 @@ module Habaki
       @tag.local == name || @tag.local == "*"
     end
 
-    # class match
+    # does selector match class ?
     # @param [String] name
     # @return [Boolean]
     def class_match?(name)
@@ -41,7 +41,7 @@ module Habaki
       @value == name
     end
 
-    # id match
+    # does selector match id ?
     # @param [String] name
     # @return [Boolean]
     def id_match?(name)
@@ -49,7 +49,7 @@ module Habaki
       @value == name
     end
 
-    # attribute match
+    # does selector match attribute value ?
     # @param [String] val
     # @return [Boolean]
     def attribute_value_match?(val)
@@ -71,7 +71,7 @@ module Habaki
       end
     end
 
-    # pseudo class match
+    # does selector pseudo class match {Visitor::Element} ?
     # @return [Boolean]
     def pseudo_match?(element)
       case @pseudo
@@ -116,23 +116,7 @@ module Habaki
       true
     end
 
-    # @api private
-    # @param [Katana::Selector] sel
-    def read(sel)
-      @match = sel.match
-      @tag = QualifiedName.read(sel.tag) if sel.tag
-      @pseudo = sel.pseudo
-
-      @attribute = QualifiedName.read(sel.data.attribute) if sel.data.attribute
-      @value = sel.data.value
-      @argument = sel.data.argument
-
-      @selectors = Selectors.read(sel.data.selectors) if sel.data.selectors
-
-      @position = SourcePosition.new(sel.position.line, sel.position.column)
-    end
-
-    # @api private
+    # @return [String]
     def string(indent = 0)
       str = ""
 
@@ -179,6 +163,22 @@ module Habaki
         end
       end
       str
+    end
+
+    # @api private
+    # @param [Katana::Selector] sel
+    def read_from_katana(sel)
+      @match = sel.match
+      @tag = QualifiedName.read_from_katana(sel.tag) if sel.tag
+      @pseudo = sel.pseudo
+
+      @attribute = QualifiedName.read_from_katana(sel.data.attribute) if sel.data.attribute
+      @value = sel.data.value
+      @argument = sel.data.argument
+
+      @selectors = Selectors.read_from_katana(sel.data.selectors) if sel.data.selectors
+
+      @position = SourcePosition.new(sel.position.line, sel.position.column)
     end
   end
 end

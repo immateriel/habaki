@@ -12,12 +12,12 @@ module Habaki
     end
 
     # @api private
-    def read(exp)
+    def read_from_katana(exp)
       @operation = exp.operation
       exp.expressions.each do |sub_exp|
-        @expressions << SupportsExpression.read(sub_exp)
+        @expressions << SupportsExpression.read_from_katana(sub_exp)
       end
-      @declaration = Declaration.read(exp.declaration) if exp.declaration
+      @declaration = Declaration.read_from_katana(exp.declaration) if exp.declaration
     end
 
     # @api private
@@ -49,18 +49,17 @@ module Habaki
       @rules = Rules.new
     end
 
-    # @api private
-    # @param [Katana::SupportsRule] rule
-    # @return [void]
-    def read(rule)
-      @expression = SupportsExpression.read(rule.expression)
-      @rules = Rules.read(rule.rules)
-    end
-
-    # @api private
     # @return [String]
     def string(indent = 0)
       "@supports #{@expression.string} {\n#{@rules.string(indent)}\n}"
+    end
+
+    # @api private
+    # @param [Katana::SupportsRule] rule
+    # @return [void]
+    def read_from_katana(rule)
+      @expression = SupportsExpression.read_from_katana(rule.expression)
+      @rules = Rules.read_from_katana(rule.rules)
     end
   end
 end

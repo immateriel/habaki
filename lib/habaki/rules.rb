@@ -103,20 +103,20 @@ module Habaki
       end
     end
 
-    # @api private
-    # @param [Katana::Array] rules
-    # @return [void]
-    def read(rules)
-      rules.each do |rule|
-        push read_rule(rule)
-      end
-    end
-
-    # @api private
+    # @return [String]
     def string(indent = 0)
       str = " " * (indent > 0 ? indent - 1 : 0)
       str += map { |rule| rule.string(indent) }.join("\n")
       str
+    end
+
+    # @api private
+    # @param [Katana::Array] rules
+    # @return [void]
+    def read_from_katana(rules)
+      rules.each do |rule|
+        push read_rule(rule)
+      end
     end
 
     private
@@ -124,21 +124,21 @@ module Habaki
     def read_rule(rul)
       case rul
       when Katana::ImportRule
-        ImportRule.read(rul)
+        ImportRule.read_from_katana(rul)
       when Katana::CharsetRule
-        CharsetRule.read(rul)
+        CharsetRule.read_from_katana(rul)
       when Katana::MediaRule
-        MediaRule.read(rul)
+        MediaRule.read_from_katana(rul)
       when Katana::FontFaceRule
-        FontFaceRule.read(rul)
+        FontFaceRule.read_from_katana(rul)
       when Katana::PageRule
-        PageRule.read(rul)
+        PageRule.read_from_katana(rul)
       when Katana::NamespaceRule
-        NamespaceRule.read(rul)
+        NamespaceRule.read_from_katana(rul)
       when Katana::StyleRule
-        StyleRule.read(rul)
+        StyleRule.read_from_katana(rul)
       when Katana::SupportsRule
-        SupportsRule.read(rul)
+        SupportsRule.read_from_katana(rul)
       else
         raise "Unsupported rule #{rul.class}"
       end

@@ -1,9 +1,9 @@
 module Habaki
   module NodeReader
     # read from low level Katana struct
-    def read(low)
+    def read_from_katana(low)
       obj = self.new
-      obj.read(low)
+      obj.read_from_katana(low)
       obj
     end
   end
@@ -11,10 +11,6 @@ module Habaki
   class Node
     extend NodeReader
 
-    # read from low level Katana struct
-    # @return [nil]
-    def read(low) end
-
     # @return [::String]
     def string(indent = 0)
       ""
@@ -24,15 +20,15 @@ module Habaki
     def to_s
       string
     end
+
+    # read from low level Katana struct
+    # @return [nil]
+    def read_from_katana(low) end
   end
 
   class NodeArray < Array
     extend NodeReader
 
-    # read from low level Katana struct
-    # @return [nil]
-    def read(low) end
-
     # @return [::String]
     def string(indent = 0)
       ""
@@ -42,5 +38,9 @@ module Habaki
     def to_s
       string
     end
+
+    # read from low level Katana struct
+    # @return [nil]
+    def read_from_katana(low) end
   end
 end

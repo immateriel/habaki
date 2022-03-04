@@ -35,7 +35,7 @@ module Habaki
     # @api private
     # @param [Katana::Error] err
     # @return [void]
-    def read(err)
+    def read_from_katana(err)
       @position = SourcePosition.new(err.first_line, err.first_column)
       @message = err.message
     end

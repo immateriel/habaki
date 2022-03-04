@@ -6,25 +6,25 @@ class TestMisc < Minitest::Test
   end
 
   def test_dimension
-    assert Habaki::Dimension.new(6, :pt).absolute?
-    assert Habaki::Dimension.new(1, :em).relative?
+    assert Habaki::Length.new(6, :pt).absolute?
+    assert Habaki::Length.new(1, :em).relative?
 
     # to_px
-    assert_equal 8.0, Habaki::Dimension.new(8, :px).to_px
-    assert_equal 8.0, Habaki::Dimension.new(6, :pt).to_px.round
-    assert_equal 8.0, Habaki::Dimension.new(0.0833, :in).to_px.round
-    assert_equal 8.0, Habaki::Dimension.new(0.2116, :cm).to_px.round
-    assert_equal 8.0, Habaki::Dimension.new(2.116, :mm).to_px.round
-    assert_nil Habaki::Dimension.new(1, :em).to_px
+    assert_equal 8.0, Habaki::Length.new(8, :px).to_px
+    assert_equal 8.0, Habaki::Length.new(6, :pt).to_px.round
+    assert_equal 8.0, Habaki::Length.new(0.0833, :in).to_px.round
+    assert_equal 8.0, Habaki::Length.new(0.2116, :cm).to_px.round
+    assert_equal 8.0, Habaki::Length.new(2.116, :mm).to_px.round
+    assert_nil Habaki::Length.new(1, :em).to_px
 
     # to_em
-    assert_equal 0.5, Habaki::Dimension.new(8, :px).to_em.round(1)
-    assert_equal 0.5, Habaki::Dimension.new(6, :pt).to_em.round(1)
-    assert_equal 0.5, Habaki::Dimension.new(0.0833, :in).to_em.round(1)
-    assert_equal 0.5, Habaki::Dimension.new(0.2116, :cm).to_em.round(1)
-    assert_equal 0.5, Habaki::Dimension.new(2.116, :mm).to_em.round(1)
+    assert_equal 0.5, Habaki::Length.new(8, :px).to_em.round(1)
+    assert_equal 0.5, Habaki::Length.new(6, :pt).to_em.round(1)
+    assert_equal 0.5, Habaki::Length.new(0.0833, :in).to_em.round(1)
+    assert_equal 0.5, Habaki::Length.new(0.2116, :cm).to_em.round(1)
+    assert_equal 0.5, Habaki::Length.new(2.116, :mm).to_em.round(1)
 
-    assert_equal 0.5, Habaki::Dimension.new(0.5, :em).to_em.round(1)
+    assert_equal 0.5, Habaki::Length.new(0.5, :em).to_em.round(1)
   end
 
   def test_property_table

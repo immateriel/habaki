@@ -7,49 +7,59 @@ Use WebKit based https://github.com/hackers-painters/katana-parser custom fork, 
 ```ruby
 require 'habaki'
 
-data = %{
+css_data = %{
 body {color: #444444;}
 p {font-size: 0.9em}
+p span {color: black}
+span.tiny {font-size: 0.8em}
 }
 
 # parse full stylesheet
-stylesheet = Habaki::Stylesheet.parse(data)
+stylesheet = Habaki::Stylesheet.parse(css_data)
 stylesheet.has_selector?("p")
-#=> true
+# => true
 stylesheet.has_selector?("a")
-#=> false
+# => false
 
 # remove a declaration
 declarations = stylesheet.find_declarations_by_selector("p").first
 declarations.remove_by_property("font-size")
 stylesheet.to_s
-#=> "body {color: grey; }\np {}"
+# => "body {color: grey; }\np {}"
 
 # add a declaration
 declarations = stylesheet.find_declarations_by_selector("body").first
-declarations.add_by_property("font-size", Habaki::Dimension.new(0.9, :em))
+declarations.add_by_property("font-size", Habaki::Length.new(0.9, :em))
 stylesheet.to_s
-#=> "body {color: grey; font-size: 0.9em; }\np {}"
+# => "body {color: grey; font-size: 0.9em; }\np {}"
 
 # compact empty declarations
 stylesheet.compact!
 stylesheet.to_s
-#=> "body {color: grey; font-size: 0.9em; }"
+# => "body {color: grey; font-size: 0.9em; }"
 
 # add rule
-rule = stylesheet.add_by_selectors("p")
-decl = rule.declarations.add_by_property("text-indent", Habaki::Dimension.new(1.4, :em))
+rule = stylesheet.rules.add_by_selectors("p")
+# => "body {color: #444444; font-size: 0.9em; }\np {}"
+decl = rule.declarations.add_by_property("text-indent", Habaki::Length.new(1.4, :em))
 stylesheet.to_s
-#=> "body {color: #444444; font-size: 0.9em; }\np {text-indent: 1.4em; }"
+# => "body {color: #444444; font-size: 0.9em; }\np {text-indent: 1.4em; }"
 
 # check declaration validity
 decl.check
-#=> true
+# => true
 decl = rule.declarations.add_by_property("color", Habaki::Ident.new("invalid"))
 stylesheet.to_s
-#=> "body {color: #444444; font-size: 0.9em; }\np {text-indent: 1.4em; color: invalid; }"
+# => "body {color: #444444; font-size: 0.9em; }\np {text-indent: 1.4em; color: invalid; }"
 decl.check
-#=> false
+# => false
+
+# advanced check
+matcher = Habaki::FormalSyntax::Matcher.new(Habaki::Declarations.parse("border: 1px solid red;").first)
+matcher.match
+# => true
+matcher.matches.map(&:to_s)
+# => ["border: <type length> => <Habaki::Length 1px>", "border: <ident solid> => <Habaki::Ident solid>", "border: <ident red> => <Habaki::Ident red>"]
 
 # parse declarations only
 decls = Habaki::Declarations.parse("font-size: 1em; color: black;")
@@ -60,6 +70,33 @@ decls.to_s
 sels = Habaki::Selectors.parse("div, p, span")
 sels.to_s
 # => "div,p,span"
+
+# advanced selector matching
+require 'nokogiri'
+html_data = %{
+    <html><body>
+    <p>text <span>black</span></p>
+    <p><span class="tiny">tiny black</span></p>
+    </body></html>
+    }
+doc = Nokogiri::HTML.parse(html_data)
+rules = stylesheet.find_matching_rules(Habaki::Visitor::NokogiriElement.new(doc.root.at("//body")))
+rules.length
+# => 1
+rules.first.to_s
+# => "body {color: #444444; }"
+
+rules = stylesheet.find_matching_rules(Habaki::Visitor::NokogiriElement.new(doc.root.search("//span")[0]))
+rules.length
+# => 1
+rules.first.to_s
+# => "body {color: #444444; }"
+
+rules = stylesheet.find_matching_rules(Habaki::Visitor::NokogiriElement.new(doc.root.search("//span")[1]))
+rules.length
+# => 2
+rules.map(&:to_s)
+# => ["p span {color: black; }", "span.tiny {font-size: 0.8em; }"]
 ```
 
 # TODO

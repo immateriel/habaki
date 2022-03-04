@@ -11,10 +11,10 @@ module Habaki
     # @api private
     # @param [Katana::MediaQueryExpression] exp
     # @return [void]
-    def read(exp)
+    def read_from_katana(exp)
       @feature = exp.feature
       if exp.values
-        @values = Values.read(exp.values)
+        @values = Values.read_from_katana(exp.values)
       end
     end
 
@@ -46,18 +46,6 @@ module Habaki
       end
     end
 
-    # @api private
-    # @param [Katana::MediaQuery] med
-    # @return [void]
-    def read(med)
-      @type = med.type
-      @restrictor = med.restrictor
-      med.expressions.each do |exp|
-        @expressions << MediaQueryExpression.read(exp)
-      end
-    end
-
-    # @api private
     # @return [String]
     def string(indent = 0)
       str = (@restrictor != :none ? @restrictor.to_s + " " : "") + (@type ? @type : "")
@@ -70,23 +58,33 @@ module Habaki
       end
       str
     end
+
+    # @api private
+    # @param [Katana::MediaQuery] med
+    # @return [void]
+    def read_from_katana(med)
+      @type = med.type
+      @restrictor = med.restrictor
+      med.expressions.each do |exp|
+        @expressions << MediaQueryExpression.read_from_katana(exp)
+      end
+    end
   end
 
   # Array of {MediaQuery}
   class MediaQueries < NodeArray
-    # @api private
-    # @param [Katana::Array<Katana::MediaQuery>] meds
-    # @return [void]
-    def read(meds)
-      meds.each do |med|
-        push MediaQuery.read(med)
-      end
-    end
-
-    # @api private
     # @return [String]
     def string(indent = 0)
       map(&:string).join(",")
+    end
+
+    # @api private
+    # @param [Katana::Array<Katana::MediaQuery>] meds
+    # @return [void]
+    def read_from_katana(meds)
+      meds.each do |med|
+        push MediaQuery.read_from_katana(med)
+      end
     end
   end
 
@@ -108,18 +106,17 @@ module Habaki
       @medias.first&.match_type?(mediatype)
     end
 
-    # @api private
-    # @param [Katana::MediaRule] rule
-    # @return [void]
-    def read(rule)
-      @medias = MediaQueries.read(rule.medias)
-      @rules = Rules.read(rule.rules)
-    end
-
-    # @api private
     # @return [String]
     def string(indent = 0)
       "@media #{@medias.string} {\n#{@rules.string(indent + 1)}\n}"
+    end
+
+    # @api private
+    # @param [Katana::MediaRule] rule
+    # @return [void]
+    def read_from_katana(rule)
+      @medias = MediaQueries.read_from_katana(rule.medias)
+      @rules = Rules.read_from_katana(rule.rules)
     end
   end
 end

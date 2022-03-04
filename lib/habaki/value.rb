@@ -1,4 +1,5 @@
 module Habaki
+  # abstract value type
   class Value < Node
     # @return [::String, Float]
     attr_accessor :data
@@ -10,7 +11,7 @@ module Habaki
     # @api private
     # @param [Katana::Value] val
     # @return [void]
-    def read(val)
+    def read_from_katana(val)
       @data = val.value
     end
 
@@ -28,9 +29,8 @@ module Habaki
     end
   end
 
-  # TODO: rename to Length
-  # dimension in px, pt etc
-  class Dimension < Value
+  # <length> value type in px, pt etc
+  class Length < Value
     # @return [Symbol]
     attr_accessor :unit
 
@@ -93,7 +93,7 @@ module Habaki
 
     # @api private
     # @return [void]
-    def read(val)
+    def read_from_katana(val)
       @data = val.value
       @unit = val.unit
       @unit = nil if @unit == :dimension
@@ -106,6 +106,7 @@ module Habaki
     end
   end
 
+  # <angle> value type in deg, rad
   class Angle < Value
     # @return [Symbol]
     attr_accessor :unit
@@ -115,61 +116,67 @@ module Habaki
       @unit = unit
     end
 
-    # @api private
-    # @return [void]
-    def read(val)
-      @data = val.value
-      @unit = val.unit
-      @unit = nil if @unit == :dimension
-    end
-
-    # @api private
     # @return [String]
     def string(indent = 0)
       @unit ? "#{data_i_or_f}#{@unit}" : @data
     end
+
+    # @api private
+    # @return [void]
+    def read_from_katana(val)
+      @data = val.value
+      @unit = val.unit
+      @unit = nil if @unit == :dimension
+    end
   end
 
+  # <percentage> value type
   class Percentage < Value
     # @return [Float]
     def to_f
       @data
     end
 
-    # @api private
     # @return [String]
     def string(indent = 0)
       "#{data_i_or_f}%"
     end
   end
 
+  # <number> or <integer> value type
   class Number < Value
     # @return [Float]
     def to_f
       @data
     end
 
-    # @api private
+    def to_i
+      to_f.to_i
+    end
+
     # @return [String]
     def string(indent = 0)
       "#{data_i_or_f}"
     end
   end
 
+  # <ident> value type
   class Ident < Value
   end
 
+  # <string> value type
   class String < Value
-    # @api private
     # @return [String]
     def string(indent = 0)
       "'#{@data}'"
     end
   end
 
+  # operator , or /
   class Operator < Value
   end
 
+  # <hex-color> value type
   class HexColor < Value
     # @api private
     # @return [String]
@@ -182,24 +189,24 @@ module Habaki
     # @return [Values]
     attr_accessor :args
 
-    # @api private
-    # @param [Katana::Value] val
-    # @return [void]
-    def read(val)
-      @data = val.value.name.sub("(", "")
-      @args = Values.new
-      if val.value.args
-        @args = Values.read(val.value.args)
-      end
-    end
-
-    # @api private
     # @return [String]
     def string(indent = 0)
       "#{@data}(#{@args.string})"
     end
+
+    # @api private
+    # @param [Katana::Value] val
+    # @return [void]
+    def read_from_katana(val)
+      @data = val.value.name.sub("(", "")
+      @args = Values.new
+      if val.value.args
+        @args = Values.read_from_katana(val.value.args)
+      end
+    end
   end
 
+  # <url>/<uri> value type
   class Url < Value
     # is url of data type ?
     # @return [Boolean]
@@ -212,7 +219,6 @@ module Habaki
       @data
     end
 
-    # @api private
     # @return [String]
     def string(indent = 0)
       "url(#{@data.include?(" ") ? "\"#{@data}\"" : @data})"
@@ -220,87 +226,5 @@ module Habaki
   end
 
   class UnicodeRange < Value
-  end
-
-  # Array of {Values}
-  class Values < NodeArray
-    # traverse values with optional class type
-    # @param [Class] klass
-    # @return [void]
-    def each_value(klass = nil, &block)
-      each do |value|
-        block.call value if !klass || value.is_a?(klass)
-      end
-    end
-
-    # remove value taking care of operator in list
-    # @param [Value] value
-    # @return [void]
-    def remove_value(value)
-      idx = index(value)
-      prev_val = at(idx - 1)
-      next_val = at(idx + 1)
-      if prev_val&.is_a?(Operator)
-        delete(prev_val)
-      elsif next_val&.is_a?(Operator)
-        delete(next_val)
-      end
-      delete(value)
-    end
-
-    # @api private
-    # @param [Katana::Array<Katana::Value>] vals
-    # @return [void]
-    def read(vals)
-      vals.each do |val|
-        push read_from_unit(val)
-      end
-    end
-
-    # @api private
-    # @return [String]
-    def string(indent = 0)
-      str = ""
-      each_cons(2) do |val|
-        str += val[0].string
-        str += val[1].is_a?(Operator) || val[0].is_a?(Operator) ? "" : " "
-      end
-      str += last.string if last
-      str
-    end
-
-    private
-
-    def read_from_unit(val)
-      case val.unit
-      when :px, :pt, :ex, :em, :mm, :cm, :in, :pc, :rem, :ch, :turn,
-        :vw, :vh, :vmin, :vmax, :dppx, :dpi, :dpcm, :fr, :dimension
-        Dimension.read(val)
-      when :deg, :rad, :grad
-        Angle.read(val)
-      when :percentage
-        Percentage.read(val)
-      when :number
-        Number.read(val)
-      when :ident
-        Ident.read(val)
-      when :string
-        String.read(val)
-      when :parser_hexcolor
-        HexColor.read(val)
-      when :parser_function
-        Function.read(val)
-      when :parser_operator
-        Operator.read(val)
-      when :uri
-        Url.read(val)
-      when :unicode_range
-        UnicodeRange.read(val)
-      else
-        # fallback
-        Value.read(val)
-      end
-    end
-
   end
 end

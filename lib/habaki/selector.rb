@@ -8,7 +8,7 @@ module Habaki
       @sub_selectors = []
     end
 
-    # does element match with this selector ?
+    # does selector match {Visitor::Element} ?
     # @param [Visitor::Element] element
     # @return [Boolean]
     def match?(element)
@@ -57,15 +57,15 @@ module Habaki
       true
     end
 
-    # @api private
-    # @param [Katana::Selector] sel
-    def read(sel)
-      @sub_selectors = rec_sub_sel(sel)
+    # @return [String]
+    def string(indent = 0)
+      @sub_selectors.map(&:string).join("")
     end
 
     # @api private
-    def string(indent = 0)
-      @sub_selectors.map(&:string).join("")
+    # @param [Katana::Selector] sel
+    def read_from_katana(sel)
+      @sub_selectors = rec_sub_sel(sel)
     end
 
     private
@@ -76,7 +76,7 @@ module Habaki
       cur_sel = sel
       cur_sub_sel = SubSelectors.new
       while cur_sel do
-        cur_sub_sel << SubSelector.read(cur_sel)
+        cur_sub_sel << SubSelector.read_from_katana(cur_sel)
         break if cur_sel.relation != :sub_selector || !cur_sel.tag_history
         cur_sel = cur_sel.tag_history
       end

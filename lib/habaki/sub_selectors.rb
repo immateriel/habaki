@@ -4,7 +4,7 @@ module Habaki
     # @return [Symbol]
     attr_accessor :relation
 
-    # does element match with this sub selector ?
+    # does selector match {Visitor::Element} ?
     # @param [Visitor::Element] element
     # @return [Boolean]
     def match?(element)

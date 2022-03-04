@@ -18,11 +18,11 @@ module Habaki
 
       out = Katana.parse_selectors(data)
       if out.selectors
-        read(out.selectors)
+        read_from_katana(out.selectors)
       end
     end
 
-    # does element match with on of these selectors ?
+    # does one of theses selectors match {Visitor::Element} ?
     # @param [Visitor::Element] element
     # @return [Boolean]
     def match?(element)
@@ -32,17 +32,17 @@ module Habaki
       false
     end
 
-    # @api private
-    # @param [Katana::Array<Katana::Selector>] sels
-    def read(sels)
-      sels.each do |sel|
-        push Selector.read(sel)
-      end
+    # @return [String]
+    def string(indent = 0)
+      map(&:string).join(",")
     end
 
     # @api private
-    def string(indent = 0)
-      map(&:string).join(",")
+    # @param [Katana::Array<Katana::Selector>] sels
+    def read_from_katana(sels)
+      sels.each do |sel|
+        push Selector.read_from_katana(sel)
+      end
     end
   end
 end

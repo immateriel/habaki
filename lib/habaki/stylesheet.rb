@@ -104,13 +104,6 @@ module Habaki
       @rules.reject! { |rule| rule.rules&.empty? || false }
     end
 
-    # add rule by selectors string
-    # @param [String] selector_str
-    # @return [StyleRule]
-    def add_by_selectors(selector_str)
-      @rules.add_by_selectors(selector_str)
-    end
-
     # instanciate and parse from data
     # @param [String] data
     # @return [Stylesheet]
@@ -133,7 +126,7 @@ module Habaki
     def parse!(data)
       return unless data
 
-      read(Katana.parse(data))
+      read_from_katana(Katana.parse(data))
     end
 
     # parse from file and append to current stylesheet
@@ -143,12 +136,17 @@ module Habaki
       parse(File.read(filename))
     end
 
+    # @return [String]
+    def string(indent = 0)
+      @rules.string(indent)
+    end
+
     # @api private
     # @param [Katana::Output] out
     # @return [void]
-    def read(out)
-      @rules.read(out.stylesheet.imports)
-      @rules.read(out.stylesheet.rules)
+    def read_from_katana(out)
+      @rules.read_from_katana(out.stylesheet.imports)
+      @rules.read_from_katana(out.stylesheet.rules)
 
       # keep reference to this stylesheet in each rule
       each_rule do |rule|
@@ -156,14 +154,8 @@ module Habaki
       end
 
       out.errors.each do |err|
-        @errors << Error.read(err)
+        @errors << Error.read_from_katana(err)
       end
-    end
-
-    # @api private
-    # @return [String]
-    def string(indent = 0)
-      @rules.string(indent)
     end
   end
 end

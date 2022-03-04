@@ -10,16 +10,16 @@ module Habaki
       @prefix = prefix
     end
 
-    # @api private
-    # @param [Katana::QualifiedName] tag
-    def read(tag)
-      @local = tag.local
-      @prefix = tag.prefix
+    # @return [String]
+    def string(indent = 0)
+      @prefix ? "#{@prefix}|#{@local}" : @local
     end
 
     # @api private
-    def string(indent = 0)
-      @prefix ? "#{@prefix}|#{@local}" : @local
+    # @param [Katana::QualifiedName] tag
+    def read_from_katana(tag)
+      @local = tag.local
+      @prefix = tag.prefix
     end
   end
 end

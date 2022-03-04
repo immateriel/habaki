@@ -28,20 +28,19 @@ module Habaki
       Habaki::FormalSyntax::Matcher.new(self).match?
     end
 
-    # @api private
-    # @param [Katana::Declaration] decl
-    # @return [void]
-    def read(decl)
-      @property = decl.property.downcase if decl.property
-      @important = decl.important
-      @values = Values.read(decl.values)
-      @position = SourcePosition.new(decl.position.line, decl.position.column)
-    end
-
-    # @api private
     # @return [String]
     def string(indent = 0)
       "#{" " * indent}#{@property}: #{@values.string}#{important_string}"
+    end
+
+    # @api private
+    # @param [Katana::Declaration] decl
+    # @return [void]
+    def read_from_katana(decl)
+      @property = decl.property.downcase if decl.property
+      @important = decl.important
+      @values = Values.read_from_katana(decl.values)
+      @position = SourcePosition.new(decl.position.line, decl.position.column)
     end
 
     private

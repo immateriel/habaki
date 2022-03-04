@@ -312,7 +312,7 @@ module Habaki
 
       out = Katana.parse_inline(data)
       if out.declarations
-        read(out.declarations)
+        read_from_katana(out.declarations)
       end
     end
 
@@ -342,16 +342,6 @@ module Habaki
       decl
     end
 
-    # @api private
-    # @param [Katana::Array<Katana::Declaration>] decls
-    # @return [void]
-    def read(decls)
-      decls.each do |decl|
-        push Declaration.read(decl)
-      end
-    end
-
-    # @api private
     # @return [String]
     def string(indent = 0)
       str = ""
@@ -361,6 +351,15 @@ module Habaki
         str += indent > 0 ? ";\n" : "; "
       }
       str
+    end
+
+    # @api private
+    # @param [Katana::Array<Katana::Declaration>] decls
+    # @return [void]
+    def read_from_katana(decls)
+      decls.each do |decl|
+        push Declaration.read_from_katana(decl)
+      end
     end
   end
 end

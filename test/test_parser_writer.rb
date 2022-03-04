@@ -61,7 +61,7 @@ class TestParserWriter < Minitest::Test
     a {color: blue; text-decoration: underline;}
     }
     stylesheet = Habaki::Stylesheet.parse(css)
-    stylesheet.rules.first.declarations.add_by_property("font-size", Habaki::Dimension.new(12, :pt))
+    stylesheet.rules.first.declarations.add_by_property("font-size", Habaki::Length.new(12, :pt))
     # arbitrary value type
     stylesheet.rules.first.declarations.add_by_property("line-height", Habaki::Value.new("14pt"))
     assert_equal 4, stylesheet.rules.first.declarations.length

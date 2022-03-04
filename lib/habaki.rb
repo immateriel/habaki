@@ -3,7 +3,9 @@ require 'katana/katana'
 require 'habaki/formal_syntax'
 
 require 'habaki/node'
+
 require 'habaki/value'
+require 'habaki/values'
 
 require 'habaki/declaration'
 require 'habaki/declarations'

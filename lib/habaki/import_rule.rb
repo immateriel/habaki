@@ -17,18 +17,17 @@ module Habaki
       Stylesheet.parse_file(base_dir+@href)
     end
 
-    # @api private
-    # @param [Katana::ImportRule] rule
-    # @return [void]
-    def read(rule)
-      @href = rule.href
-      @medias = MediaQueries.read(rule.medias)
-    end
-
-    # @api private
     # @return [String]
     def string(indent = 0)
       "@import \"#{@href}\" #{@medias.string};"
+    end
+
+    # @api private
+    # @param [Katana::ImportRule] rule
+    # @return [void]
+    def read_from_katana(rule)
+      @href = rule.href
+      @medias = MediaQueries.read_from_katana(rule.medias)
     end
   end
 end
