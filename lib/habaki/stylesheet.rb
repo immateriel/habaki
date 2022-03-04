@@ -33,14 +33,25 @@ module Habaki
       end
     end
 
+    # rules matching with {Visitor::Element} enumerator
+    # @param [Visitor::Element] element
+    # @return [Enumerator<Rule>]
+    def matching_rules(element)
+      Enumerator.new do |matching_rules|
+        each_rules do |rules|
+          rules.each_matching_rule(element) do |matching_rule|
+            matching_rules << matching_rule
+          end
+        end
+      end
+    end
+
     # traverse rules matching with {Visitor::Element}
     # @param [Visitor::Element] element
     # @return [Array<Rule>]
     def each_matching_rule(element, &block)
-      each_rules do |rules|
-        rules.each_matching_rule(element) do |matching_rule|
-          block.call matching_rule
-        end
+      matching_rules(element).each do |matching_rule|
+        block.call matching_rule
       end
     end
 
@@ -48,11 +59,7 @@ module Habaki
     # @param [Visitor::Element] element
     # @return [Array<Rule>]
     def find_matching_rules(element)
-      matching_rules = []
-      each_matching_rule(element) do |matching_rule|
-        matching_rules << matching_rule
-      end
-      matching_rules
+      matching_rules(element).to_a
     end
 
     # traverse matching declarations for {Visitor::Element}
@@ -88,13 +95,20 @@ module Habaki
 
     # remove rules with no declaration
     def compact!
-      @rules.reject!{|rule| rule.declarations&.empty? || false}
+      @rules.reject! { |rule| rule.declarations&.empty? || false }
       @rules.each do |rule|
         if rule.rules
-          rule.rules.reject!{|emb_rule| emb_rule.declarations&.empty? || false}
+          rule.rules.reject! { |emb_rule| emb_rule.declarations&.empty? || false }
         end
       end
-      @rules.reject!{|rule| rule.rules&.empty? || false}
+      @rules.reject! { |rule| rule.rules&.empty? || false }
+    end
+
+    # add rule by selectors string
+    # @param [String] selector_str
+    # @return [StyleRule]
+    def add_by_selectors(selector_str)
+      @rules.add_by_selectors(selector_str)
     end
 
     # instanciate and parse from data

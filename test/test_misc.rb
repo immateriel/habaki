@@ -116,6 +116,34 @@ line-height: 18px; font-family: Police,sans-serif; }.gsub(/\n/, " "))
     #                          "background-image: url(starsolid.gif); background-repeat: repeat-y; background-attachment: fixed; background-color: #99f; ")
   end
 
+  def test_margin_shorthand
+    assert_shorthand_expanded("margin: 1px; ",
+                              "margin-top: 1px; margin-right: 1px; margin-bottom: 1px; margin-left: 1px; ")
+
+    assert_shorthand_created( "margin-top: 1px; margin-right: 1px; margin-bottom: 1px; margin-left: 1px; ",
+                               "margin: 1px 1px 1px 1px; ")
+
+    assert_shorthand_expanded("margin: 1px 2px; ",
+                              "margin-top: 1px; margin-right: 2px; margin-bottom: 1px; margin-left: 2px; ")
+
+    assert_shorthand_created( "margin-top: 1px; margin-right: 2px; margin-bottom: 1px; margin-left: 2px;",
+                              "margin: 1px 2px 1px 2px; ")
+
+    assert_shorthand_expanded("margin: 1px 2px 3px; ",
+                              "margin-top: 1px; margin-right: 2px; margin-bottom: 3px; margin-left: 2px; ")
+
+    assert_shorthand_created( "margin-top: 1px; margin-right: 2px; margin-bottom: 3px; margin-left: 2px; ",
+                              "margin: 1px 2px 3px 2px; ")
+
+    assert_shorthand_expanded("margin: 1px 2px 3px 4px; ",
+                              "margin-top: 1px; margin-right: 2px; margin-bottom: 3px; margin-left: 4px; ")
+
+    assert_shorthand_created("margin-top: 1px; margin-right: 2px; margin-bottom: 3px; margin-left: 4px; ",
+                             "margin: 1px 2px 3px 4px; ")
+
+  end
+
+
   private
 
   def assert_decl_match(decl, debug = false)

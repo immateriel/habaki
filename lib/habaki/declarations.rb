@@ -1,7 +1,6 @@
 module Habaki
   # partially adapted from css_parser https://github.com/premailer/css_parser/blob/master/lib/css_parser/rule_set.rb
   module Shorthand
-    BORDER_STYLE_PROPERTIES = %w[border-width border-style border-color].freeze
     BORDER_PROPERTIES = %w[border border-left border-right border-top border-bottom].freeze
     BORDER_STYLES = %[none hidden dotted dashed solid double groove ridge inset outset].freeze
 
@@ -88,9 +87,12 @@ module Habaki
 
         replacement = [top, right, bottom, left].zip(values).to_h
 
+        position = find_by_property(property)&.position
         remove_by_property(property)
+
         replacement.each do |short_prop, value|
-          add_by_property(short_prop, value)
+          decl = add_by_property(short_prop, value)
+          decl.position = position
         end
       end
     end
@@ -123,7 +125,8 @@ module Habaki
       end
 
       props.each do |k, v|
-        add_by_property(k, Values.new([v].flatten))
+        new_decl = add_by_property(k, Values.new([v].flatten))
+        new_decl.position = declaration.position
       end
 
       remove_by_property(property)
@@ -161,12 +164,13 @@ module Habaki
 
       return if new_values.empty?
 
+      first_position = find_by_property(properties_to_delete.first)&.position
       properties_to_delete.each do |property|
         remove_by_property(property)
       end
 
-      #puts "SHORTHAND #{shorthand_property} : #{self.string}"
-      add_by_property(shorthand_property, new_values)
+      new_decl = add_by_property(shorthand_property, new_values)
+      new_decl.position = first_position
     end
 
     # Looks for long format CSS background properties (e.g. <tt>background-color</tt>) and
@@ -191,7 +195,8 @@ module Habaki
     #
     # TODO: this is extremely similar to create_background_shorthand! and should be combined
     def create_border_shorthand! # :nodoc:
-      values = Values.new(BORDER_STYLE_PROPERTIES.map do |property|
+      border_style_properties = %w[border-width border-style border-color]
+      values = Values.new(border_style_properties.map do |property|
         next unless (declaration = find_by_property(property))
         next if declaration.important
         # can't merge if any value contains a space (i.e. has multiple values)
@@ -201,39 +206,15 @@ module Habaki
         declaration.value
       end.compact)
 
-      return if values.size != BORDER_STYLE_PROPERTIES.size
+      return if values.length != border_style_properties.length
 
-      BORDER_STYLE_PROPERTIES.each do |property|
+      first_position = find_by_property(border_style_properties.first)&.position
+      border_style_properties.each do |property|
         remove_by_property(property)
       end
 
-      add_by_property('border', values)
-    end
-
-    # Looks for long format CSS dimensional properties (margin, padding, border-color, border-style and border-width)
-    # and converts them into shorthand CSS properties.
-    def create_dimensions_shorthand! # :nodoc:
-      return if length < NUMBER_OF_DIMENSIONS
-
-      DIMENSIONS.each do |property, dimensions|
-        values = [:top, :right, :bottom, :left].each_with_index.with_object({}) do |(side, index), result|
-          next unless (declaration = find_by_property(dimensions[index]))
-
-          remove_by_property(dimensions[index])
-          result[side] = declaration.value
-        end
-
-        # All four dimensions must be present
-        next if values.size != dimensions.size
-
-        new_values = Values.new(values.values_at(*compute_dimensions_shorthand(values))) #.join(' ').strip
-        unless new_values.empty?
-          add_by_property(property, new_values)
-        end
-
-        # Delete the longhand values
-        dimensions.each { |d| remove_by_property(d) }
-      end
+      new_decl = add_by_property('border', values)
+      new_decl.position = first_position
     end
 
     # Looks for long format CSS font properties (e.g. <tt>font-weight</tt>) and
@@ -252,8 +233,12 @@ module Habaki
         values += decl.values
       end
 
-      properties.each { |p| remove_by_property(p) }
-      add_by_property("font", values)
+      first_position = find_by_property(properties.first)&.position
+      properties.each do |property|
+        remove_by_property(property)
+      end
+      new_decl = add_by_property("font", values)
+      new_decl.position = first_position
     end
 
     # Looks for long format CSS list-style properties (e.g. <tt>list-style-type</tt>) and
@@ -262,6 +247,34 @@ module Habaki
     # Leaves properties declared !important alone.
     def create_list_style_shorthand! # :nodoc:
       create_shorthand_properties! 'list-style'
+    end
+
+    # Looks for long format CSS dimensional properties (margin, padding, border-color, border-style and border-width)
+    # and converts them into shorthand CSS properties.
+    def create_dimensions_shorthand! # :nodoc:
+      return if length < NUMBER_OF_DIMENSIONS
+
+      DIMENSIONS.each do |property, dimensions|
+        values = [:top, :right, :bottom, :left].each_with_index.with_object({}) do |(side, index), result|
+          next unless (declaration = find_by_property(dimensions[index]))
+          result[side] = declaration.value
+        end
+
+        # All four dimensions must be present
+        next if values.length != dimensions.length
+
+        new_values = Values.new(values.values_at(*compute_dimensions_shorthand(values)))
+        unless new_values.empty?
+          first_position = find_by_property(dimensions.first)&.position
+          decl = add_by_property(property, new_values)
+          decl.position = first_position
+        end
+
+        # Delete the longhand values
+        dimensions.each do |prop|
+          remove_by_property(prop)
+        end
+      end
     end
 
     def compute_dimensions_shorthand(values)
@@ -321,11 +334,12 @@ module Habaki
     # @param [String] property
     # @param [Value, Values, Array<Value>] value
     # @param [Boolean] important
-    # @return [void]
+    # @return [Declaration]
     def add_by_property(property, value, important = false)
       decl = Habaki::Declaration.new(property, important)
       decl.values = Values.new([value].flatten)
       push decl
+      decl
     end
 
     # @api private

@@ -68,8 +68,6 @@ module Habaki
         else
           false
         end
-      else
-        nil
       end
     end
 

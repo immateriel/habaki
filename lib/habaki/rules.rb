@@ -1,38 +1,69 @@
 module Habaki
   class Rules < NodeArray
+    # @param [Class<Rule>] klass
+    # @return [Enumerator<Rule>]
+    def enum_with_class(klass)
+      Enumerator.new do |rules|
+        each do |rule|
+          rules << rule if rule.is_a?(klass)
+        end
+      end
+    end
+
     # @return [CharsetRule, nil]
     def charset
-      select { |rule| rule.is_a?(CharsetRule) }.first
+      enum_with_class(CharsetRule).first
     end
 
-    # @return [Array<MediaRule>]
+    # @return [Enumerator<MediaRule>]
     def medias
-      select { |rule| rule.is_a?(MediaRule) }
+      enum_with_class(MediaRule)
     end
 
-    # @return [Array<SupportsRule>]
+    # @return [Enumerator<SupportsRule>]
     def supports
-      select { |rule| rule.is_a?(SupportsRule) }
+      enum_with_class(SupportsRule)
     end
 
-    # @return [Array<NamespaceRule>]
+    # @return [Enumerator<NamespaceRule>]
     def namespaces
-      select { |rule| rule.is_a?(NamespaceRule) }
+      enum_with_class(NamespaceRule)
     end
 
-    # @return [Array<FontFaceRule>]
+    # @return [Enumerator<FontFaceRule>]
     def font_faces
-      select { |rule| rule.is_a?(FontFaceRule) }
+      enum_with_class(FontFaceRule)
     end
 
-    # @return [Array<PageRule>]
+    # @return [Enumerator<PageRule>]
     def pages
-      select { |rule| rule.is_a?(PageRule) }
+      enum_with_class(PageRule)
     end
 
-    # @return [Array<StyleRule>]
+    # @return [Enumerator<StyleRule>]
     def styles
-      select { |rule| rule.is_a?(StyleRule) }
+      enum_with_class(StyleRule)
+    end
+
+    # add rule by selectors string
+    # @param [String] selector_str
+    # @return [StyleRule]
+    def add_by_selectors(selector_str)
+      rule = StyleRule.new
+      rule.selectors = Selectors.parse(selector_str)
+      push rule
+      rule
+    end
+
+    # rules matching with {Visitor::Element} enumerator
+    # @param [Visitor::Element] element
+    # @return [Enumerator<Rule>]
+    def matching_rules(element)
+      Enumerator.new do |rules|
+        each do |rule|
+          rules << rule if rule.match?(element)
+        end
+      end
     end
 
     # traverse rules matching with {Visitor::Element}
@@ -40,8 +71,8 @@ module Habaki
     # @yieldparam [Rule] rule
     # @return [void]
     def each_matching_rule(element, &block)
-      each do |rule|
-        block.call rule if rule.match?(element)
+      matching_rules(element).each do |rule|
+        block.call rule
       end
     end
 
@@ -49,11 +80,7 @@ module Habaki
     # @param [Visitor::Element] element
     # @return [Array<Rule>]
     def find_matching_rules(element)
-      matching_rules = []
-      each_matching_rule(element) do |rule|
-        matching_rules << rule
-      end
-      matching_rules
+      matching_rules(element).to_a
     end
 
     # traverse matching declarations for {Visitor::Element}
