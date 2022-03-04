@@ -33,15 +33,24 @@ module Habaki
       end
     end
 
+    # traverse rules matching with {Visitor::Element}
+    # @param [Visitor::Element] element
+    # @return [Array<Rule>]
+    def each_matching_rule(element, &block)
+      each_rules do |rules|
+        rules.each_matching_rule(element) do |matching_rule|
+          block.call matching_rule
+        end
+      end
+    end
+
     # get rules matching with {Visitor::Element}
     # @param [Visitor::Element] element
     # @return [Array<Rule>]
     def find_matching_rules(element)
       matching_rules = []
-      each_rules do |rules|
-        rules.each_matching_rule(element) do |matching_rule|
-          matching_rules << matching_rule
-        end
+      each_matching_rule(element) do |matching_rule|
+        matching_rules << matching_rule
       end
       matching_rules
     end
@@ -79,13 +88,13 @@ module Habaki
 
     # remove rules with no declaration
     def compact!
-      @rules.reject!{|rule| rule.declarations && rule.declarations.length == 0}
+      @rules.reject!{|rule| rule.declarations&.empty? || false}
       @rules.each do |rule|
         if rule.rules
-          rule.rules.reject!{|emb_rule| emb_rule.declarations && emb_rule.declarations.length == 0}
+          rule.rules.reject!{|emb_rule| emb_rule.declarations&.empty? || false}
         end
       end
-      @rules.reject!{|rule| rule.rules && rule.rules.length == 0}
+      @rules.reject!{|rule| rule.rules&.empty? || false}
     end
 
     # instanciate and parse from data

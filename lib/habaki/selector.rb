@@ -12,51 +12,49 @@ module Habaki
     # @param [Visitor::Element] element
     # @return [Boolean]
     def match?(element)
-      return false if @sub_selectors.length == 0
+      return false if @sub_selectors.empty?
 
       rev_sub_selectors = @sub_selectors.reverse
-      match = true
 
       current_sub_selector = rev_sub_selectors.first
-      match &&= current_sub_selector.match?(element)
+      return false unless current_sub_selector.match?(element)
 
-      if rev_sub_selectors.length > 1 && match
-        parent_element = element.parent
-        previous_element = element.previous
+      return true if @sub_selectors.length == 1
 
-        rev_sub_selectors[1..-1].each do |sub_selector|
-          case current_sub_selector.relation
-          when :descendant
-            sub_match = false
-            while parent_element do
-              sub_match = sub_selector.match?(parent_element)
-              parent_element = parent_element.parent
-              break if sub_match
-            end
-            match &&= sub_match
-          when :child
-            if parent_element
-              sub_match = sub_selector.match?(parent_element)
-              match &&= sub_match
-            end
-          when :direct_adjacent
-            if previous_element
-              sub_match = sub_selector.match?(previous_element)
-              match &&= sub_match
-            end
-          when :indirect_adjacent
-            sub_match = false
-            while previous_element do
-              sub_match = sub_selector.match?(previous_element)
-              previous_element = previous_element.previous
-              break if sub_match
-            end
-            match &&= sub_match
+      parent_element = element.parent
+      previous_element = element.previous
+
+      rev_sub_selectors[1..-1].each do |sub_selector|
+        case current_sub_selector.relation
+        when :descendant
+          sub_match = false
+          while parent_element do
+            sub_match = sub_selector.match?(parent_element)
+            parent_element = parent_element.parent
+            break if sub_match
           end
-          current_sub_selector = sub_selector
+          return false unless sub_match
+        when :child
+          return false unless parent_element
+          return false unless sub_selector.match?(parent_element)
+        when :direct_adjacent
+          return false unless previous_element
+          return false unless sub_selector.match?(previous_element)
+        when :indirect_adjacent
+          sub_match = false
+          while previous_element do
+            sub_match = sub_selector.match?(previous_element)
+            previous_element = previous_element.previous
+            break if sub_match
+          end
+          return false unless sub_match
+        else
+          # STDERR.puts "unknown relation #{current_sub_selector.relation}"
+          return false
         end
+        current_sub_selector = sub_selector
       end
-      match
+      true
     end
 
     # @api private

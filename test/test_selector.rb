@@ -11,7 +11,7 @@ class TestSelector < Minitest::Test
     a {color: blue;}
     }
     stylesheet = Habaki::Stylesheet.parse(css)
-    selectors = stylesheet.rules.first.selectors.first.sub_selectors.first
+    selectors = stylesheet.rules.first.selectors.first.sub_selectors.first.first
     assert selectors.tag_match?("a")
     refute selectors.tag_match?("h1")
   end
@@ -21,7 +21,7 @@ class TestSelector < Minitest::Test
     .l {color: blue;}
     }
     stylesheet = Habaki::Stylesheet.parse(css)
-    selector = stylesheet.rules.first.selectors.first.sub_selectors.first
+    selector = stylesheet.rules.first.selectors.first.sub_selectors.first.first
     assert selector.class_match?("l")
     refute selector.class_match?("ll")
   end
@@ -31,8 +31,10 @@ class TestSelector < Minitest::Test
     a.l {color: blue;}
     }
     stylesheet = Habaki::Stylesheet.parse(css)
-    selector = stylesheet.rules.first.selectors.first.sub_selectors.first
-    assert selector.tag_match?("a") && selector.class_match?("l")
+    selector = stylesheet.rules.first.selectors.first.sub_selectors.first.first
+    assert selector.tag_match?("a")
+    selector = stylesheet.rules.first.selectors.first.sub_selectors.first.last
+    assert selector.class_match?("l")
   end
 
   def test_id
@@ -40,7 +42,7 @@ class TestSelector < Minitest::Test
     #l {color: blue;}
     }
     stylesheet = Habaki::Stylesheet.parse(css)
-    selector = stylesheet.rules.first.selectors.first.sub_selectors.first
+    selector = stylesheet.rules.first.selectors.first.sub_selectors.first.first
     assert selector.id_match?("l")
     refute selector.id_match?("ll")
   end

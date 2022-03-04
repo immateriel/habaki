@@ -21,7 +21,7 @@ module Habaki
     # @api private
     # @return [String]
     def string(indent = 0)
-      "(#{@feature}#{@values.length > 0 ? ": #{@values.string}" : ""})"
+      "(#{@feature}#{@values.any? ? ": #{@values.string}" : ""})"
     end
   end
 
@@ -61,7 +61,7 @@ module Habaki
     # @return [String]
     def string(indent = 0)
       str = (@restrictor != :none ? @restrictor.to_s + " " : "") + (@type ? @type : "")
-      if @expressions.length > 0
+      if @expressions.any?
         @expressions.each do |exp|
           str += " and " if str != ""
           str += exp.string

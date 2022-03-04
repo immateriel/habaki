@@ -3,7 +3,7 @@ require "habaki"
 filename = ARGV[0]
 
 stylesheet = Habaki::Stylesheet.parse(File.read(filename))
-if stylesheet.errors.length > 0
+if stylesheet.errors.any?
   stylesheet.errors.each do |error|
     STDERR.puts "ERROR(#{error.line}:#{error.column}): #{error.message}"
   end

@@ -73,6 +73,51 @@ module Habaki
       end
     end
 
+    # pseudo class match
+    # @return [Boolean]
+    def pseudo_match?(element)
+      case @pseudo
+      when :root
+        return false unless element.tag_name == "html"
+      when :empty
+        return false unless element.children.empty?
+      when :first_child
+        parent_element = element.parent
+        return false unless parent_element&.children.first == element
+      when :last_child
+        parent_element = element.parent
+        return false unless parent_element&.children.last == element
+      when :only_child
+        parent_element = element.parent
+        return false unless parent_element&.children.length == 1 && parent_element&.children.first == element
+      when :nth_child
+        parent_element = element.parent
+        arg = @argument.split("+")
+        case arg[0]
+        when "odd"
+          return false unless ((parent_element&.children.index(element) + 1) % 2 == 1)
+        when "even"
+          return false unless ((parent_element&.children.index(element) + 1) % 2 == 0)
+        when /^\d+$/
+          return false unless parent_element&.children[@argument.to_i - 1] == element
+        when "n"
+          return false unless ((parent_element&.children.index(element) + 1) % 1) == (arg[1]&.to_i || 0)
+        when /n$/
+          return false unless ((parent_element&.children.index(element) + 1) % arg[0].sub("n", "").to_i) == (arg[1]&.to_i || 0)
+        else
+          # TODO "of type"
+          return false
+        end
+      when :not
+        return false unless !@selectors.match?(element)
+      when :not_parsed, :unknown
+      else
+        # STDERR.puts "unsupported pseudo #{sub_sel.pseudo}"
+        return false
+      end
+      true
+    end
+
     # @api private
     # @param [Katana::Selector] sel
     def read(sel)
