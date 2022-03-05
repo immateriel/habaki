@@ -39,7 +39,9 @@ module Habaki
       nil
     end
 
-    def match?(element)
+    # @param [Visitor::Element] element
+    # @return [Boolean]
+    def element_match?(element)
       false
     end
   end

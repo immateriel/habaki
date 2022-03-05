@@ -22,14 +22,14 @@ stylesheet.has_selector?("a")
 # => false
 
 # remove a declaration
-declarations = stylesheet.find_declarations_by_selector("p").first
-declarations.remove_by_property("font-size")
+rule = stylesheet.find_by_selector("p").first
+rule.declarations.remove_by_property("font-size")
 stylesheet.to_s
 # => "body {color: grey; }\np {}"
 
 # add a declaration
-declarations = stylesheet.find_declarations_by_selector("body").first
-declarations.add_by_property("font-size", Habaki::Length.new(0.9, :em))
+rule = stylesheet.find_by_selector("body").first
+rule.declarations.add_by_property("font-size", Habaki::Length.new(0.9, :em))
 stylesheet.to_s
 # => "body {color: grey; font-size: 0.9em; }\np {}"
 
@@ -39,7 +39,7 @@ stylesheet.to_s
 # => "body {color: grey; font-size: 0.9em; }"
 
 # add rule
-rule = stylesheet.rules.add_by_selectors("p")
+rule = stylesheet.rules.add_by_selector("p")
 # => "body {color: #444444; font-size: 0.9em; }\np {}"
 decl = rule.declarations.add_by_property("text-indent", Habaki::Length.new(1.4, :em))
 stylesheet.to_s
@@ -55,11 +55,11 @@ decl.check
 # => false
 
 # advanced check
-matcher = Habaki::FormalSyntax::Matcher.new(Habaki::Declarations.parse("border: 1px solid red;").first)
+matcher = Habaki::FormalSyntax::Matcher.new(Habaki::Declarations.parse("border: 1px solid #ff000;").first)
 matcher.match
 # => true
 matcher.matches.map(&:to_s)
-# => ["border: <type length> => <Habaki::Length 1px>", "border: <ident solid> => <Habaki::Ident solid>", "border: <ident red> => <Habaki::Ident red>"]
+# => ["border: 1px => <length>", "border: solid => solid", "border: #ff0000 => <hex-color>"]
 
 # parse declarations only
 decls = Habaki::Declarations.parse("font-size: 1em; color: black;")
@@ -90,7 +90,7 @@ rules = stylesheet.find_matching_rules(Habaki::Visitor::NokogiriElement.new(doc.
 rules.length
 # => 1
 rules.first.to_s
-# => "body {color: #444444; }"
+# => "p span {color: black; }"
 
 rules = stylesheet.find_matching_rules(Habaki::Visitor::NokogiriElement.new(doc.root.search("//span")[1]))
 rules.length
@@ -100,7 +100,8 @@ rules.map(&:to_s)
 ```
 
 # TODO
-- attribute match type (case sensitive, insensitive)
-- implement @keyframes
-- implement :host()
-- parse comments
+- writer: improve output indentation
+- parser: attribute match type (case sensitive, insensitive)
+- parser: implement @keyframes
+- parser: implement :host()
+- parser: parse comments

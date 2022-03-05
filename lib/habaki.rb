@@ -11,12 +11,16 @@ require 'habaki/declaration'
 require 'habaki/declarations'
 
 require 'habaki/qualified_name'
+
 require 'habaki/visitor/element'
 require 'habaki/visitor/nokogiri_element'
+
 require 'habaki/sub_selector'
 require 'habaki/sub_selectors'
 require 'habaki/selector'
 require 'habaki/selectors'
+
+require 'habaki/visitor/media'
 
 require 'habaki/rule'
 require 'habaki/charset_rule'

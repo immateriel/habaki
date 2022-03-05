@@ -25,9 +25,9 @@ module Habaki
     # does one of theses selectors match {Visitor::Element} ?
     # @param [Visitor::Element] element
     # @return [Boolean]
-    def match?(element)
+    def element_match?(element)
       each do |selector|
-        return true if selector.match?(element)
+        return true if selector.element_match?(element)
       end
       false
     end

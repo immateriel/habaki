@@ -320,7 +320,7 @@ module Habaki
     # @param [String] property
     # @return [Declaration]
     def find_by_property(property)
-      select { |decl| decl.property == property }.first
+      find { |decl| decl.property == property }
     end
 
     # Remove declaration with property
@@ -335,11 +335,25 @@ module Habaki
     # @param [Value, Values, Array<Value>] value
     # @param [Boolean] important
     # @return [Declaration]
-    def add_by_property(property, value, important = false)
+    def add_by_property(property, value = [], important = false)
       decl = Habaki::Declaration.new(property, important)
       decl.values = Values.new([value].flatten)
       push decl
       decl
+    end
+
+    # at position or shortcut for find_by_property
+    # @param [Integer, String] prop index or property name
+    # @return [Declaration, nil]
+    def [](prop)
+      case prop
+      when Integer
+        at(prop)
+      when ::String
+        find_by_property(prop)
+      else
+        raise TypeError, "invalid type #{prop.class}"
+      end
     end
 
     # @return [String]

@@ -480,8 +480,11 @@ VALUE rb_selector_data_value(VALUE self)
 {
   KatanaSelectorRareData *c_sel;
   Data_Get_Struct(self, KatanaSelectorRareData, c_sel);
-  if (c_sel->value)
-    return rb_str_new2(c_sel->value);
+  if (c_sel->value) {
+    // force UTF-8
+    return rb_enc_associate_index(rb_str_new2(c_sel->value), rb_enc_find_index("UTF-8"));
+  }
+
   else
     return Qnil;
 }

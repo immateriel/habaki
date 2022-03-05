@@ -150,8 +150,9 @@ module Habaki
       @data
     end
 
+    # @return [Integer]
     def to_i
-      to_f.to_i
+      @data.to_i
     end
 
     # @return [String]

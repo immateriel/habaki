@@ -1,11 +1,36 @@
 module Habaki
   class MediaQueryExpression < Node
+    # @return [String]
     attr_accessor :feature
     # @return [Values]
     attr_accessor :values
 
     def initialize
       @values = Values.new
+    end
+
+    # @return [Value]
+    def value
+      @values.first
+    end
+
+    # @param [Visitor::Media] media
+    # @return [Boolean]
+    def media_match?(media)
+      case @feature
+      when "min-width"
+        return true unless media.width
+        media.width >= value.to_px
+      when "max-width"
+        return true unless media.width
+        media.width <= value.to_px
+      when "min-height"
+        return true unless media.height
+        media.height >= value.to_px
+      when "max-height"
+        return true unless media.height
+        media.height <= value.to_px
+      end
     end
 
     # @api private
@@ -37,13 +62,25 @@ module Habaki
       @expressions = []
     end
 
-    def match_type?(mediatype = "all")
+    def media_match_type?(mediatype = "all")
+      return true unless mediatype
       case @restrictor
-      when :none
-        @type == mediatype || @type == "all"
+      when :none, :only
+        @type == mediatype || @type == "all" || !mediatype
       when :not
         @type != mediatype
+      else
+        false
       end
+    end
+
+    # @param [Visitor::Media] media
+    def media_match?(media)
+      return false unless media_match_type?(media.type)
+      @expressions.each do |exp|
+        return false unless exp.media_match?(media)
+      end
+      true
     end
 
     # @return [String]
@@ -78,6 +115,12 @@ module Habaki
       map(&:string).join(",")
     end
 
+    # @param [Visitor::Media] media
+    # @return [Boolean]
+    def media_match?(media)
+      inject(false) { |result, q| result ||= q.media_match?(media) }
+    end
+
     # @api private
     # @param [Katana::Array<Katana::MediaQuery>] meds
     # @return [void]
@@ -100,10 +143,16 @@ module Habaki
       @rules = Rules.new
     end
 
-    # does media match mediatype ?
+    # does rule media match ?
+    # @param [Visitor::Media, String, NilClass] media use String (eg: "print") to check only media type, nil to match everything, or Visitor::Media for complex query
     # @return [Boolean]
-    def match_type?(mediatype = "all")
-      @medias.first&.match_type?(mediatype)
+    def media_match?(media)
+      case media
+      when ::String, NilClass
+        @medias.media_match?(Visitor::Media.new(media))
+      else
+        @medias.media_match?(media)
+      end
     end
 
     # @return [String]

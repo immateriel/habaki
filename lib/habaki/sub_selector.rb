@@ -107,7 +107,7 @@ module Habaki
           return false
         end
       when :not
-        return false unless !@selectors.match?(element)
+        return false unless !@selectors.element_match?(element)
       when :not_parsed, :unknown
       else
         # STDERR.puts "unsupported pseudo #{sub_sel.pseudo}"

@@ -47,6 +47,19 @@ class TestSelector < Minitest::Test
     refute selector.id_match?("ll")
   end
 
+  def test_find
+    css = %{
+    @media screen {
+     a {color: blue;}
+    }
+    p {font-size: 0.9em}
+    }
+    stylesheet = Habaki::Stylesheet.parse(css)
+    assert_equal 1, stylesheet.find_by_selector("a").length
+    assert_equal 0, stylesheet.rules.find_by_selector("a").length
+    assert_equal 1, stylesheet.rules.find_by_selector("p").length
+  end
+
   def test_html_tag
     css = %{
     div {color: blue;}
@@ -360,7 +373,7 @@ div.rd {color: red;}
     rule = stylesheet.rules.first
     elements = []
     Habaki::Visitor::NokogiriElement.new(Nokogiri::HTML.parse(html)).traverse do |el|
-      elements << el if rule.match?(el)
+      elements << el if rule.element_match?(el)
     end
     elements
   end

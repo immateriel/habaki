@@ -2,9 +2,6 @@ require 'habaki'
 require 'minitest/autorun'
 
 class TestParserWriter < Minitest::Test
-  def setup
-  end
-
   def test_empty
     stylesheet = Habaki::Stylesheet.parse("")
     assert_equal 0, stylesheet.rules.length
@@ -66,33 +63,6 @@ class TestParserWriter < Minitest::Test
     stylesheet.rules.first.declarations.add_by_property("line-height", Habaki::Value.new("14pt"))
     assert_equal 4, stylesheet.rules.first.declarations.length
     assert_equal "a {color: blue; text-decoration: underline; font-size: 12pt; line-height: 14pt; }", stylesheet.string
-  end
-
-  def test_media_sel
-    css = %{
-    @media print {
-    a {color: blue; text-decoration: underline;}
-    }
-    @media all {
-    div {color: black;}
-    }
-    @media (min-width: 100px) {
-    div {font-size: 10pt;}
-    }
-    @media not screen {
-    p {font-size: 12pt;}
-    }}
-    stylesheet = Habaki::Stylesheet.parse(css)
-    assert_equal 3, stylesheet.rules.medias.select{|media| media.match_type?("print")}.length
-    assert_equal 1, stylesheet.rules.medias.select{|media| media.match_type?("screen")}.length
-
-    stylesheet.each_rule do |rule|
-      if rule.declarations
-        rule.declarations.remove_by_property("font-size")
-      end
-    end
-    stylesheet.compact!
-    assert_equal 2, stylesheet.rules.medias.select{|media| media.match_type?("print")}.length
   end
 
   def test_url

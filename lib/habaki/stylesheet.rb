@@ -12,21 +12,24 @@ module Habaki
     end
 
     # traverse rules
+    # @param [Visitor::Media, String, NilClass] media
     # @yieldparam [Rules] rules
     # @return [void]
-    def each_rules(&block)
+    def each_rules(media = nil, &block)
       block.call @rules
       @rules.each do |rule|
-        block.call rule.rules if rule.rules
+        next unless rule.rules
+        next if rule.is_a?(MediaRule) && !rule.media_match?(media)
+        block.call rule.rules
       end
     end
 
     # traverse all rules (including all media & supports)
-    # TODO: add media query / supports query option
-    # @yieldparam [Rule] rules
+    # @param [Visitor::Media, String, NilClass] media
+    # @yieldparam [Rule] rule
     # @return [void]
-    def each_rule(&block)
-      each_rules do |rules|
+    def each_rule(media = nil, &block)
+      each_rules(media) do |rules|
         rules.each do |rule|
           block.call rule
         end
@@ -35,10 +38,11 @@ module Habaki
 
     # rules matching with {Visitor::Element} enumerator
     # @param [Visitor::Element] element
+    # @param [Visitor::Media, String, NilClass] media
     # @return [Enumerator<Rule>]
-    def matching_rules(element)
+    def matching_rules(element, media = nil)
       Enumerator.new do |matching_rules|
-        each_rules do |rules|
+        each_rules(media) do |rules|
           rules.each_matching_rule(element) do |matching_rule|
             matching_rules << matching_rule
           end
@@ -48,47 +52,71 @@ module Habaki
 
     # traverse rules matching with {Visitor::Element}
     # @param [Visitor::Element] element
-    # @return [Array<Rule>]
-    def each_matching_rule(element, &block)
-      matching_rules(element).each do |matching_rule|
+    # @param [Visitor::Media, String, NilClass] media
+    # @yieldparam [Rule] rule
+    # @return [void]
+    def each_matching_rule(element, media = nil, &block)
+      matching_rules(element, media).each do |matching_rule|
         block.call matching_rule
       end
     end
 
     # get rules matching with {Visitor::Element}
     # @param [Visitor::Element] element
+    # @param [Visitor::Media, String, NilClass] media
     # @return [Array<Rule>]
-    def find_matching_rules(element)
-      matching_rules(element).to_a
+    def find_matching_rules(element, media = nil)
+      matching_rules(element, media).to_a
     end
 
     # traverse matching declarations for {Visitor::Element}
     # @param [String] property
     # @param [Visitor::Element] element
-    # @return [Declaration, nil]
-    def each_matching_declaration(property, element, &block)
-      each_rules do |rules|
+    # @param [Visitor::Media, String, NilClass] media
+    # @yieldparam [Declaration] declaration
+    # @return [void]
+    def each_matching_declaration(property, element, media = nil, &block)
+      each_rules(media) do |rules|
         rules.each_matching_declaration(property, element, &block)
       end
     end
 
     # does selector exists ?
     # @param [String] selector_str
+    # @param [Visitor::Media, String, NilClass] media
     # @return [Boolean]
-    def has_selector?(selector_str)
+    def has_selector?(selector_str, media = nil)
       each_rule do |rule|
-        return true if rule.selectors && rule.selectors.map(&:to_s).include?(selector_str)
+        rule.each_selector do |selector|
+          return true if selector_str == selector.to_s
+        end
       end
       false
     end
 
+    # find rule from selector str
+    # @param [String] selector_str
+    # @param [Visitor::Media, String, NilClass] media
+    # @return [Array<Rule>]
+    def find_by_selector(selector_str, media = nil)
+      results = []
+      each_rule(media) do |rule|
+        rule.each_selector do |selector|
+          results << rule if selector_str == selector.to_s
+        end
+      end
+      results
+    end
+
     # find declarations from selector str
     # @param [String] selector_str
+    # @param [Visitor::Media, String, NilClass] media
     # @return [Array<Declarations>]
-    def find_declarations_by_selector(selector_str)
+    def find_declarations_by_selector(selector_str, media = nil)
       results = []
-      each_rule do |rule|
-        results << rule.declarations if rule.selectors && rule.selectors.map(&:to_s).include?(selector_str)
+      each_rule(media) do |rule|
+        next unless rule.selectors
+        results << rule.declarations if rule.selectors.map(&:to_s).include?(selector_str)
       end
       results
     end

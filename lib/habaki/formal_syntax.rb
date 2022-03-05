@@ -273,7 +273,7 @@ module Habaki
       end
 
       def to_s
-        "#{@reference}: <#{@node.type} #{@node.value}> => <#{@value.class} #{@value}>"
+        "#{@reference}: #{@value} => #{@node}"
       end
     end
 

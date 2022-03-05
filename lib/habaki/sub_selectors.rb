@@ -7,7 +7,7 @@ module Habaki
     # does selector match {Visitor::Element} ?
     # @param [Visitor::Element] element
     # @return [Boolean]
-    def match?(element)
+    def element_match?(element)
       each do |sub_sel|
         case sub_sel.match
         when :tag

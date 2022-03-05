@@ -14,8 +14,8 @@ module Habaki
     # does rule match {Visitor::Element} ?
     # @param [Visitor::Element] element
     # @return [Boolean]
-    def match?(element)
-      selectors.match?(element)
+    def element_match?(element)
+      selectors.element_match?(element)
     end
 
     # @return [String]

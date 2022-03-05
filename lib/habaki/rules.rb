@@ -48,11 +48,24 @@ module Habaki
     # add rule by selectors string
     # @param [String] selector_str
     # @return [StyleRule]
-    def add_by_selectors(selector_str)
+    def add_by_selector(selector_str)
       rule = StyleRule.new
       rule.selectors = Selectors.parse(selector_str)
       push rule
       rule
+    end
+
+    # find rules from selector str
+    # @param [String] selector_str
+    # @return [Array<Rule>]
+    def find_by_selector(selector_str)
+      results = []
+      each do |rule|
+        rule.each_selector do |selector|
+          results << rule if selector_str == selector.to_s
+        end
+      end
+      results
     end
 
     # rules matching with {Visitor::Element} enumerator
@@ -61,7 +74,7 @@ module Habaki
     def matching_rules(element)
       Enumerator.new do |rules|
         each do |rule|
-          rules << rule if rule.match?(element)
+          rules << rule if rule.element_match?(element)
         end
       end
     end
@@ -84,6 +97,8 @@ module Habaki
     end
 
     # traverse matching declarations for {Visitor::Element}
+    #
+    # If element does not have property, recursively look into parent for it unless block return true or something
     # @param [String] property
     # @param [Visitor::Element] element
     # @yieldparam [Declaration] declaration

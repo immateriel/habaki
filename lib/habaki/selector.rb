@@ -11,13 +11,13 @@ module Habaki
     # does selector match {Visitor::Element} ?
     # @param [Visitor::Element] element
     # @return [Boolean]
-    def match?(element)
+    def element_match?(element)
       return false if @sub_selectors.empty?
 
       rev_sub_selectors = @sub_selectors.reverse
 
       current_sub_selector = rev_sub_selectors.first
-      return false unless current_sub_selector.match?(element)
+      return false unless current_sub_selector.element_match?(element)
 
       return true if @sub_selectors.length == 1
 
@@ -29,21 +29,21 @@ module Habaki
         when :descendant
           sub_match = false
           while parent_element do
-            sub_match = sub_selector.match?(parent_element)
+            sub_match = sub_selector.element_match?(parent_element)
             parent_element = parent_element.parent
             break if sub_match
           end
           return false unless sub_match
         when :child
           return false unless parent_element
-          return false unless sub_selector.match?(parent_element)
+          return false unless sub_selector.element_match?(parent_element)
         when :direct_adjacent
           return false unless previous_element
-          return false unless sub_selector.match?(previous_element)
+          return false unless sub_selector.element_match?(previous_element)
         when :indirect_adjacent
           sub_match = false
           while previous_element do
-            sub_match = sub_selector.match?(previous_element)
+            sub_match = sub_selector.element_match?(previous_element)
             previous_element = previous_element.previous
             break if sub_match
           end

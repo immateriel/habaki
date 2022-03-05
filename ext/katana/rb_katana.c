@@ -109,15 +109,6 @@ VALUE rb_output_errors(VALUE self)
   return array;
 }
 
-VALUE rb_output_dump(VALUE self)
-{
-  KatanaOutput *c_output;
-  Data_Get_Struct(self, KatanaOutput, c_output);
-
-  katana_dump_output(c_output);
-  return Qnil;
-}
-
 
 // Array
 /*
@@ -256,7 +247,6 @@ void Init_katana()
   rb_Katana = rb_define_module("Katana");
 
   rb_Output = rb_define_class_under(rb_Katana, "Output", rb_cObject);
-  rb_define_method(rb_Output, "dump", rb_output_dump, 0);
   rb_define_method(rb_Output, "stylesheet", rb_output_stylesheet, 0);
   rb_define_method(rb_Output, "declarations", rb_output_declarations, 0);
   rb_define_method(rb_Output, "selectors", rb_output_selectors, 0);
