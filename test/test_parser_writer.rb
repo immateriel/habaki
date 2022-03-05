@@ -1,12 +1,26 @@
-require 'habaki'
-require 'minitest/autorun'
+require 'test_helper'
 
 class TestParserWriter < Minitest::Test
-  def test_empty
+
+  def test_parse_empty
     stylesheet = Habaki::Stylesheet.parse("")
     assert_equal 0, stylesheet.rules.length
     stylesheet = Habaki::Stylesheet.parse(nil)
     assert_equal 0, stylesheet.rules.length
+  end
+
+  def test_parse_selectors
+    assert_equal "div,p,span", Habaki::Selectors.parse("div,p,span").to_s
+  end
+
+  def test_parse_and_check_declaration
+    decl = Habaki::Declarations.parse("font-size:1em").first
+    assert decl.check
+    assert_equal "font-size: 1em", decl.to_s
+
+    decl = Habaki::Declarations.parse("font-size:invalid").first
+    refute decl.check
+    assert_equal "font-size: invalid", decl.to_s
   end
 
   def test_decl
@@ -41,6 +55,17 @@ class TestParserWriter < Minitest::Test
     decl = stylesheet.rules.font_faces.first.declarations.first
     decl.values.delete(decl.values.last)
     assert_equal %{@font-face {src: url(font.ttf),url(font.otf),; }}, stylesheet.to_s
+  end
+
+  def test_decl_find
+    css = %{
+    a {color: blue; text-decoration: underline;}
+    }
+    stylesheet = Habaki::Stylesheet.parse(css)
+    rule = stylesheet.find_by_selector("a").first
+    assert_equal Habaki::Ident.new("blue"), rule.declarations.find_by_property("color").value
+    assert_equal Habaki::Ident.new("blue"), rule.declarations["color"].value
+    assert_equal Habaki::Ident.new("blue"), rule.declarations[0].value
   end
 
   def test_decl_del
@@ -168,12 +193,21 @@ a {color: black; }
 }})
   end
 
+  def test_font_face
+      assert_identical_css(%{@font-face {src: url(font.ttf); }})
+    end
+
+  def test_page
+    assert_identical_css(%{@page {margin: 1cm; }})
+    # TODO
+    # assert_identical_css(%{@page :first {margin: 1cm; }})
+  end
+
   def test_pseudo
     assert_identical_css(%{a:hover {color: blue; }
 p.nt:nth-of-type(3n) {color: red; }
 li:nth-last-child(3n+2) {color: green; }})
   end
-
 
   def test_charset
     assert_identical_css(%{@charset "utf-8";})

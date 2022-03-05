@@ -21,6 +21,10 @@ module Habaki
       "#{@data}"
     end
 
+    def ==(other)
+      to_s == other.to_s
+    end
+
     private
 
     def data_i_or_f
@@ -89,6 +93,76 @@ module Habaki
     # @return [Float]
     def to_f
       @data.is_a?(Float) ? @data : 0.0
+    end
+
+    # @return [Length]
+    def +(other)
+      case other
+      when Length
+        raise ArgumentError, "cannot addition with different units" unless @unit == other.unit
+        Length.new(@data + other.data, @unit)
+      else
+        raise ArgumentError, "cannot addition #{self.class} with #{other.class}"
+      end
+    end
+
+    # @return [Length]
+    def -(other)
+      case other
+      when Length
+        raise ArgumentError, "cannot substract with different units" unless @unit == other.unit
+        Length.new(@data - other.data, @unit)
+      else
+        raise ArgumentError, "cannot substract #{self.class} with #{other.class}"
+      end
+    end
+
+    # @return [Length]
+    def *(other)
+      case other
+      when Integer, Float
+        Length.new((@data * other).round(3), @unit)
+      when Percentage
+        Length.new((@data * other.data/100.0).round(3), @unit)
+      else
+        raise ArgumentError, "cannot multiply #{self.class} with #{other.class}"
+      end
+    end
+
+    # @return [Length]
+    def /(other)
+      case other
+      when Integer, Float
+        Length.new((@data / other).round(3), @unit)
+      else
+        raise ArgumentError, "cannot divide #{self.class} with #{other.class}"
+      end
+    end
+
+    include Comparable
+
+    # @return [Integer]
+    def <=>(other)
+      raise ArgumentError, "cannot compare #{self.class} with #{other.class}" unless other.is_a?(Length)
+      if @unit == other.unit
+        @data <=> other.data
+      elsif absolute? && other.absolute?
+        to_px <=> other.to_px
+      else
+        nil
+      end
+    end
+
+    # @return [Boolean]
+    def ==(other)
+      return false unless other.is_a?(Length)
+      if @unit == other.unit
+        @data == other.data
+      elsif absolute? && other.absolute?
+        to_px == other.to_px
+      else
+        false
+      end
     end
 
     # @api private

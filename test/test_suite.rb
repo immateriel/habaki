@@ -1,5 +1,4 @@
-require 'habaki'
-require 'minitest/autorun'
+require 'test_helper'
 
 # test parser/writer for files in suite directory
 class TestSuite < Minitest::Test

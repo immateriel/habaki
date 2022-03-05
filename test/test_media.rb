@@ -1,5 +1,4 @@
-require 'habaki'
-require 'minitest/autorun'
+require 'test_helper'
 
 class TestMisc < Minitest::Test
   def test_type
@@ -14,14 +13,14 @@ class TestMisc < Minitest::Test
 
   def test_exp
     css = %{
-    @media screen and (min-width: 600px) and (max-width: 900px) {
+    @media screen and (min-width: 600px) and (max-width: 900px) and (min-height: 500px) and (max-height: 700px) {
      a {color: blue;}
     }}
     stylesheet = Habaki::Stylesheet.parse(css)
     require 'pp'
-    visitor = Habaki::Visitor::Media.new("screen", 800)
+    visitor = Habaki::Visitor::Media.new("screen", 800, 600)
     assert stylesheet.rules.medias.first.media_match?(visitor)
-    visitor = Habaki::Visitor::Media.new("screen", 1024)
+    visitor = Habaki::Visitor::Media.new("screen", 1024, 768)
     refute stylesheet.rules.medias.first.media_match?(visitor)
   end
 

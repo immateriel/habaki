@@ -1,6 +1,5 @@
-require 'habaki'
+require 'test_helper'
 require 'nokogiri'
-require 'minitest/autorun'
 
 class TestSelector < Minitest::Test
   def setup

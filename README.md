@@ -100,6 +100,7 @@ rules.map(&:to_s)
 ```
 
 # TODO
+- parser/writer: implement @page pseudo class
 - writer: improve output indentation
 - parser: attribute match type (case sensitive, insensitive)
 - parser: implement @keyframes

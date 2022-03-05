@@ -503,7 +503,7 @@ void katana_destroy_namespace_rule(KatanaParser* parser, KatanaNamespaceRule* e)
 
 KatanaRule* katana_new_page_rule(KatanaParser* parser)
 {
-    KatanaFontFaceRule* rule = katana_parser_allocate(parser, sizeof(KatanaPageRule));
+    KatanaPageRule* rule = katana_parser_allocate(parser, sizeof(KatanaPageRule));
     rule->base.name = "page";
     rule->base.type = KatanaRulePage;
     rule->declarations = parser->parsed_declarations;

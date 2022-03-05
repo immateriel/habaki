@@ -18,11 +18,14 @@ module Habaki
       prev_val = at(idx - 1)
       next_val = at(idx + 1)
       if prev_val&.is_a?(Operator)
-        delete(prev_val)
+        delete_at(idx)
+        delete_at(idx - 1)
       elsif next_val&.is_a?(Operator)
-        delete(next_val)
+        delete_at(idx + 1)
+        delete_at(idx)
+      else
+        delete_at(idx)
       end
-      delete(value)
     end
 
     # @return [String]

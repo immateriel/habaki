@@ -1,5 +1,4 @@
-require 'habaki'
-require 'minitest/autorun'
+require 'test_helper'
 
 class TestMisc < Minitest::Test
   def test_dimension
@@ -22,6 +21,38 @@ class TestMisc < Minitest::Test
     assert_equal 0.5, Habaki::Length.new(2.116, :mm).to_em.round(1)
 
     assert_equal 0.5, Habaki::Length.new(0.5, :em).to_em.round(1)
+  end
+
+  def test_length_operators
+    assert Habaki::Length.new(8, :px) == Habaki::Length.new(8, :px)
+    assert Habaki::Length.new(10, :px) >= Habaki::Length.new(8, :px)
+    assert Habaki::Length.new(10, :px) > Habaki::Length.new(8, :px)
+    assert Habaki::Length.new(8, :px) < Habaki::Length.new(10, :px)
+    assert Habaki::Length.new(8, :px) <= Habaki::Length.new(10, :px)
+
+    assert Habaki::Length.new(12, :pt) > Habaki::Length.new(15, :px)
+
+    assert Habaki::Length.new(2, :em) > Habaki::Length.new(1, :em)
+
+    assert Habaki::Length.new(12, :pt) == Habaki::Length.new(16, :px)
+
+    assert_equal Habaki::Length.new(14, :px), Habaki::Length.new(12, :px) +  Habaki::Length.new(2, :px)
+    assert_equal Habaki::Length.new(14, :px), Habaki::Length.new(16, :px) -  Habaki::Length.new(2, :px)
+
+    assert_equal Habaki::Length.new(14, :px), Habaki::Length.new(7, :px) * 2.0
+    assert_equal Habaki::Length.new(14, :px), Habaki::Length.new(28, :px) / 2.0
+
+    assert_equal Habaki::Length.new(14, :px), Habaki::Length.new(7, :px) * Habaki::Percentage.new(200)
+
+    refute Habaki::Length.new(12, :pt) == Habaki::Length.new(1, :em)
+
+    assert_raises(ArgumentError) do
+      Habaki::Length.new(12, :pt) > Habaki::Ident.new("smaller")
+    end
+
+    assert_raises(ArgumentError) do
+      Habaki::Length.new(12, :pt) / Habaki::Length.new(12, :pt)
+    end
   end
 
   def test_property_table

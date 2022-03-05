@@ -303,7 +303,7 @@ module Habaki
         puts "MATCH #{node} (#{node.type}) #{node.occurence} WITH #{@declaration.to_s}" if @debug
         @reference = @declaration.property
         # always add inherit keyword
-        return true if @declaration.value&.is_a?(Habaki::Ident) && @declaration.value.to_s == "inherit"
+        return true if @declaration.value == Habaki::Ident.new("inherit")
 
         res = rec_match(node)
         @matches.compact!

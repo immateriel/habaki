@@ -119,7 +119,7 @@ module Habaki
 
       props = {}
       matcher.matches.each do |match|
-        next if match.value.is_a?(Operator) && match.value.data == "/" # font-size/line-height
+        next if match.value == Operator.new("/") # font-size/line-height
         props[match.reference] ||= Values.new
         props[match.reference] << match.value
       end

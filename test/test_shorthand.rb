@@ -1,5 +1,4 @@
-require 'habaki'
-require 'minitest/autorun'
+require 'test_helper'
 
 class TestShorthand < Minitest::Test
   def test_create_shorthand
@@ -10,7 +9,7 @@ class TestShorthand < Minitest::Test
                              "border-width: auto thin auto 0px; ")
 
     assert_shorthand_created("margin-right: auto; margin-bottom: 0px; margin-left: auto; margin-top: 0px",
-                             "margin: 0px auto 0px auto; ")
+                             "margin: 0px auto; ")
 
     assert_shorthand_created(%{list-style-image: url('chess.png'); list-style-type: katakana;},
                              "list-style: katakana url(chess.png); ")
@@ -56,19 +55,19 @@ line-height: 18px; font-family: Police,sans-serif; }.gsub(/\n/, " "))
                               "margin-top: 1px; margin-right: 1px; margin-bottom: 1px; margin-left: 1px; ")
 
     assert_shorthand_created("margin-top: 1px; margin-right: 1px; margin-bottom: 1px; margin-left: 1px; ",
-                             "margin: 1px 1px 1px 1px; ")
+                             "margin: 1px 1px; ")
 
     assert_shorthand_expanded("margin: 1px 2px; ",
                               "margin-top: 1px; margin-right: 2px; margin-bottom: 1px; margin-left: 2px; ")
 
     assert_shorthand_created("margin-top: 1px; margin-right: 2px; margin-bottom: 1px; margin-left: 2px;",
-                             "margin: 1px 2px 1px 2px; ")
+                             "margin: 1px 2px; ")
 
     assert_shorthand_expanded("margin: 1px 2px 3px; ",
                               "margin-top: 1px; margin-right: 2px; margin-bottom: 3px; margin-left: 2px; ")
 
     assert_shorthand_created("margin-top: 1px; margin-right: 2px; margin-bottom: 3px; margin-left: 2px; ",
-                             "margin: 1px 2px 3px 2px; ")
+                             "margin: 1px 2px 3px; ")
 
     assert_shorthand_expanded("margin: 1px 2px 3px 4px; ",
                               "margin-top: 1px; margin-right: 2px; margin-bottom: 3px; margin-left: 4px; ")
