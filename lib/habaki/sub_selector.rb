@@ -1,4 +1,5 @@
 module Habaki
+  # part of selector (eg in p.t, p is a tag subselector and .t a class subselector)
   class SubSelector < Node
     # @return [Symbol]
     attr_accessor :match

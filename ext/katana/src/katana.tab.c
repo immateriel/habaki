@@ -716,40 +716,40 @@ static const yytype_int16 yyrline[] =
      328,   334,   340,   346,   353,   359,   366,   380,   381,   385,
      386,   389,   391,   392,   396,   397,   401,   402,   406,   407,
      411,   412,   415,   417,   422,   425,   427,   434,   435,   436,
-     437,   438,   439,   440,   441,   442,   446,   452,   457,   464,
-     465,   469,   470,   476,   482,   483,   484,   485,   486,   487,
-     488,   489,   493,   497,   504,   510,   517,   520,   526,   532,
-     533,   537,   538,   542,   545,   551,   557,   563,   567,   574,
-     577,   583,   586,   589,   595,   598,   605,   606,   610,   617,
-     620,   624,   628,   632,   640,   644,   651,   657,   663,   669,
-     672,   678,   682,   689,   697,   705,   706,   707,   708,   712,
-     720,   726,   735,   741,   750,   755,   756,   764,   782,   790,
-     796,   803,   807,   811,   818,   819,   826,   827,   833,   837,
-     841,   849,   855,   859,   866,   869,   889,   898,   905,   920,
-     928,   933,   937,   944,   945,   949,   949,   957,   960,   963,
-     966,   969,   972,   975,   978,   981,   984,   987,   990,   993,
-     996,   999,  1002,  1008,  1014,  1021,  1028,  1036,  1037,  1038,
-    1039,  1048,  1049,  1053,  1054,  1058,  1064,  1071,  1077,  1083,
-    1089,  1094,  1099,  1106,  1107,  1108,  1121,  1136,  1140,  1144,
-    1153,  1158,  1163,  1168,  1176,  1182,  1191,  1195,  1202,  1208,
-    1214,  1215,  1221,  1228,  1239,  1240,  1241,  1245,  1255,  1263,
-    1272,  1273,  1277,  1283,  1290,  1296,  1303,  1309,  1312,  1315,
-    1318,  1321,  1324,  1330,  1331,  1335,  1348,  1361,  1376,  1385,
-    1393,  1403,  1407,  1418,  1433,  1452,  1456,  1473,  1476,  1487,
-    1491,  1502,  1508,  1511,  1512,  1513,  1516,  1520,  1524,  1531,
-    1545,  1552,  1558,  1564,  1571,  1585,  1586,  1590,  1595,  1602,
-    1605,  1608,  1614,  1618,  1623,  1627,  1636,  1642,  1648,  1649,
-    1655,  1656,  1662,  1663,  1665,  1666,  1667,  1668,  1669,  1670,
-    1676,  1677,  1678,  1682,  1686,  1687,  1688,  1689,  1690,  1691,
-    1692,  1693,  1694,  1695,  1696,  1697,  1698,  1699,  1700,  1701,
-    1702,  1703,  1704,  1705,  1706,  1711,  1712,  1713,  1714,  1715,
-    1716,  1717,  1718,  1719,  1723,  1726,  1729,  1735,  1736,  1740,
-    1743,  1746,  1749,  1754,  1756,  1760,  1766,  1772,  1776,  1781,
-    1786,  1790,  1794,  1801,  1802,  1806,  1810,  1816,  1817,  1821,
-    1822,  1823,  1824,  1825,  1829,  1832,  1833,  1834,  1841,  1844,
-    1845,  1846,  1850,  1853,  1854,  1858,  1864,  1870,  1874,  1877,
-    1877,  1877,  1877,  1877,  1877,  1877,  1877,  1880,  1885,  1890,
-    1892,  1893,  1894,  1895,  1898,  1900,  1901,  1902
+     437,   438,   439,   440,   441,   442,   446,   452,   456,   463,
+     464,   468,   469,   475,   481,   482,   483,   484,   485,   486,
+     487,   488,   492,   496,   503,   509,   516,   519,   525,   531,
+     532,   536,   537,   541,   544,   550,   556,   562,   566,   573,
+     576,   582,   585,   588,   594,   597,   604,   605,   609,   616,
+     619,   623,   627,   631,   638,   642,   649,   655,   661,   667,
+     670,   676,   680,   686,   692,   698,   699,   700,   701,   705,
+     713,   719,   728,   734,   743,   748,   749,   755,   759,   765,
+     771,   778,   782,   786,   793,   794,   801,   802,   808,   812,
+     816,   824,   830,   834,   841,   844,   864,   873,   879,   886,
+     891,   896,   900,   907,   908,   912,   912,   920,   923,   926,
+     929,   932,   935,   938,   941,   944,   947,   950,   953,   956,
+     959,   962,   965,   971,   977,   984,   991,   999,  1000,  1001,
+    1002,  1011,  1012,  1016,  1017,  1021,  1027,  1034,  1040,  1046,
+    1052,  1057,  1062,  1069,  1070,  1071,  1082,  1095,  1099,  1103,
+    1112,  1117,  1122,  1127,  1132,  1138,  1147,  1151,  1158,  1161,
+    1167,  1168,  1174,  1179,  1188,  1189,  1190,  1194,  1202,  1208,
+    1217,  1218,  1222,  1228,  1235,  1241,  1248,  1254,  1257,  1260,
+    1263,  1266,  1269,  1275,  1276,  1280,  1293,  1303,  1313,  1322,
+    1330,  1340,  1344,  1352,  1360,  1369,  1373,  1390,  1393,  1396,
+    1400,  1403,  1409,  1412,  1413,  1414,  1417,  1421,  1425,  1432,
+    1444,  1451,  1457,  1463,  1470,  1477,  1478,  1482,  1487,  1494,
+    1497,  1500,  1506,  1510,  1515,  1519,  1528,  1534,  1540,  1541,
+    1547,  1548,  1554,  1555,  1557,  1558,  1559,  1560,  1561,  1562,
+    1568,  1569,  1570,  1574,  1578,  1579,  1580,  1581,  1582,  1583,
+    1584,  1585,  1586,  1587,  1588,  1589,  1590,  1591,  1592,  1593,
+    1594,  1595,  1596,  1597,  1598,  1601,  1602,  1603,  1604,  1605,
+    1606,  1607,  1608,  1609,  1613,  1616,  1619,  1625,  1626,  1630,
+    1633,  1636,  1639,  1644,  1646,  1650,  1656,  1662,  1666,  1671,
+    1676,  1680,  1683,  1690,  1691,  1695,  1699,  1705,  1706,  1710,
+    1711,  1712,  1713,  1714,  1718,  1721,  1722,  1723,  1730,  1733,
+    1734,  1735,  1739,  1742,  1743,  1747,  1753,  1759,  1763,  1766,
+    1766,  1766,  1766,  1766,  1766,  1766,  1766,  1769,  1774,  1779,
+    1781,  1782,  1783,  1784,  1787,  1789,  1790,  1791
 };
 #endif
 
@@ -2559,7 +2559,6 @@ yyreduce:
   case 47:
                            {
         (yyval.rule) = (yyvsp[0].rule);
-        // parser->m_hadSyntacticallyValidCSSRule = true;
         katana_end_rule(parser, !!(yyval.rule));
     }
     break;
@@ -2757,7 +2756,6 @@ yyreduce:
   case 93:
               {
         (yyval.mediaList) = (yyvsp[0].mediaList);
-        // $$->addMediaQuery(parser->sinkFloatingMediaQuery(parser->createFloatingNotAllQuery()));
         katana_parser_log(parser, "createFloatingNotAllQuery");
     }
     break;
@@ -2802,7 +2800,6 @@ yyreduce:
 
   case 102:
                                                                                                                                                                              {
-        // $$ = parser->createSupportsRule($4, $9);
         (yyval.rule) = katana_new_supports_rule(parser, (yyvsp[-6].supportsExp), (yyvsp[-1].ruleList));
     }
     break;
@@ -2810,16 +2807,12 @@ yyreduce:
   case 103:
                 {
       katana_start_rule_header(parser, KatanaRuleSupports);
-        // parser->startRuleHeader(StyleRule::Supports);
-        // parser->markSupportsRuleHeaderStart();
     }
     break;
 
   case 104:
                 {
         katana_end_rule_header(parser);
-        // parser->endRuleHeader();
-        // parser->markSupportsRuleHeaderEnd();
     }
     break;
 
@@ -2877,37 +2870,19 @@ yyreduce:
 
   case 116:
                                                                               {
-        // parser->reportError($3, InvalidSupportsConditionCSSError);
-        // $$ = false;
         YYERROR;
     }
     break;
 
   case 117:
                                                                                                            {
-        // $$ = false;
-        // CSSPropertyID id = cssPropertyID($3);
-        // if (id != CSSPropertyInvalid) {
-        //    parser->m_valueList = parser->sinkFloatingValueList($7);
-        //    int oldParsedProperties = parser->m_parsedProperties.size();
-        //    $$ = parser->parseValue(id, $8);
-        //    // We just need to know if the declaration is supported as it is written. Rollback any additions.
-        //    if ($$)
-        //        parser->rollbackLastProperties(parser->m_parsedProperties.size() - oldParsedProperties);
-        // }
-        // parser->m_valueList = nullptr;
-        // parser->endProperty($8, false);
-        //$$ = 0;
         (yyval.supportsExp) = katana_new_supports_exp(parser, KatanaSupportsOperatorNone);
-
         (yyval.supportsExp)->decl = katana_new_declaration(parser, &(yyvsp[-7].string), false, (yyvsp[-3].valueList));
     }
     break;
 
   case 118:
                                                                                                                         {
-        // $$ = false;
-        // parser->endProperty(false, false, GeneralCSSError);        
         YYERROR;
     }
     break;
@@ -3030,21 +3005,12 @@ yyreduce:
   case 137:
                 {
       katana_start_rule_header(parser, KatanaRulePage);
-        // parser->startRuleHeader(StyleRule::Page);
     }
     break;
 
   case 138:
                                                                                                  {
         (yyval.rule) = katana_new_page_rule(parser);
-        // if ($4)
-        //     $$ = parser->createPageRule(parser->sinkFloatingSelector($4));
-        // else {
-        //    // Clear properties in the invalid @page rule.
-        //    parser->clearProperties();
-        //    // Also clear margin at-rules here once we fully implement margin at-rules parsing.
-        //    $$ = 0;
-        // }
     }
     break;
 
@@ -3053,9 +3019,6 @@ yyreduce:
         (yyval.selector) = katana_new_selector(parser);
         (yyval.selector)->match = KatanaSelectorMatchTag;
         (yyval.selector)->tag = katana_new_qualified_name(parser, NULL, &(yyvsp[-1].string), &parser->default_namespace);
-
-        // $$ = parser->createFloatingSelectorWithTagName(QualifiedName(nullAtom, $1, parser->m_defaultNamespace));
-        // $$->setForPage();
     }
     break;
 
@@ -3308,8 +3271,6 @@ yyreduce:
             while (NULL != end->tagHistory)
                 end = end->tagHistory;
             end->relation = KatanaSelectorRelationDescendant;
-            // if ($1->isContentPseudoElement())
-            //     end->setRelationIsAffectedByPseudoContent();
             end->tagHistory = katana_sink_floating_selector(parser, (yyvsp[-2].selector));
         }
     }
@@ -3323,8 +3284,6 @@ yyreduce:
             while (NULL != end->tagHistory)
                 end = end->tagHistory;
             end->relation = (yyvsp[-1].relation);
-            // if ($1->isContentPseudoElement())
-            //     end->setRelationIsAffectedByPseudoContent();
             end->tagHistory = katana_sink_floating_selector(parser, (yyvsp[-2].selector));
         }
     }
@@ -3379,9 +3338,6 @@ yyreduce:
         (yyval.selector) = katana_new_selector(parser);
         (yyval.selector)->match = KatanaSelectorMatchTag;
         (yyval.selector)->tag = katana_new_qualified_name(parser, &(yyvsp[-1].string), &(yyvsp[0].string), &(yyvsp[-1].string));
-        // $$ = parser->createFloatingSelectorWithTagName(parser->determineNameInNamespace($1, $2));
-        // if (!$$)
-        //    YYERROR;
     }
     break;
 
@@ -3419,9 +3375,6 @@ yyreduce:
 
   case 198:
                      {
-        // FIXME: 标签名是否区分大写
-        // if (parser->m_context.isHTMLDocument())
-        //     parser->tokenToLowerCase($1);
         (yyval.string) = (yyvsp[0].string);
     }
     break;
@@ -3442,8 +3395,6 @@ yyreduce:
                      {
         (yyval.selector) = katana_new_selector(parser);
         (yyval.selector)->match =KatanaSelectorMatchId;
-        // if (isQuirksModeBehavior(parser->m_context.mode()))
-            // parser->tokenToLowerCase($1);
         katana_selector_set_value(parser, (yyval.selector), &(yyvsp[0].string));
     }
     break;
@@ -3455,8 +3406,6 @@ yyreduce:
         } else {
             (yyval.selector) = katana_new_selector(parser);
             (yyval.selector)->match =KatanaSelectorMatchId;
-            // if (isQuirksModeBehavior(parser->m_context.mode()))
-                // parser->tokenToLowerCase($1);
             katana_selector_set_value(parser, (yyval.selector), &(yyvsp[0].string));
         }
     }
@@ -3466,16 +3415,12 @@ yyreduce:
                          {
         (yyval.selector) = katana_new_selector(parser);
         (yyval.selector)->match = KatanaSelectorMatchClass;
-        // if (isQuirksModeBehavior(parser->m_context.mode()))
-        //     parser->tokenToLowerCase($2);
         katana_selector_set_value(parser, (yyval.selector), &(yyvsp[0].string));
     }
     break;
 
   case 208:
                                  {
-        // if (parser->m_context.isHTMLDocument())
-        //    parser->tokenToLowerCase($1);
         (yyval.string) = (yyvsp[-1].string);
     }
     break;
@@ -3597,9 +3542,6 @@ yyreduce:
         katana_string_to_lowercase(parser, &(yyvsp[0].string));
         katana_selector_set_value(parser, (yyval.selector), &(yyvsp[0].string));
         katana_selector_extract_pseudo_type((yyval.selector));
-        // if ($$->pseudo == KatanaSelectorPseudoUnknown) {
-        //     katana_parser_report_error(parser, $2, InvalidSelectorPseudoCSSError);
-        //     YYERROR;
     }
     break;
 
@@ -3612,11 +3554,6 @@ yyreduce:
         katana_string_to_lowercase(parser, &(yyvsp[0].string));
         katana_selector_set_value(parser, (yyval.selector), &(yyvsp[0].string));
         katana_selector_extract_pseudo_type((yyval.selector));
-        // FIXME: This call is needed to force selector to compute the pseudoType early enough.
-        // CSSSelector::PseudoType type = $$->pseudoType();
-        // if (type == CSSSelector::PseudoUnknown) {
-        //     katana_parser_report_error(parser, $3, InvalidSelectorPseudoCSSError);
-        //     YYERROR;
     }
     break;
 
@@ -3664,9 +3601,6 @@ yyreduce:
         katana_selector_set_argument(parser, (yyval.selector), &(yyvsp[-2].string));
         katana_selector_set_value(parser, (yyval.selector), &(yyvsp[-4].string));
         katana_selector_extract_pseudo_type((yyval.selector));
-        // CSSSelector::PseudoType type = $$->pseudoType();
-        // if (type == CSSSelector::PseudoUnknown)
-        //     YYERROR;
     }
     break;
 
@@ -3677,13 +3611,6 @@ yyreduce:
         katana_selector_set_argument_with_number(parser, (yyval.selector), (yyvsp[-3].integer), &(yyvsp[-2].number));
         katana_selector_set_value(parser, (yyval.selector), &(yyvsp[-5].string));
         katana_selector_extract_pseudo_type((yyval.selector));
-        // $$ = parser->createFloatingSelector();
-        // $$->setMatch(CSSSelector::PseudoClass);
-        // $$->setArgument(AtomicString::number($4 * $5));
-        // $$->setValue($2);
-        // CSSSelector::PseudoType type = $$->pseudoType();
-        // if (type == CSSSelector::PseudoUnknown)
-        //    YYERROR;
     }
     break;
 
@@ -3696,16 +3623,6 @@ yyreduce:
         katana_string_to_lowercase(parser, &(yyvsp[-4].string));
         katana_selector_set_value(parser, (yyval.selector), &(yyvsp[-4].string));
         katana_selector_extract_pseudo_type((yyval.selector));
-        // CSSSelector::PseudoType type = $$->pseudoType();
-        // if (type == CSSSelector::PseudoUnknown)
-        //    YYERROR;
-        // else if (type == CSSSelector::PseudoNthChild ||
-        //         type == CSSSelector::PseudoNthOfType ||
-        //         type == CSSSelector::PseudoNthLastChild ||
-        //         type == CSSSelector::PseudoNthLastOfType) {
-        //    if (!isValidNthToken($4))
-        //        YYERROR;
-        // }
     }
     break;
 
@@ -3743,14 +3660,6 @@ yyreduce:
 
   case 238:
                                                                                                    {
-        // $$ = parser->createFloatingSelector();
-        // $$->setMatch(CSSSelector::PseudoClass);
-        // $$->adoptSelectorVector(*parser->sinkFloatingSelectorVector($4));
-        // parser->tokenToLowerCase($2);
-        // $$->setValue($2);
-        // CSSSelector::PseudoType type = $$->pseudoType();
-        // if (type != CSSSelector::PseudoHost)
-        //    YYERROR;
         YYERROR;
     }
     break;
@@ -3763,14 +3672,6 @@ yyreduce:
 
   case 240:
                                                                                                           {
-        // $$ = parser->createFloatingSelector();
-        // $$->setMatch(CSSSelector::PseudoClass);
-        // $$->adoptSelectorVector(*parser->sinkFloatingSelectorVector($4));
-        // parser->tokenToLowerCase($2);
-        // $$->setValue($2);
-        // CSSSelector::PseudoType type = $$->pseudoType();
-        //if (type != CSSSelector::PseudoHostContext)
-        //    YYERROR;
         YYERROR;
     }
     break;
@@ -3809,10 +3710,8 @@ yyreduce:
                                                       {
         (yyval.boolean) = false;
         bool isPropertyParsed = false;
-        // unsigned int oldParsedProperties = parser->parsedProperties->length;
         (yyval.boolean) = katana_add_declaration(parser, katana_new_declaration(parser, &(yyvsp[-5].string), (yyvsp[0].boolean), (yyvsp[-1].valueList)));
         if (!(yyval.boolean)) {
-            // parser->rollbackLastProperties(parser->m_parsedProperties.size() - oldParsedProperties);
             katana_parser_report_error(parser, (yyvsp[-2].location), "InvalidPropertyValueCSSError");
         } else {
             isPropertyParsed = true;
@@ -3855,13 +3754,6 @@ yyreduce:
 
   case 254:
                                                 {
-        // $$ = cssPropertyID($2);
-        // parser->setCurrentProperty($$);
-        // if ($$ == CSSPropertyInvalid)
-        //    parser->reportError($1, InvalidPropertyCSSError);
-        // $$ = $2;
-        // katana_set_current_declaration(parser, &$$);
-
         (yyval.string) = (yyvsp[-1].string);
         katana_set_current_declaration(parser, &(yyval.string));
     }
@@ -4091,8 +3983,6 @@ yyreduce:
   case 304:
                     {
       (yyval.value) = katana_new_dimension_value(parser, &(yyvsp[0].number), KATANA_VALUE_REMS);
-      /* if (parser->m_styleSheet)
-          parser->m_styleSheet->parserSetUsesRemUnits(true); */
   }
     break;
 
@@ -4218,7 +4108,6 @@ yyreduce:
 
   case 331:
                                                                                             {
-//        $$.setFromFunction(parser->createFloatingFunction($1, parser->sinkFloatingValueList($3)));
         (yyval.value) = katana_new_function_value(parser, &(yyvsp[-4].string), (yyvsp[-2].valueList));
     }
     break;

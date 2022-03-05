@@ -1,6 +1,6 @@
-Fast and full featured CSS parser/writer for ruby
+Fast and full featured CSS parser/writer for ruby.
 
-Use WebKit based https://github.com/hackers-painters/katana-parser custom fork, support CSS3 syntax
+Use WebKit based https://github.com/hackers-painters/katana-parser custom fork for low-level parsing, support CSS3 syntax.
 
 # Usage
 

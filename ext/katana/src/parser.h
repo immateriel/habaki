@@ -229,26 +229,6 @@ void katana_parser_report_error(KatanaParser* parser, KatanaSourcePosition* pos,
 // print
 void katana_print(const char * format, ...);
     
-void katana_print_stylesheet(KatanaParser* parser, KatanaStylesheet* sheet);
-void katana_print_rule(KatanaParser* parser, KatanaRule* rule);
-void katana_print_font_face_rule(KatanaParser* parser, KatanaFontFaceRule* rule);
-void katana_print_import_rule(KatanaParser* parser, KatanaImportRule* rule);
-    
-void katana_print_media_query_exp(KatanaParser* parser, KatanaMediaQueryExp* exp);
-void katana_print_media_query(KatanaParser* parser, KatanaMediaQuery* query);
-void katana_print_media_list(KatanaParser* parser, KatanaArray* medias);
-void katana_print_media_rule(KatanaParser* parser, KatanaMediaRule* rule);
-
-void katana_print_keyframes_rule(KatanaParser* parser, KatanaKeyframesRule* rule);
-void katana_print_keyframe(KatanaParser* parser, KatanaKeyframe* keyframe);
-
-void katana_print_style_rule(KatanaParser* parser, KatanaStyleRule* rule);
-void katana_print_selector(KatanaParser* parser, KatanaSelector* selector);
-void katana_print_selector_list(KatanaParser* parser, KatanaArray* selectors);
-void katana_print_declaration(KatanaParser* parser, KatanaDeclaration* decl);
-void katana_print_declaration_list(KatanaParser* parser, KatanaArray* declarations);
-void katana_print_value_list(KatanaParser* parser, KatanaArray* values);
-
 
 #ifdef __cplusplus
 }

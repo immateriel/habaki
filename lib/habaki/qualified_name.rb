@@ -1,7 +1,10 @@
 module Habaki
   # name with optional ns prefix
   class QualifiedName < Node
-    attr_accessor :local, :prefix
+    # @return [String]
+    attr_accessor :local
+    # @return [String]
+    attr_accessor :prefix
 
     # @param [String] local
     # @param [String] prefix

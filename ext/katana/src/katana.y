@@ -451,7 +451,6 @@ before_rule:
 rule:
     before_rule valid_rule {
         $$ = $2;
-        // parser->m_hadSyntacticallyValidCSSRule = true;
         katana_end_rule(parser, !!$$);
     }
   | before_rule invalid_rule {
@@ -631,7 +630,6 @@ media_list:
     }
     | mq_list {
         $$ = $1;
-        // $$->addMediaQuery(parser->sinkFloatingMediaQuery(parser->createFloatingNotAllQuery()));
         katana_parser_log(parser, "createFloatingNotAllQuery");
     }
     ;
@@ -680,7 +678,6 @@ medium:
 
 supports:
     before_supports_rule KATANA_CSS_SUPPORTS_SYM maybe_space supports_condition at_supports_rule_header_end '{' at_rule_body_start maybe_space block_rule_body closing_brace {
-        // $$ = parser->createSupportsRule($4, $9);
         $$ = katana_new_supports_rule(parser, $4, $9);
     }
     ;
@@ -688,16 +685,12 @@ supports:
 before_supports_rule:
     /* empty */ {
       katana_start_rule_header(parser, KatanaRuleSupports);
-        // parser->startRuleHeader(StyleRule::Supports);
-        // parser->markSupportsRuleHeaderStart();
     }
     ;
 
 at_supports_rule_header_end:
     /* empty */ {
         katana_end_rule_header(parser);
-        // parser->endRuleHeader();
-        // parser->markSupportsRuleHeaderEnd();
     }
     ;
 
@@ -754,34 +747,16 @@ supports_condition_in_parens:
     }
     | supports_declaration_condition
     | '(' error error_location error_recovery closing_parenthesis maybe_space {
-        // parser->reportError($3, InvalidSupportsConditionCSSError);
-        // $$ = false;
         YYERROR;
     }
     ;
 
 supports_declaration_condition:
     '(' maybe_space KATANA_CSS_IDENT maybe_space ':' maybe_space expr prio closing_parenthesis maybe_space {
-        // $$ = false;
-        // CSSPropertyID id = cssPropertyID($3);
-        // if (id != CSSPropertyInvalid) {
-        //    parser->m_valueList = parser->sinkFloatingValueList($7);
-        //    int oldParsedProperties = parser->m_parsedProperties.size();
-        //    $$ = parser->parseValue(id, $8);
-        //    // We just need to know if the declaration is supported as it is written. Rollback any additions.
-        //    if ($$)
-        //        parser->rollbackLastProperties(parser->m_parsedProperties.size() - oldParsedProperties);
-        // }
-        // parser->m_valueList = nullptr;
-        // parser->endProperty($8, false);
-        //$$ = 0;
         $$ = katana_new_supports_exp(parser, KatanaSupportsOperatorNone);
-
         $$->decl = katana_new_declaration(parser, &$3, false, $7);
     }
     | '(' maybe_space KATANA_CSS_IDENT maybe_space ':' maybe_space error error_recovery closing_parenthesis maybe_space {
-        // $$ = false;
-        // parser->endProperty(false, false, GeneralCSSError);        
         YYERROR;
     }
     ;
@@ -897,7 +872,6 @@ keyframes_error_recovery:
 before_page_rule:
     /* empty */ {
       katana_start_rule_header(parser, KatanaRulePage);
-        // parser->startRuleHeader(StyleRule::Page);
     }
     ;
 
@@ -905,14 +879,6 @@ page:
     before_page_rule KATANA_CSS_PAGE_SYM maybe_space page_selector at_rule_header_end
     '{' at_rule_body_start maybe_space_before_declaration declarations_and_margins closing_brace {
         $$ = katana_new_page_rule(parser);
-        // if ($4)
-        //     $$ = parser->createPageRule(parser->sinkFloatingSelector($4));
-        // else {
-        //    // Clear properties in the invalid @page rule.
-        //    parser->clearProperties();
-        //    // Also clear margin at-rules here once we fully implement margin at-rules parsing.
-        //    $$ = 0;
-        // }
     }
     ;
 
@@ -921,9 +887,6 @@ page_selector:
         $$ = katana_new_selector(parser);
         $$->match = KatanaSelectorMatchTag;
         $$->tag = katana_new_qualified_name(parser, NULL, &$1, &parser->default_namespace);
-
-        // $$ = parser->createFloatingSelectorWithTagName(QualifiedName(nullAtom, $1, parser->m_defaultNamespace));
-        // $$->setForPage();
     }
     | KATANA_CSS_IDENT pseudo_page maybe_space {
         // $$ = $2;
@@ -1113,8 +1076,6 @@ selector:
             while (NULL != end->tagHistory)
                 end = end->tagHistory;
             end->relation = KatanaSelectorRelationDescendant;
-            // if ($1->isContentPseudoElement())
-            //     end->setRelationIsAffectedByPseudoContent();
             end->tagHistory = katana_sink_floating_selector(parser, $1);
         }
     }
@@ -1125,8 +1086,6 @@ selector:
             while (NULL != end->tagHistory)
                 end = end->tagHistory;
             end->relation = (yyvsp[-1].relation);
-            // if ($1->isContentPseudoElement())
-            //     end->setRelationIsAffectedByPseudoContent();
             end->tagHistory = katana_sink_floating_selector(parser, $1);
         }
     }
@@ -1169,9 +1128,6 @@ simple_selector:
         $$ = katana_new_selector(parser);
         $$->match = KatanaSelectorMatchTag;
         $$->tag = katana_new_qualified_name(parser, &$1, &$2, &$1);
-        // $$ = parser->createFloatingSelectorWithTagName(parser->determineNameInNamespace($1, $2));
-        // if (!$$)
-        //    YYERROR;
     }
     | namespace_selector element_name specifier_list {
         // printf("namespace_selector element_name specifier_list\n");
@@ -1200,9 +1156,6 @@ simple_selector_list:
 
 element_name:
     KATANA_CSS_IDENT {
-        // FIXME: 标签名是否区分大写
-        // if (parser->m_context.isHTMLDocument())
-        //     parser->tokenToLowerCase($1);
         $$ = $1;
     }
     | '*' {
@@ -1221,8 +1174,6 @@ specifier:
     KATANA_CSS_IDSEL {
         $$ = katana_new_selector(parser);
         $$->match =KatanaSelectorMatchId;
-        // if (isQuirksModeBehavior(parser->m_context.mode()))
-            // parser->tokenToLowerCase($1);
         katana_selector_set_value(parser, $$, &$1);
     }
   | KATANA_CSS_HEX {
@@ -1231,8 +1182,6 @@ specifier:
         } else {
             $$ = katana_new_selector(parser);
             $$->match =KatanaSelectorMatchId;
-            // if (isQuirksModeBehavior(parser->m_context.mode()))
-                // parser->tokenToLowerCase($1);
             katana_selector_set_value(parser, $$, &$1);
         }
     }
@@ -1245,16 +1194,12 @@ class:
     '.' KATANA_CSS_IDENT {
         $$ = katana_new_selector(parser);
         $$->match = KatanaSelectorMatchClass;
-        // if (isQuirksModeBehavior(parser->m_context.mode()))
-        //     parser->tokenToLowerCase($2);
         katana_selector_set_value(parser, $$, &$2);
     }
   ;
 
 attr_name:
     KATANA_CSS_IDENT maybe_space {
-        // if (parser->m_context.isHTMLDocument())
-        //    parser->tokenToLowerCase($1);
         $$ = $1;
     }
     ;
@@ -1354,9 +1299,6 @@ pseudo:
         katana_string_to_lowercase(parser, &$3);
         katana_selector_set_value(parser, $$, &$3);
         katana_selector_extract_pseudo_type($$);
-        // if ($$->pseudo == KatanaSelectorPseudoUnknown) {
-        //     katana_parser_report_error(parser, $2, InvalidSelectorPseudoCSSError);
-        //     YYERROR;
     }
     | ':' ':' error_location KATANA_CSS_IDENT {
         if (katana_string_is_function(&$4))
@@ -1366,11 +1308,6 @@ pseudo:
         katana_string_to_lowercase(parser, &$4);
         katana_selector_set_value(parser, (yyval.selector), &$4);
         katana_selector_extract_pseudo_type((yyval.selector));
-        // FIXME: This call is needed to force selector to compute the pseudoType early enough.
-        // CSSSelector::PseudoType type = $$->pseudoType();
-        // if (type == CSSSelector::PseudoUnknown) {
-        //     katana_parser_report_error(parser, $3, InvalidSelectorPseudoCSSError);
-        //     YYERROR;
     }
     // used by ::cue(:past/:future)
     | ':' ':' KATANA_CSS_CUEFUNCTION maybe_space simple_selector_list maybe_space closing_parenthesis {
@@ -1410,9 +1347,6 @@ pseudo:
         katana_selector_set_argument(parser, $$, &$4);
         katana_selector_set_value(parser, (yyval.selector), &$2);
         katana_selector_extract_pseudo_type($$);
-        // CSSSelector::PseudoType type = $$->pseudoType();
-        // if (type == CSSSelector::PseudoUnknown)
-        //     YYERROR;
     }
     // used by :nth-*
     | ':' KATANA_CSS_FUNCTION maybe_space maybe_unary_operator KATANA_CSS_INTEGER maybe_space closing_parenthesis {
@@ -1421,13 +1355,6 @@ pseudo:
         katana_selector_set_argument_with_number(parser, $$, $4, &$5);
         katana_selector_set_value(parser, (yyval.selector), &$2);
         katana_selector_extract_pseudo_type((yyval.selector));
-        // $$ = parser->createFloatingSelector();
-        // $$->setMatch(CSSSelector::PseudoClass);
-        // $$->setArgument(AtomicString::number($4 * $5));
-        // $$->setValue($2);
-        // CSSSelector::PseudoType type = $$->pseudoType();
-        // if (type == CSSSelector::PseudoUnknown)
-        //    YYERROR;
     }
     // used by :nth-*(odd/even) and :lang
     | ':' KATANA_CSS_FUNCTION maybe_space KATANA_CSS_IDENT maybe_space closing_parenthesis {
@@ -1438,16 +1365,6 @@ pseudo:
         katana_string_to_lowercase(parser, &$2);
         katana_selector_set_value(parser, $$, &$2);
         katana_selector_extract_pseudo_type((yyval.selector));
-        // CSSSelector::PseudoType type = $$->pseudoType();
-        // if (type == CSSSelector::PseudoUnknown)
-        //    YYERROR;
-        // else if (type == CSSSelector::PseudoNthChild ||
-        //         type == CSSSelector::PseudoNthOfType ||
-        //         type == CSSSelector::PseudoNthLastChild ||
-        //         type == CSSSelector::PseudoNthLastOfType) {
-        //    if (!isValidNthToken($4))
-        //        YYERROR;
-        // }
     }
     | ':' KATANA_CSS_FUNCTION selector_recovery closing_parenthesis {
         YYERROR;
@@ -1474,14 +1391,6 @@ pseudo:
         YYERROR;
     }
     | ':' KATANA_CSS_HOSTFUNCTION maybe_space simple_selector_list maybe_space closing_parenthesis {
-        // $$ = parser->createFloatingSelector();
-        // $$->setMatch(CSSSelector::PseudoClass);
-        // $$->adoptSelectorVector(*parser->sinkFloatingSelectorVector($4));
-        // parser->tokenToLowerCase($2);
-        // $$->setValue($2);
-        // CSSSelector::PseudoType type = $$->pseudoType();
-        // if (type != CSSSelector::PseudoHost)
-        //    YYERROR;
         YYERROR;
     }
     | ':' KATANA_CSS_HOSTFUNCTION selector_recovery closing_parenthesis {
@@ -1489,14 +1398,6 @@ pseudo:
     }
     //  used by :host-context()
     | ':' KATANA_CSS_HOSTCONTEXTFUNCTION maybe_space simple_selector_list maybe_space closing_parenthesis {
-        // $$ = parser->createFloatingSelector();
-        // $$->setMatch(CSSSelector::PseudoClass);
-        // $$->adoptSelectorVector(*parser->sinkFloatingSelectorVector($4));
-        // parser->tokenToLowerCase($2);
-        // $$->setValue($2);
-        // CSSSelector::PseudoType type = $$->pseudoType();
-        //if (type != CSSSelector::PseudoHostContext)
-        //    YYERROR;
         YYERROR;
     }
     | ':' KATANA_CSS_HOSTCONTEXTFUNCTION selector_recovery closing_parenthesis {
@@ -1531,10 +1432,8 @@ declaration:
     property ':' maybe_space error_location expr prio {
         $$ = false;
         bool isPropertyParsed = false;
-        // unsigned int oldParsedProperties = parser->parsedProperties->length;
         (yyval.boolean) = katana_add_declaration(parser, katana_new_declaration(parser, &$1, $6, $5));
         if (!(yyval.boolean)) {
-            // parser->rollbackLastProperties(parser->m_parsedProperties.size() - oldParsedProperties);
             katana_parser_report_error(parser, $4, "InvalidPropertyValueCSSError");
         } else {
             isPropertyParsed = true;
@@ -1569,13 +1468,6 @@ declaration:
 
 property:
     error_location KATANA_CSS_IDENT maybe_space {
-        // $$ = cssPropertyID($2);
-        // parser->setCurrentProperty($$);
-        // if ($$ == CSSPropertyInvalid)
-        //    parser->reportError($1, InvalidPropertyCSSError);
-        // $$ = $2;
-        // katana_set_current_declaration(parser, &$$);
-
         $$ = $2;
         katana_set_current_declaration(parser, &$$);
     }
@@ -1705,8 +1597,6 @@ unary_term:
   | KATANA_CSS_EXS { $$ = katana_new_dimension_value(parser, &$1, KATANA_VALUE_EXS); }
   | KATANA_CSS_REMS {
       $$ = katana_new_dimension_value(parser, &$1, KATANA_VALUE_REMS);
-      /* if (parser->m_styleSheet)
-          parser->m_styleSheet->parserSetUsesRemUnits(true); */
   }
   | KATANA_CSS_CHS { $$ = katana_new_dimension_value(parser, &$1, KATANA_VALUE_CHS); }
   | KATANA_CSS_VW { $$ = katana_new_dimension_value(parser, &$1, KATANA_VALUE_VW); }
@@ -1788,7 +1678,6 @@ calc_func_expr:
 
 calc_function:
     KATANA_CSS_CALCFUNCTION maybe_space calc_func_expr calc_maybe_space closing_parenthesis {
-//        $$.setFromFunction(parser->createFloatingFunction($1, parser->sinkFloatingValueList($3)));
         $$ = katana_new_function_value(parser, &$1, $3);
     }
     | KATANA_CSS_CALCFUNCTION maybe_space expr_recovery closing_parenthesis {

@@ -3,12 +3,6 @@
  */
 #include "rb_katana.h"
 
-extern VALUE rb_Katana, rb_Output, rb_KError, rb_KPosition, rb_KArray, rb_Stylesheet,
-    rb_MediaRule, rb_MediaQuery, rb_MediaQueryExp,
-    rb_SupportsRule, rb_SupportsExp,
-    rb_PageRule, rb_FontFaceRule, rb_StyleRule, rb_ImportRule, rb_NamespaceRule, rb_CharsetRule,
-    rb_Selector, rb_SelectorData, rb_Declaration, rb_Value, rb_QualifiedName, rb_ValueFunction;
-
 // Declaration
 
 /*
@@ -37,20 +31,6 @@ VALUE rb_declaration_important(VALUE self)
         return Qfalse;
 }
 
-
-/*
- * @return [String, nil]
- */
-VALUE rb_declaration_raw(VALUE self)
-{
-    KatanaDeclaration *c_decl;
-    Data_Get_Struct(self, KatanaDeclaration, c_decl);
-    if (c_decl->raw)
-        return rb_str_new2(c_decl->raw);
-    else
-        return Qnil;
-}
-
 /*
  * @return [Katana::Array<Katana::Value>, nil]
  */
@@ -69,9 +49,7 @@ VALUE rb_declaration_values(VALUE self)
         return array;
     }
     else
-    {
         return Qnil;
-    }
 }
 
 /*
@@ -85,19 +63,6 @@ VALUE rb_declaration_position(VALUE self)
 }
 
 // Value
-
-/*
- * @return [String, nil]
- */
-VALUE rb_value_raw(VALUE self)
-{
-    KatanaValue *c_val;
-    Data_Get_Struct(self, KatanaValue, c_val);
-    if (c_val->raw)
-        return rb_str_new2(c_val->raw);
-    else
-        return Qnil;
-}
 
 /*
  * @return [Symbol]
@@ -405,20 +370,17 @@ void init_katana_declaration()
     rb_define_method(rb_Declaration, "values", rb_declaration_values, 0);
 
     rb_define_method(rb_Declaration, "position", rb_declaration_position, 0);
-    rb_define_method(rb_Declaration, "raw", rb_declaration_raw, 0);
 
     // Declaration
     rb_Declaration = rb_define_class_under(rb_Katana, "Declaration", rb_cObject);
     rb_define_method(rb_Declaration, "property", rb_declaration_prop, 0);
     rb_define_method(rb_Declaration, "important", rb_declaration_important, 0);
     rb_define_method(rb_Declaration, "values", rb_declaration_values, 0);
-    rb_define_method(rb_Declaration, "raw", rb_declaration_raw, 0);
 
     // Value
     rb_Value = rb_define_class_under(rb_Katana, "Value", rb_cObject);
     rb_define_method(rb_Value, "value", rb_value_value, 0);
     rb_define_method(rb_Value, "unit", rb_value_unit, 0);
-    rb_define_method(rb_Value, "raw", rb_value_raw, 0);
 
     // ValueFunction
     rb_ValueFunction = rb_define_class_under(rb_Katana, "ValueFunction", rb_cObject);

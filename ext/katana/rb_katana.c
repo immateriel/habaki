@@ -6,7 +6,7 @@ VALUE rb_Katana, rb_Output, rb_KError, rb_KPosition, rb_KArray, rb_Stylesheet,
     rb_PageRule, rb_FontFaceRule, rb_StyleRule, rb_ImportRule, rb_NamespaceRule, rb_CharsetRule,
     rb_Selector, rb_SelectorData, rb_Declaration, rb_Value, rb_QualifiedName, rb_ValueFunction;
 
-void output_free(KatanaOutput *output)
+static void output_free(KatanaOutput *output)
 {
   katana_destroy_output(output);
 }
@@ -43,9 +43,7 @@ VALUE rb_output_declarations(VALUE self)
     return array;
   }
   else
-  {
     return Qnil;
-  }
 }
 
 /*
@@ -66,9 +64,7 @@ VALUE rb_output_selectors(VALUE self)
     return array;
   }
   else
-  {
     return Qnil;
-  }
 }
 
 // Position
@@ -78,9 +74,9 @@ VALUE rb_output_selectors(VALUE self)
  */
 VALUE rb_position_line(VALUE self)
 {
-    KatanaSourcePosition *c_pos;
-    Data_Get_Struct(self, KatanaSourcePosition, c_pos);
-    return INT2NUM(c_pos->line);
+  KatanaSourcePosition *c_pos;
+  Data_Get_Struct(self, KatanaSourcePosition, c_pos);
+  return INT2NUM(c_pos->line);
 }
 
 /*
@@ -88,9 +84,9 @@ VALUE rb_position_line(VALUE self)
  */
 VALUE rb_position_column(VALUE self)
 {
-    KatanaSourcePosition *c_pos;
-    Data_Get_Struct(self, KatanaSourcePosition, c_pos);
-    return INT2NUM(c_pos->column);
+  KatanaSourcePosition *c_pos;
+  Data_Get_Struct(self, KatanaSourcePosition, c_pos);
+  return INT2NUM(c_pos->column);
 }
 
 /*
@@ -109,18 +105,16 @@ VALUE rb_output_errors(VALUE self)
   return array;
 }
 
-
 // Array
 /*
-* @return [Integer]
-*/
+ * @return [Integer]
+ */
 VALUE rb_array_length(VALUE array)
 {
   KatanaArray *c_array;
   Data_Get_Struct(array, KatanaArray, c_array);
   return INT2NUM(c_array->length);
 }
-
 
 // Error
 

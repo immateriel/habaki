@@ -8,21 +8,20 @@ module Habaki
       @data = data
     end
 
-    # @api private
-    # @param [Katana::Value] val
-    # @return [void]
-    def read_from_katana(val)
-      @data = val.value
+    def ==(other)
+      to_s == other.to_s
     end
 
-    # @api private
     # @return [String]
     def string(indent = 0)
       "#{@data}"
     end
 
-    def ==(other)
-      to_s == other.to_s
+    # @api private
+    # @param [Katana::Value] val
+    # @return [void]
+    def read_from_katana(val)
+      @data = val.value
     end
 
     private
@@ -165,18 +164,17 @@ module Habaki
       end
     end
 
+    # @return [String]
+    def string(indent = 0)
+      @unit ? "#{data_i_or_f}#{@unit}" : @data
+    end
+
     # @api private
     # @return [void]
     def read_from_katana(val)
       @data = val.value
       @unit = val.unit
       @unit = nil if @unit == :dimension
-    end
-
-    # @api private
-    # @return [String]
-    def string(indent = 0)
-      @unit ? "#{data_i_or_f}#{@unit}" : @data
     end
   end
 
@@ -253,7 +251,6 @@ module Habaki
 
   # <hex-color> value type
   class HexColor < Value
-    # @api private
     # @return [String]
     def string(indent = 0)
       "##{@data}"

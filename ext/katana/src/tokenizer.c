@@ -298,14 +298,3 @@ inline bool katana_is_html_space(char c)
 {
     return c <= ' ' && (c == ' ' || c == '\n' || c == '\t' || c == '\r' || c == '\f');
 }
-
-//inline int katana_to_ascii_hex_value(char c)
-//{
-//    //    ASSERT(isASCIIHexDigit(c));
-//    return c < 'A' ? c - '0' : (c - 'A' + 10) & 0xF;
-//}
-
-//inline bool katana_is_ascii_hex_digit(char c)
-//{
-//    return (c >= '0' && c <= '9') || ((c | 0x20) >= 'a' && (c | 0x20) <= 'f');
-//}

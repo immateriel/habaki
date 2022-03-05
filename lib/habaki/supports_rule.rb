@@ -40,7 +40,7 @@ module Habaki
 
   # supports rule @supports
   class SupportsRule < Rule
-    # @return [SupportExp]
+    # @return [SupportsExpression]
     attr_accessor :expression
     # @return [Rules]
     attr_accessor :rules

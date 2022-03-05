@@ -1,16 +1,10 @@
 #include "rb_katana.h"
 
-extern VALUE rb_Katana, rb_Output, rb_KError, rb_KArray, rb_Stylesheet,
-    rb_MediaRule, rb_MediaQuery, rb_MediaQueryExp,
-    rb_SupportsRule, rb_SupportsExp,
-    rb_PageRule, rb_FontFaceRule, rb_StyleRule, rb_ImportRule, rb_NamespaceRule, rb_CharsetRule,
-    rb_Selector, rb_SelectorData, rb_Declaration, rb_Value, rb_QualifiedName, rb_ValueFunction;
-
 // SupportsRule
 
 /*
-* @return [Symbol]
-*/
+ * @return [Symbol]
+ */
 VALUE rb_supports_exp_op(VALUE self)
 {
   ID id;
@@ -53,20 +47,19 @@ VALUE rb_supports_exp_exps(VALUE self)
     return array;
   }
   else
-  {
     return Qnil;
-  }
 }
 
 VALUE rb_supports_exp_declaration(VALUE self)
 {
   KatanaSupportsExp *c_exp;
   Data_Get_Struct(self, KatanaSupportsExp, c_exp);
-  if(c_exp->decl) {
+  if (c_exp->decl)
+  {
     VALUE array = Data_Wrap_Struct(rb_Declaration, NULL, NULL, c_exp->decl);
-  } else {
-    return Qnil;
   }
+  else
+    return Qnil;
 }
 
 VALUE rb_supports_rules(VALUE self)
@@ -84,9 +77,7 @@ VALUE rb_supports_rules(VALUE self)
     return array;
   }
   else
-  {
     return Qnil;
-  }
 }
 
 VALUE rb_supports_exp(VALUE self)
@@ -100,16 +91,14 @@ VALUE rb_supports_exp(VALUE self)
     return exp;
   }
   else
-  {
     return Qnil;
-  }
 }
 
 // NamespaceRule
 
 /*
-* @return [String, nil]
-*/
+ * @return [String, nil]
+ */
 VALUE rb_namespace_rule_prefix(VALUE self)
 {
   KatanaNamespaceRule *c_rule;
@@ -121,8 +110,8 @@ VALUE rb_namespace_rule_prefix(VALUE self)
 }
 
 /*
-* @return [String, nil]
-*/
+ * @return [String, nil]
+ */
 VALUE rb_namespace_rule_uri(VALUE self)
 {
   KatanaNamespaceRule *c_rule;
@@ -136,8 +125,8 @@ VALUE rb_namespace_rule_uri(VALUE self)
 // MediaRule
 
 /*
-* @return [Katana::Array]
-*/
+ * @return [Katana::Array]
+ */
 VALUE rb_media_rule_rules(VALUE self)
 {
   KatanaMediaRule *c_media_rule;
@@ -153,14 +142,12 @@ VALUE rb_media_rule_rules(VALUE self)
     return array;
   }
   else
-  {
     return Qnil;
-  }
 }
 
 /*
-* @return [Katana::Array<Katana::MediaQuery>]
-*/
+ * @return [Katana::Array<Katana::MediaQuery>]
+ */
 VALUE rb_media_rule_medias(VALUE self)
 {
   KatanaMediaRule *c_media_rule;
@@ -175,16 +162,14 @@ VALUE rb_media_rule_medias(VALUE self)
     return array;
   }
   else
-  {
     return Qnil;
-  }
 }
 
 // MediaQueryExp
 
 /*
-* @return [String, nil]
-*/
+ * @return [String, nil]
+ */
 VALUE rb_media_query_exp_feature(VALUE self)
 {
   KatanaMediaQueryExp *c_query;
@@ -196,8 +181,8 @@ VALUE rb_media_query_exp_feature(VALUE self)
 }
 
 /*
-* @return [Katana::Array<Katana::Value>, nil]
-*/
+ * @return [Katana::Array<Katana::Value>, nil]
+ */
 VALUE rb_media_query_exp_values(VALUE self)
 {
   KatanaMediaQueryExp *c_query;
@@ -213,16 +198,14 @@ VALUE rb_media_query_exp_values(VALUE self)
     return array;
   }
   else
-  {
     return Qnil;
-  }
 }
 
 // MediaQuery
 
 /*
-* @return [String]
-*/
+ * @return [String]
+ */
 VALUE rb_media_query_type(VALUE self)
 {
   KatanaMediaQuery *c_query;
@@ -234,8 +217,8 @@ VALUE rb_media_query_type(VALUE self)
 }
 
 /*
-* @return [Symbol]
-*/
+ * @return [Symbol]
+ */
 VALUE rb_media_query_restrictor(VALUE self)
 {
   ID id;
@@ -260,8 +243,8 @@ VALUE rb_media_query_restrictor(VALUE self)
 }
 
 /*
-* @return [Katana::Array<Katana::MediaQueryExpression>]
-*/
+ * @return [Katana::Array<Katana::MediaQueryExpression>]
+ */
 VALUE rb_media_query_expressions(VALUE self)
 {
   KatanaMediaQuery *c_query;
@@ -277,16 +260,14 @@ VALUE rb_media_query_expressions(VALUE self)
     return array;
   }
   else
-  {
     return Qnil;
-  }
 }
 
 // PageRule
 
 /*
-* @return [Katana::Array<Katana::Declaration>]
-*/
+ * @return [Katana::Array<Katana::Declaration>]
+ */
 VALUE rb_page_rule_declarations(VALUE self)
 {
   KatanaPageRule *c_rule;
@@ -302,16 +283,14 @@ VALUE rb_page_rule_declarations(VALUE self)
     return array;
   }
   else
-  {
     return Qnil;
-  }
 }
 
 // FontFaceRule
 
 /*
-* @return [Katana::Array<Katana::Declaration>]
-*/
+ * @return [Katana::Array<Katana::Declaration>]
+ */
 VALUE rb_font_face_rule_declarations(VALUE self)
 {
   KatanaFontFaceRule *c_rule;
@@ -327,16 +306,14 @@ VALUE rb_font_face_rule_declarations(VALUE self)
     return array;
   }
   else
-  {
     return Qnil;
-  }
 }
 
 // ImportRule
 
 /*
-* @return [String]
-*/
+ * @return [String]
+ */
 VALUE rb_import_rule_href(VALUE self)
 {
   KatanaImportRule *c_rule;
@@ -348,8 +325,8 @@ VALUE rb_import_rule_href(VALUE self)
 }
 
 /*
-* @return [Katana::Array<Katana::MediaQuery>]
-*/
+ * @return [Katana::Array<Katana::MediaQuery>]
+ */
 VALUE rb_import_rule_medias(VALUE self)
 {
   KatanaImportRule *c_rule;
@@ -365,16 +342,14 @@ VALUE rb_import_rule_medias(VALUE self)
     return array;
   }
   else
-  {
     return Qnil;
-  }
 }
 
 // CharsetRule
 
 /*
-* @return [String]
-*/
+ * @return [String]
+ */
 VALUE rb_charset_rule_encoding(VALUE self)
 {
   KatanaCharsetRule *c_rule;
@@ -388,8 +363,8 @@ VALUE rb_charset_rule_encoding(VALUE self)
 // StyleRule
 
 /*
-* @return [Katana::Array<Katana::Selector>]
-*/
+ * @return [Katana::Array<Katana::Selector>]
+ */
 VALUE rb_style_rule_selectors(VALUE self)
 {
   KatanaStyleRule *c_style_rule;
@@ -405,14 +380,12 @@ VALUE rb_style_rule_selectors(VALUE self)
     return array;
   }
   else
-  {
     return Qnil;
-  }
 }
 
 /*
-* @return [Katana::Array<Katana::Declaration>]
-*/
+ * @return [Katana::Array<Katana::Declaration>]
+ */
 VALUE rb_style_rule_declarations(VALUE self)
 {
   KatanaStyleRule *c_style_rule;
@@ -428,12 +401,10 @@ VALUE rb_style_rule_declarations(VALUE self)
     return array;
   }
   else
-  {
     return Qnil;
-  }
 }
 
-void init_katana_rule() 
+void init_katana_rule()
 {
   // SupportsRule
   rb_SupportsExp = rb_define_class_under(rb_Katana, "SupportsExpression", rb_cObject);

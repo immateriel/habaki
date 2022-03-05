@@ -46,10 +46,8 @@ VALUE rb_selector_data_selectors(VALUE self);
 
 VALUE rb_declaration_prop(VALUE self);
 VALUE rb_declaration_important(VALUE self);
-VALUE rb_declaration_raw(VALUE self);
 VALUE rb_declaration_values(VALUE self);
 
-VALUE rb_value_raw(VALUE self);
 VALUE rb_value_unit(VALUE self);
 VALUE rb_value_value(VALUE self);
 VALUE rb_value_function_name(VALUE self);
@@ -93,6 +91,12 @@ VALUE rb_style_rule_declarations(VALUE self);
 void init_katana_rule();
 void init_katana_selector();
 void init_katana_declaration();
+
+extern VALUE rb_Katana, rb_Output, rb_KError, rb_KPosition, rb_KArray, rb_Stylesheet,
+    rb_MediaRule, rb_MediaQuery, rb_MediaQueryExp,
+    rb_SupportsRule, rb_SupportsExp,
+    rb_PageRule, rb_FontFaceRule, rb_StyleRule, rb_ImportRule, rb_NamespaceRule, rb_CharsetRule,
+    rb_Selector, rb_SelectorData, rb_Declaration, rb_Value, rb_QualifiedName, rb_ValueFunction;
 
 #endif
 
