@@ -117,12 +117,13 @@ module Habaki
       true
     end
 
+    # @param [Formatter::Base] format
     # @return [String]
-    def string(indent = 0)
+    def string(format = Formatter::Base.new)
       str = ""
 
       if attribute_selector?
-        str += "[#{@attribute.string}"
+        str += "[#{@attribute.string(format)}"
         case @match
         when :attribute_exact
           str += "="
@@ -143,7 +144,7 @@ module Habaki
       else
         case @match
         when :tag
-          str += @tag.string
+          str += @tag.string(format)
         when :class
           str += ".#{@value}"
         when :id
@@ -154,7 +155,7 @@ module Habaki
           str += ":#{@value}"
           case @pseudo
           when :any, :not, :host, :host_context
-            str += @selectors.string
+            str += @selectors.string(format)
             str += ")"
           when :lang, :nth_child, :nth_last_child, :nth_of_type, :nth_last_of_type
             str += "#{@argument})"

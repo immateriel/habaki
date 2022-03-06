@@ -28,14 +28,15 @@ module Habaki
       end
     end
 
+    # @param [Formatter::Base] format
     # @return [String]
-    def string(indent = 0)
+    def string(format = Formatter::Base.new)
       str = ""
       each_cons(2) do |val|
-        str += val[0].string
+        str += val[0].string(format)
         str += val[1].is_a?(Operator) || val[0].is_a?(Operator) ? "" : " "
       end
-      str += last.string if last
+      str += last.string(format) if last
       str
     end
 

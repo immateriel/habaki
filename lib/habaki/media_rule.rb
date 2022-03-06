@@ -33,6 +33,12 @@ module Habaki
       end
     end
 
+    # @param [Formatter::Base] format
+    # @return [String]
+    def string(format = Formatter::Base.new)
+      "(#{@feature}#{@values.any? ? ": #{@values.string(format)}" : ""})"
+    end
+
     # @api private
     # @param [Katana::MediaQueryExpression] exp
     # @return [void]
@@ -41,12 +47,6 @@ module Habaki
       if exp.values
         @values = Values.read_from_katana(exp.values)
       end
-    end
-
-    # @api private
-    # @return [String]
-    def string(indent = 0)
-      "(#{@feature}#{@values.any? ? ": #{@values.string}" : ""})"
     end
   end
 
@@ -83,15 +83,15 @@ module Habaki
       true
     end
 
+    # @param [Formatter::Base] format
     # @return [String]
-    def string(indent = 0)
+    def string(format = Formatter::Base.new)
       str = (@restrictor != :none ? @restrictor.to_s + " " : "") + (@type ? @type : "")
       if @expressions.any?
         @expressions.each do |exp|
           str += " and " if str != ""
-          str += exp.string
+          str += exp.string(format)
         end
-        str += ""
       end
       str
     end
@@ -110,9 +110,10 @@ module Habaki
 
   # Array of {MediaQuery}
   class MediaQueries < NodeArray
+    # @param [Formatter::Base] format
     # @return [String]
-    def string(indent = 0)
-      map(&:string).join(",")
+    def string(format = Formatter::Base.new)
+      string_join(format, ",")
     end
 
     # @param [Visitor::Media] media
@@ -155,9 +156,10 @@ module Habaki
       end
     end
 
+    # @param [Formatter::Base] format
     # @return [String]
-    def string(indent = 0)
-      "@media #{@medias.string} {\n#{@rules.string(indent + 1)}\n}"
+    def string(format = Formatter::Base.new)
+      "@media #{@medias.string(format)} {\n#{@rules.string(format + 1)}\n}"
     end
 
     # @api private

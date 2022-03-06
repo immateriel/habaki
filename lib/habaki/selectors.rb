@@ -32,9 +32,10 @@ module Habaki
       false
     end
 
+    # @param [Formatter::Base] format
     # @return [String]
-    def string(indent = 0)
-      map(&:string).join(",")
+    def string(format = Formatter::Base.new)
+      string_join(format, ",")
     end
 
     # @api private

@@ -8,9 +8,10 @@ module Habaki
       @declarations = Declarations.new
     end
 
+    # @param [Formatter::Base] format
     # @return [String]
-    def string(indent = 0)
-      "@font-face {#{@declarations.string(indent)}}"
+    def string(format = Formatter::Base.new)
+      "@font-face {#{@declarations.string(format)}}"
     end
 
     # @api private

@@ -57,9 +57,10 @@ module Habaki
       true
     end
 
+    # @param [Formatter::Base] format
     # @return [String]
-    def string(indent = 0)
-      @sub_selectors.map(&:string).join("")
+    def string(format = Formatter::Base.new)
+      @sub_selectors.map do |sub_sel| sub_sel.string(format) end.join("")
     end
 
     # @api private

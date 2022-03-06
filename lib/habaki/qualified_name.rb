@@ -13,8 +13,9 @@ module Habaki
       @prefix = prefix
     end
 
+    # @param [Formatter::Base] format
     # @return [String]
-    def string(indent = 0)
+    def string(format = Formatter::Base.new)
       @prefix ? "#{@prefix}|#{@local}" : @local
     end
 

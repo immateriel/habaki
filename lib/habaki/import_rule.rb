@@ -17,9 +17,10 @@ module Habaki
       Stylesheet.parse_file(base_dir+@href)
     end
 
+    # @param [Formatter::Base] format
     # @return [String]
-    def string(indent = 0)
-      "@import \"#{@href}\" #{@medias.string};"
+    def string(format = Formatter::Base.new)
+      "@import #{format.quote}#{@href}#{format.quote} #{@medias.string(format)};"
     end
 
     # @api private

@@ -14,8 +14,9 @@ module Habaki
       @uri = uri
     end
 
+    # @param [Formatter::Base] format
     # @return [String]
-    def string(indent = 0)
+    def string(format = Formatter::Base.new)
       "@namespace #{@prefix.length > 0 ? "#{@prefix} " : ""}\"#{@uri}\";"
     end
 

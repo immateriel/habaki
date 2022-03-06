@@ -1,6 +1,6 @@
 module Habaki
   # Array of {SubSelector}
-  class SubSelectors < Array
+  class SubSelectors < NodeArray
     # @return [Symbol]
     attr_accessor :relation
 
@@ -27,23 +27,28 @@ module Habaki
       true
     end
 
-    # @api private
-    def string(indent = 0)
-      str = ""
+    # @param [Formatter::Base] format
+    # @return [String]
+    def string(format = Formatter::Base.new)
+      "#{string_relation}#{string_join(format, "")}"
+    end
+
+    private
+
+    def string_relation
       case @relation
       when :descendant
-        str += " "
+        " "
       when :child
-        str += " > "
+        " > "
       when :direct_adjacent
-        str += " + "
+        " + "
       when :indirect_adjacent
-        str += " ~ "
+        " ~ "
+      else
+        ""
       end
-      each do |sub_sel|
-        str += sub_sel.string
-      end
-      str
     end
+
   end
 end

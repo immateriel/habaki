@@ -164,9 +164,10 @@ module Habaki
       parse(File.read(filename))
     end
 
+    # @param [Formatter::Base] format
     # @return [String]
-    def string(indent = 0)
-      @rules.string(indent)
+    def string(format = Formatter::Base.new)
+      @rules.string(format)
     end
 
     # @api private

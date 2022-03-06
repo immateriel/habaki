@@ -21,4 +21,4 @@ stylesheet.each_rule do |rule|
   end
 end
 
-puts stylesheet.string(0)
+puts stylesheet.string(Habaki::Formatter::Indented.new)

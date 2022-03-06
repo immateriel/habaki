@@ -12,8 +12,9 @@ module Habaki
       to_s == other.to_s
     end
 
+    # @param [Formatter::Base] format
     # @return [String]
-    def string(indent = 0)
+    def string(format = Formatter::Base.new)
       "#{@data}"
     end
 
@@ -164,8 +165,9 @@ module Habaki
       end
     end
 
+    # @param [Formatter::Base] format
     # @return [String]
-    def string(indent = 0)
+    def string(format = Formatter::Base.new)
       @unit ? "#{data_i_or_f}#{@unit}" : @data
     end
 
@@ -188,8 +190,9 @@ module Habaki
       @unit = unit
     end
 
+    # @param [Formatter::Base] format
     # @return [String]
-    def string(indent = 0)
+    def string(format = Formatter::Base.new)
       @unit ? "#{data_i_or_f}#{@unit}" : @data
     end
 
@@ -209,8 +212,9 @@ module Habaki
       @data
     end
 
+    # @param [Formatter::Base] format
     # @return [String]
-    def string(indent = 0)
+    def string(format = Formatter::Base.new)
       "#{data_i_or_f}%"
     end
   end
@@ -227,8 +231,9 @@ module Habaki
       @data.to_i
     end
 
+    # @param [Formatter::Base] format
     # @return [String]
-    def string(indent = 0)
+    def string(format = Formatter::Base.new)
       "#{data_i_or_f}"
     end
   end
@@ -239,9 +244,10 @@ module Habaki
 
   # <string> value type
   class String < Value
+    # @param [Formatter::Base] format
     # @return [String]
-    def string(indent = 0)
-      "'#{@data}'"
+    def string(format = Formatter::Base.new)
+      "#{format.quote}#{@data}#{format.quote}"
     end
   end
 
@@ -251,8 +257,9 @@ module Habaki
 
   # <hex-color> value type
   class HexColor < Value
+    # @param [Formatter::Base] format
     # @return [String]
-    def string(indent = 0)
+    def string(format = Formatter::Base.new)
       "##{@data}"
     end
   end
@@ -261,8 +268,9 @@ module Habaki
     # @return [Values]
     attr_accessor :args
 
+    # @param [Formatter::Base] format
     # @return [String]
-    def string(indent = 0)
+    def string(format = Formatter::Base.new)
       "#{@data}(#{@args.string})"
     end
 
@@ -291,9 +299,10 @@ module Habaki
       @data
     end
 
+    # @param [Formatter::Base] format
     # @return [String]
-    def string(indent = 0)
-      "url(#{@data.include?(" ") ? "\"#{@data}\"" : @data})"
+    def string(format = Formatter::Base.new)
+      "url(#{@data.include?(" ") ? "#{format.quote}#{@data}#{format.quote}" : @data})"
     end
   end
 

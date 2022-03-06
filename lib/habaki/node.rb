@@ -11,14 +11,15 @@ module Habaki
   class Node
     extend NodeReader
 
+    # @param [Formatter::Base] format
     # @return [::String]
-    def string(indent = 0)
+    def string(format = Formatter::Base.new)
       ""
     end
 
     # @return [::String]
     def to_s
-      string
+      string(Formatter::Flat.new)
     end
 
     # read from low level Katana struct
@@ -29,14 +30,19 @@ module Habaki
   class NodeArray < Array
     extend NodeReader
 
+    # @param [Formatter::Base] format
     # @return [::String]
-    def string(indent = 0)
+    def string(format = Formatter::Base.new)
       ""
+    end
+
+    def string_join(format, sep)
+      map do |node| node.string(format) end.join(sep)
     end
 
     # @return [::String]
     def to_s
-      string
+      string(Formatter::Flat.new)
     end
 
     # read from low level Katana struct

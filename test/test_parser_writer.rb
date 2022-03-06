@@ -25,7 +25,7 @@ class TestParserWriter < Minitest::Test
 
   def test_decl
     css = %{
-    a {color: blue; text-decoration: underline; font-size: 16px; }
+    a {color: blue; text-decoration: underline; font-size: 16px;}
     }
     stylesheet = Habaki::Stylesheet.parse(css)
     assert_equal "blue", stylesheet.rules.first.declarations.find_by_property("color").value.data
@@ -38,23 +38,23 @@ class TestParserWriter < Minitest::Test
     stylesheet = Habaki::Stylesheet.parse(css)
     decl = stylesheet.rules.font_faces.first.declarations.first
     decl.values.remove_value(decl.values.last)
-    assert_equal %{@font-face {src: url(font.ttf),url(font.otf); }}, stylesheet.to_s
+    assert_equal %{@font-face {src: url(font.ttf),url(font.otf);}}, stylesheet.to_s
 
     stylesheet = Habaki::Stylesheet.parse(css)
     decl = stylesheet.rules.font_faces.first.declarations.first
     decl.values.remove_value(decl.values[2])
-    assert_equal %{@font-face {src: url(font.ttf),url(font.woff); }}, stylesheet.to_s
+    assert_equal %{@font-face {src: url(font.ttf),url(font.woff);}}, stylesheet.to_s
 
     stylesheet = Habaki::Stylesheet.parse(css)
     decl = stylesheet.rules.font_faces.first.declarations.first
     decl.values.remove_value(decl.values.first)
-    assert_equal %{@font-face {src: url(font.otf),url(font.woff); }}, stylesheet.to_s
+    assert_equal %{@font-face {src: url(font.otf),url(font.woff);}}, stylesheet.to_s
 
     # array delete does not manage operators
     stylesheet = Habaki::Stylesheet.parse(css)
     decl = stylesheet.rules.font_faces.first.declarations.first
     decl.values.delete(decl.values.last)
-    assert_equal %{@font-face {src: url(font.ttf),url(font.otf),; }}, stylesheet.to_s
+    assert_equal %{@font-face {src: url(font.ttf),url(font.otf),;}}, stylesheet.to_s
   end
 
   def test_decl_find
@@ -75,7 +75,7 @@ class TestParserWriter < Minitest::Test
     stylesheet = Habaki::Stylesheet.parse(css)
     stylesheet.rules.first.declarations.remove_by_property("color")
     assert_equal 1, stylesheet.rules.first.declarations.length
-    assert_equal "a {text-decoration: underline; }", stylesheet.string
+    assert_equal "a {text-decoration: underline;}", stylesheet.to_s
   end
 
   def test_decl_add
@@ -87,26 +87,26 @@ class TestParserWriter < Minitest::Test
     # arbitrary value type
     stylesheet.rules.first.declarations.add_by_property("line-height", Habaki::Value.new("14pt"))
     assert_equal 4, stylesheet.rules.first.declarations.length
-    assert_equal "a {color: blue; text-decoration: underline; font-size: 12pt; line-height: 14pt; }", stylesheet.string
+    assert_equal "a {color: blue; text-decoration: underline; font-size: 12pt; line-height: 14pt;}", stylesheet.to_s
   end
 
   def test_url
-    assert_identical_css(%{div {background-image: url(image.png); }})
-    assert_identical_css(%{div {background-image: url("image space.png"); }})
-    assert_identical_css(%{div {background-image: url(); }})
+    assert_identical_css(%{div {background-image: url(image.png);}})
+    assert_identical_css(%{div {background-image: url("image space.png");}})
+    assert_identical_css(%{div {background-image: url();}})
   end
 
   def test_important
-    assert_identical_css(%{p {color: blue !important; }})
-    assert_equal %{p {color: blue !important; }}, Habaki::Stylesheet.parse(%{p {color: blue ! important; }}).to_s
+    assert_identical_css(%{p {color: blue !important;}})
+    assert_equal %{p {color: blue !important;}}, Habaki::Stylesheet.parse(%{p {color: blue ! important;}}).to_s
   end
 
   def test_attr
-    assert_identical_css(%{input[value="M"] {color: blue; }})
+    assert_identical_css(%{input[value="M"] {color: blue;}})
   end
 
   def test_mul_attr
-    assert_identical_css(%{input[name="A"][value="M"] {color: blue; }})
+    assert_identical_css(%{input[name="A"][value="M"] {color: blue;}})
   end
 
   def test_import
@@ -115,41 +115,31 @@ class TestParserWriter < Minitest::Test
 
   def test_media_not
     assert_identical_css(%{@media not screen {
-article {
- padding: 1rem 3rem;
-}
+article {padding: 1rem 3rem;}
 }})
   end
 
   def test_media_only
     assert_identical_css(%{@media only screen {
-article {
- padding: 1rem 3rem;
-}
+article {padding: 1rem 3rem;}
 }})
   end
 
   def test_media_and
     assert_identical_css(%{@media screen and (min-width: 900px) {
-article {
- padding: 1rem 3rem;
-}
+article {padding: 1rem 3rem;}
 }})
   end
 
   def test_media_exp_only
     assert_identical_css(%{@media (min-width: 900px) {
-a {
- color: black;
-}
+a {color: black;}
 }})
   end
 
   def test_media_no_value
     assert_identical_css(%{@media (monochrome) {
-a {
- color: black;
-}
+a {color: black;}
 }})
   end
 
@@ -168,45 +158,45 @@ svg|a {}
 
   def test_supports
     assert_identical_css(%{@supports (transform-style: preserve-3d) {
-a {color: black; }
+a {color: black;}
 }})
   end
 
   def test_supports_and
     assert_identical_css(%{@supports (display: grid) and (display: inline-grid) {
-a {color: black; }
+a {color: black;}
 }})
   end
 
   def test_supports_not
     css = %{@supports (display: grid) and (not (display: inline-grid)) {
-a {color: black; }
+a {color: black;}
 }}
     stylesheet = Habaki::Stylesheet.parse(css)
     # TODO: fix double parentheses problem
-    # assert_equal css, stylesheet.string
+    # assert_equal css, stylesheet.to_s
   end
 
   def test_supports_or
     assert_identical_css(%{@supports (transform-style: preserve-3d) or ((-moz-transform-style: preserve-3d) or ((-o-transform-style: preserve-3d) or (-webkit-transform-style: preserve-3d))) {
-a {color: black; }
+a {color: black;}
 }})
   end
 
   def test_font_face
-      assert_identical_css(%{@font-face {src: url(font.ttf); }})
+      assert_identical_css(%{@font-face {src: url(font.ttf);}})
     end
 
   def test_page
-    assert_identical_css(%{@page {margin: 1cm; }})
+    assert_identical_css(%{@page {margin: 1cm;}})
     # TODO
-    # assert_identical_css(%{@page :first {margin: 1cm; }})
+    # assert_identical_css(%{@page :first {margin: 1cm;}})
   end
 
   def test_pseudo
-    assert_identical_css(%{a:hover {color: blue; }
-p.nt:nth-of-type(3n) {color: red; }
-li:nth-last-child(3n+2) {color: green; }})
+    assert_identical_css(%{a:hover {color: blue;}
+p.nt:nth-of-type(3n) {color: red;}
+li:nth-last-child(3n+2) {color: green;}})
   end
 
   def test_charset
@@ -217,17 +207,17 @@ li:nth-last-child(3n+2) {color: green; }})
   if false
 
     def test_host
-      assert_identical_css(%{:host(.special-custom-element) {font-weight: bold; }})
+      assert_identical_css(%{:host(.special-custom-element) {font-weight: bold;}})
     end
   end
 
   def test_invalid
-    assert_identical_css(%{p {padding: 4m; font-size: %; color: #; weight: em; }})
+    assert_identical_css(%{p {padding: 4m; font-size: %; color: #; weight: em;}})
   end
 
   def test_inline
-    css = %{font-size: 12pt; color: blue; }
-    assert_equal css, Habaki::Declarations.parse(css).string
+    css = %{font-size: 12pt; color: blue;}
+    assert_equal css, Habaki::Declarations.parse(css).to_s
   end
 
   def test_position
@@ -254,7 +244,7 @@ a {color: blue}
 
   def test_error
     css = %{a,{ }
-div {color: green; }
+div {color: green;}
 .inv { invalid }}
     stylesheet = Habaki::Stylesheet.parse(css)
     assert_equal 2, stylesheet.errors.length
@@ -262,15 +252,15 @@ div {color: green; }
     assert_equal 3, stylesheet.errors[0].column
     assert_equal 3, stylesheet.errors[1].line
     assert_equal 16, stylesheet.errors[1].column
-    assert_equal %{div {color: green; }
-.inv {}}, stylesheet.string
+    assert_equal %{div {color: green;}
+.inv {}}, stylesheet.to_s
   end
 
   private
 
   def assert_identical_css(css)
     stylesheet = Habaki::Stylesheet.parse(css)
-    assert_equal css, stylesheet.string
+    assert_equal css, stylesheet.to_s
   end
 
 end

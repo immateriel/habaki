@@ -18,9 +18,10 @@ module Habaki
       selectors.element_match?(element)
     end
 
+    # @param [Formatter::Base] format
     # @return [String]
-    def string(indent = 0)
-      "#{@selectors.string} {#{@declarations.string(indent)}#{" " * (indent > 0 ? indent - 1 : 0)}}"
+    def string(format = Formatter::Base.new)
+      "#{@selectors.string(format)} {#{format.declarations_prefix}#{@declarations.string(format+1)}#{format.declarations_suffix}#{format.rules_prefix}}"
     end
 
     # @api private

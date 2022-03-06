@@ -356,15 +356,12 @@ module Habaki
       end
     end
 
+    # @param [Formatter::Base] format
     # @return [String]
-    def string(indent = 0)
-      str = ""
-      str += "\n" if indent > 0
-      each { |decl|
-        str += decl.string(indent)
-        str += indent > 0 ? ";\n" : "; "
-      }
-      str
+    def string(format = Formatter::Base.new)
+      map do |decl|
+        decl.string(format) + ";"
+      end.join(format.declarations_join)
     end
 
     # @api private

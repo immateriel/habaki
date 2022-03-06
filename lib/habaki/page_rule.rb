@@ -8,9 +8,10 @@ module Habaki
       @declarations = Declarations.new
     end
 
+    # @param [Formatter::Base] format
     # @return [String]
-    def string(indent = 0)
-      "@page {#{@declarations.string(indent)}}"
+    def string(format = Formatter::Base.new)
+      "@page {#{@declarations.string(format + 1)}}"
     end
 
     # @api private

@@ -1318,6 +1318,7 @@ pseudo:
         // CSSSelector::PseudoType type = $$->pseudoType();
         // if (type != CSSSelector::PseudoCue)
         //    YYERROR;
+        YYERROR;
     }
     | ':' ':' KATANA_CSS_CUEFUNCTION selector_recovery closing_parenthesis {
         YYERROR;

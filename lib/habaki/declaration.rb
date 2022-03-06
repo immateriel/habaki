@@ -28,9 +28,10 @@ module Habaki
       Habaki::FormalSyntax::Matcher.new(self).match?
     end
 
+    # @param [Formatter::Base] format
     # @return [String]
-    def string(indent = 0)
-      "#{" " * indent}#{@property}: #{@values.string}#{important_string}"
+    def string(format = Formatter::Base.new)
+      "#{format.declaration_prefix}#{@property}: #{@values.string(format)}#{important_string}"
     end
 
     # @api private

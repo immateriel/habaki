@@ -140,6 +140,8 @@ nth             [\+-]?{intnum}*n([\t\r\n ]*[\+-][\t\r\n ]*{intnum})?
 
 "-webkit-any("          {KATANA_TOKEN(KATANA_CSS_ANYFUNCTION)}
 "not("                  {KATANA_TOKEN(KATANA_CSS_NOTFUNCTION)}
+"cue("                  {KATANA_TOKEN(KATANA_CSS_CUEFUNCTION)}
+"host("                 {KATANA_TOKEN(KATANA_CSS_HOSTFUNCTION)}
 "url("{w}{string}{w}")" {KATANA_TOKEN(KATANA_CSS_URI)}
 "url("{w}{url}{w}")"    {KATANA_TOKEN(KATANA_CSS_URI)}
 "calc("                 {KATANA_TOKEN(KATANA_CSS_CALCFUNCTION)}

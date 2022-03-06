@@ -9,9 +9,10 @@ module Habaki
       @encoding
     end
 
+    # @param [Formatter::Base] format
     # @return [String]
-    def string(indent = 0)
-      "@charset \"#{@encoding}\";"
+    def string(format = Formatter::Base.new)
+      "@charset #{format.quote}#{@encoding}#{format.quote};"
     end
 
     # @api private

@@ -118,11 +118,10 @@ module Habaki
       end
     end
 
+    # @param [Formatter::Base] format
     # @return [String]
-    def string(indent = 0)
-      str = " " * (indent > 0 ? indent - 1 : 0)
-      str += map { |rule| rule.string(indent) }.join("\n")
-      str
+    def string(format = Formatter::Base.new)
+      "#{format.rules_prefix}#{string_join(format, format.rules_join)}"
     end
 
     # @api private

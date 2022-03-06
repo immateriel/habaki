@@ -2,6 +2,7 @@ require 'katana/katana'
 
 require 'habaki/formal_syntax'
 
+require 'habaki/formatter'
 require 'habaki/node'
 
 require 'habaki/value'
