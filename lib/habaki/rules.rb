@@ -28,13 +28,13 @@ module Habaki
       end
     end
 
-    # rules matching with {Visitor::Element} ordered by specificity
+    # rules matching with {Visitor::Element} ordered by specificity score (highest last)
     # @param [Visitor::Element] element
     # @return [Array<Rule>]
     def find_matching_rules(element, *args)
       results = []
       each_match(element, *args) do |rule, selector, specificity|
-        results << [specificity.value, rule]
+        results << [specificity.score, rule]
       end
       results.sort! { |a, b| a.first <=> b.first }
       results.map(&:last)

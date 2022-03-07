@@ -44,11 +44,11 @@ module Habaki
         when 1
           add_by_property("#{k}-style", declaration.values[0], declaration.important)
         when 2
-          if BORDER_STYLES.include?(declaration.values[0].data)
+          if BORDER_STYLES.include?(declaration.values[0].to_s)
             add_by_property("#{k}-style", declaration.values[0])
             add_by_property("#{k}-color", declaration.values[1])
           else
-            if BORDER_STYLES.include?(declaration.values[1].data)
+            if BORDER_STYLES.include?(declaration.values[1].to_s)
               add_by_property("#{k}-width", declaration.values[0])
               add_by_property("#{k}-style", declaration.values[1])
             else

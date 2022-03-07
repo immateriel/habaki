@@ -1,10 +1,10 @@
 module Habaki
   # CSS specificity score
   class Specificity
-    attr_accessor :value
+    attr_accessor :score
 
-    def initialize(value = 0)
-      @value = value
+    def initialize(score = 0)
+      @score = score
     end
   end
 
@@ -37,7 +37,7 @@ module Habaki
 
     # @return [Boolean]
     def match_with_specificity(comp, specificity, value)
-      specificity.value += value if specificity && comp
+      specificity.score += value if specificity && comp
       comp
     end
 
