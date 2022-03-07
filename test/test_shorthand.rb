@@ -32,7 +32,7 @@ class TestShorthand < Minitest::Test
                              "background: linear-gradient(blue,red) 0% 0%/25px 50px;")
 
     assert_shorthand_created(%{background-image: url('chess.png'); background-color: gray; background-position: center -10.2%; background-attachment: fixed; background-repeat: no-repeat;},
-                            "background: url(chess.png) no-repeat fixed center -10.2% gray;")
+                            "background: gray url(chess.png) no-repeat fixed center -10.2%;")
 
   end
 
@@ -52,6 +52,9 @@ line-height: 18px; font-family: Police,sans-serif;}.gsub(/\n/, " "))
 
     assert_shorthand_expanded(%{background: url(starsolid.gif) repeat-y fixed #99f;},
                               "background-image: url(starsolid.gif); background-repeat: repeat-y; background-attachment: fixed; background-color: #99f;")
+
+    assert_shorthand_expanded(%{background: #f4c6b7 !important;},
+                              "background-color: #f4c6b7;")
   end
 
   def test_margin_shorthand

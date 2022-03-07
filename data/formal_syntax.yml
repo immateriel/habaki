@@ -994,6 +994,6 @@ src: "[ <url> [ format( <string># ) ]? | local( <family-name> ) ]#"
 -epub-text-align-last: "auto | start | end | left | right | center | justify"
 -epub-word-break: "normal | keep-all | break-all"
 
---shorthand-background: "<'background-image'> || <'background-repeat'> || <'background-attachment'> || <'background-position'> [ / <'background-size'>]? || <'background-color'>"
+--shorthand-background: "<'background-color'> || <'background-image'> || <'background-repeat'> || <'background-attachment'> || <'background-position'> [ / <'background-size'>]?"
 --shorthand-font: "[[<'font-style'> || <'font-variant'> || <'font-weight'>]? <'font-size'> [ / <'line-height'>]? <'font-family'>] | caption | icon | menu | message-box | small-caption | status-bar"
 --shorthand-list-style: "<'list-style-type'> || <'list-style-position'> || <'list-style-image'>"
