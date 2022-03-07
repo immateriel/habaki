@@ -314,13 +314,15 @@ class TestSelector < Minitest::Test
 div.bl {color: blue;}
 p {font-size:12px}
 a {text-decoration: underline}
+span.kl {font-weight: bold}
 p span {color: red;}
+span {font-size: 11px; color: green !important}
 }
     html = %{<html><body>
     <div class="bl">blue text</div>
     <div>other <span>text</span></div>
     <p>Paragraph 1</p>
-    <p class="para">Paragraph <span>2</span></p>
+    <p class="para">Paragraph <span class="kl">2</span></p>
     </body></html>}
 
     stylesheet = Habaki::Stylesheet.parse(css)
@@ -330,39 +332,14 @@ p span {color: red;}
     el = doc.root.search("div")[0]
     assert_equal 1, stylesheet.find_matching_rules(Habaki::Visitor::NokogiriElement.new(el)).length
     el = doc.root.search("span")[1]
-    assert_equal 1, stylesheet.find_matching_rules(Habaki::Visitor::NokogiriElement.new(el)).length
-  end
+    found_rules = stylesheet.find_matching_rules(Habaki::Visitor::NokogiriElement.new(el))
+    assert_equal 3, found_rules.length
+    assert_equal "span {font-size: 11px; color: green !important;}", found_rules[0].to_s
+    assert_equal "p span {color: red;}", found_rules[1].to_s
+    assert_equal "span.kl {font-weight: bold;}", found_rules[2].to_s
 
-  def test_mini_rendering
-    css = %{body {color: grey;}
-span.bl {color: blue}
-div.rd {color: red;}
-}
-    html = %{<html><body>
-    <div>grey text <em>grey too</em></div>
-    <div><span class="bl">blue text</div>
-    <div class="rd">red text <em>red too</em></div>
-    </body></html>}
-
-    stylesheet = Habaki::Stylesheet.parse(css)
-    doc = Nokogiri::HTML.parse(html)
-    decl = nil
-
-    el = doc.root.search("em")[0]
-      stylesheet.each_matching_declaration("color", Habaki::Visitor::NokogiriElement.new(el)) do |d|
-      decl = d
-    end
-    assert_equal "grey", decl&.value&.data
-    el = doc.root.search("em")[1]
-    stylesheet.each_matching_declaration("color", Habaki::Visitor::NokogiriElement.new(el)) do |d|
-      decl = d
-    end
-    assert_equal "red", decl&.value&.data
-    el = doc.root.search("span")[0]
-    stylesheet.each_matching_declaration("color", Habaki::Visitor::NokogiriElement.new(el)) do |d|
-      decl = d
-    end
-    assert_equal "blue", decl&.value&.data
+    decls = stylesheet.find_matching_declarations(Habaki::Visitor::NokogiriElement.new(el))
+    assert_equal Habaki::Ident.new("green"), decls.find_by_property("color")&.value
   end
 
   private

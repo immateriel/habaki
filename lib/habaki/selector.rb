@@ -10,40 +10,42 @@ module Habaki
 
     # does selector match {Visitor::Element} ?
     # @param [Visitor::Element] element
+    # @param [Specificity, nil] specificity
     # @return [Boolean]
-    def element_match?(element)
+    def element_match?(element, specificity = nil)
       return false if @sub_selectors.empty?
 
       rev_sub_selectors = @sub_selectors.reverse
 
       current_sub_selector = rev_sub_selectors.first
-      return false unless current_sub_selector.element_match?(element)
+      return false unless current_sub_selector.element_match?(element, specificity)
 
       return true if @sub_selectors.length == 1
-
-      parent_element = element.parent
-      previous_element = element.previous
 
       rev_sub_selectors[1..-1].each do |sub_selector|
         case current_sub_selector.relation
         when :descendant
+          parent_element = element.parent
           sub_match = false
           while parent_element do
-            sub_match = sub_selector.element_match?(parent_element)
+            sub_match = sub_selector.element_match?(parent_element, specificity)
             parent_element = parent_element.parent
             break if sub_match
           end
           return false unless sub_match
         when :child
+          parent_element = element.parent
           return false unless parent_element
-          return false unless sub_selector.element_match?(parent_element)
+          return false unless sub_selector.element_match?(parent_element, specificity)
         when :direct_adjacent
+          previous_element = element.previous
           return false unless previous_element
-          return false unless sub_selector.element_match?(previous_element)
+          return false unless sub_selector.element_match?(previous_element, specificity)
         when :indirect_adjacent
+          previous_element = element.previous
           sub_match = false
           while previous_element do
-            sub_match = sub_selector.element_match?(previous_element)
+            sub_match = sub_selector.element_match?(previous_element, specificity)
             previous_element = previous_element.previous
             break if sub_match
           end

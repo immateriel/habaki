@@ -1,5 +1,62 @@
 module Habaki
+  # selector matcher helper
+  module SelectorMatcher
+    # traverse rules matching with {Visitor::Element}
+    # @param [Visitor::Element] element
+    # @yieldparam [Rule] rule
+    # @yieldparam [Selector] selector
+    # @yieldparam [Specificity] specificity
+    # @return [void]
+    def each_match(element, *args, &block)
+      each_rule(*args) do |rule|
+        rule.each_selector do |selector|
+          specificity = Specificity.new
+          if selector.element_match?(element, specificity)
+            block.call rule, selector, specificity
+          end
+        end
+      end
+    end
+
+    # traverse rules matching with {Visitor::Element}
+    # @param [Visitor::Element] element
+    # @yieldparam [Rule] rule
+    # @return [void]
+    def each_matching_rule(element, *args, &block)
+      find_matching_rules(element, *args).each do |rule|
+        block.call rule
+      end
+    end
+
+    # rules matching with {Visitor::Element} ordered by specificity
+    # @param [Visitor::Element] element
+    # @return [Array<Rule>]
+    def find_matching_rules(element, *args)
+      results = []
+      each_match(element, *args) do |rule, selector, specificity|
+        results << [specificity.value, rule]
+      end
+      results.sort! { |a, b| a.first <=> b.first }
+      results.map(&:last)
+    end
+
+    # get cascaded declarations results for {Visitor::Element}
+    # @param [Visitor::Element] element
+    # @return [Declarations]
+    def find_matching_declarations(element, *args)
+      declarations = Declarations.new
+      each_matching_rule(element, *args) do |rule|
+        rule.each_declaration do |decl|
+          declarations.replace_important(decl)
+        end
+      end
+      declarations
+    end
+  end
+
   class Rules < NodeArray
+    include SelectorMatcher
+
     # @param [Class<Rule>] klass
     # @return [Enumerator<Rule>]
     def enum_with_class(klass)
@@ -68,54 +125,8 @@ module Habaki
       results
     end
 
-    # rules matching with {Visitor::Element} enumerator
-    # @param [Visitor::Element] element
-    # @return [Enumerator<Rule>]
-    def matching_rules(element)
-      Enumerator.new do |rules|
-        each do |rule|
-          rules << rule if rule.element_match?(element)
-        end
-      end
-    end
-
-    # traverse rules matching with {Visitor::Element}
-    # @param [Visitor::Element] element
-    # @yieldparam [Rule] rule
-    # @return [void]
-    def each_matching_rule(element, &block)
-      matching_rules(element).each do |rule|
-        block.call rule
-      end
-    end
-
-    # get rules matching with Visitor::Element
-    # @param [Visitor::Element] element
-    # @return [Array<Rule>]
-    def find_matching_rules(element)
-      matching_rules(element).to_a
-    end
-
-    # traverse matching declarations for {Visitor::Element}
-    #
-    # If element does not have property, recursively look into parent for it unless block return true or something
-    # @param [String] property
-    # @param [Visitor::Element] element
-    # @yieldparam [Declaration] declaration
-    # @return [void]
-    def each_matching_declaration(property, element, &block)
-      found = false
-      cur_element = element
-      while cur_element do
-        each_matching_rule(cur_element) do |rule|
-          decl = rule.declarations.find_by_property(property)
-          found = false
-          found = block.call decl if decl
-        end
-        break if found
-
-        cur_element = cur_element.parent
-      end
+    def each_rule(&block)
+      each &block
     end
 
     # @param [Formatter::Base] format

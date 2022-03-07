@@ -1,4 +1,13 @@
 module Habaki
+  # CSS specificity score
+  class Specificity
+    attr_accessor :value
+
+    def initialize(value = 0)
+      @value = value
+    end
+  end
+
   # part of selector (eg in p.t, p is a tag subselector and .t a class subselector)
   class SubSelector < Node
     # @return [Symbol]
@@ -26,35 +35,46 @@ module Habaki
       @match.to_s.start_with?("attribute_")
     end
 
+    # @return [Boolean]
+    def match_with_specificity(comp, specificity, value)
+      specificity.value += value if specificity && comp
+      comp
+    end
+
     # does selector match tag ?
     # @param [String] name
+    # @param [Specificity, nil] specificity
     # @return [Boolean]
-    def tag_match?(name)
+    def tag_match?(name, specificity = nil)
       return nil unless @match == :tag
-      @tag.local == name || @tag.local == "*"
+      match_with_specificity(@tag.local == name, specificity, 1) || @tag.local == "*"
     end
 
     # does selector match class ?
     # @param [String] name
+    # @param [Specificity, nil] specificity
     # @return [Boolean]
-    def class_match?(name)
+    def class_match?(name, specificity = nil)
       return nil unless @match == :class
-      @value == name
+      match_with_specificity(@value == name, specificity, 10)
     end
 
     # does selector match id ?
     # @param [String] name
+    # @param [Specificity, nil] specificity
     # @return [Boolean]
-    def id_match?(name)
+    def id_match?(name, specificity = nil)
       return nil unless @match == :id
-      @value == name
+      match_with_specificity(@value == name, specificity, 100)
     end
 
     # does selector match attribute value ?
     # @param [String] val
+    # @param [Specificity, nil] specificity
     # @return [Boolean]
-    def attribute_value_match?(val)
-      if attribute_selector?
+    def attribute_value_match?(val, specificity = nil)
+      return nil unless attribute_selector?
+      match_with_specificity(
         case @match
         when :attribute_exact
           val == @value
@@ -68,13 +88,20 @@ module Habaki
           val == @value || val == "#{@value}-"
         else
           false
-        end
-      end
+        end, specificity, 10)
+    end
+
+    # @param [Visitor::Element] element
+    # @param [Specificity, nil] specificity
+    # @return [Boolean]
+    def pseudo_match?(element, specificity = nil)
+      match_with_specificity(pseudo_class_match?(element), specificity, 10)
     end
 
     # does selector pseudo class match {Visitor::Element} ?
+    # @param [Visitor::Element] element
     # @return [Boolean]
-    def pseudo_match?(element)
+    def pseudo_class_match?(element)
       case @pseudo
       when :root
         return false unless element.tag_name == "html"

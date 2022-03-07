@@ -342,6 +342,23 @@ module Habaki
       decl
     end
 
+    # Add declaration or replace if more important
+    # @param [Declaration] decl
+    # @return [Declaration]
+    def replace_important(decl)
+      previous_decl = find_by_property(decl.property)
+      if previous_decl
+        if decl.important || !previous_decl.important
+          #remove_by_property(decl.property)
+          delete(previous_decl)
+          push decl
+        end
+      else
+        push decl
+      end
+      decl
+    end
+
     # at position or shortcut for find_by_property
     # @param [Integer, String] prop index or property name
     # @return [Declaration, nil]

@@ -1,6 +1,8 @@
 module Habaki
   # main structure
   class Stylesheet < Node
+    include SelectorMatcher
+
     # @return [Rules]
     attr_accessor :rules
     # @return [Array<Error>]
@@ -33,51 +35,6 @@ module Habaki
         rules.each do |rule|
           block.call rule
         end
-      end
-    end
-
-    # rules matching with {Visitor::Element} enumerator
-    # @param [Visitor::Element] element
-    # @param [Visitor::Media, String, NilClass] media
-    # @return [Enumerator<Rule>]
-    def matching_rules(element, media = nil)
-      Enumerator.new do |matching_rules|
-        each_rules(media) do |rules|
-          rules.each_matching_rule(element) do |matching_rule|
-            matching_rules << matching_rule
-          end
-        end
-      end
-    end
-
-    # traverse rules matching with {Visitor::Element}
-    # @param [Visitor::Element] element
-    # @param [Visitor::Media, String, NilClass] media
-    # @yieldparam [Rule] rule
-    # @return [void]
-    def each_matching_rule(element, media = nil, &block)
-      matching_rules(element, media).each do |matching_rule|
-        block.call matching_rule
-      end
-    end
-
-    # get rules matching with {Visitor::Element}
-    # @param [Visitor::Element] element
-    # @param [Visitor::Media, String, NilClass] media
-    # @return [Array<Rule>]
-    def find_matching_rules(element, media = nil)
-      matching_rules(element, media).to_a
-    end
-
-    # traverse matching declarations for {Visitor::Element}
-    # @param [String] property
-    # @param [Visitor::Element] element
-    # @param [Visitor::Media, String, NilClass] media
-    # @yieldparam [Declaration] declaration
-    # @return [void]
-    def each_matching_declaration(property, element, media = nil, &block)
-      each_rules(media) do |rules|
-        rules.each_matching_declaration(property, element, &block)
       end
     end
 
@@ -184,6 +141,17 @@ module Habaki
 
       out.errors.each do |err|
         @errors << Error.read_from_katana(err)
+      end
+    end
+  end
+
+  # group of stylesheets to match through multiple {Stylesheet}
+  class Stylesheets < Array
+    include SelectorMatcher
+
+    def each_rule(media = nil, &block)
+      each do |stylesheet|
+        stylesheet.each_rule(media, &block)
       end
     end
   end
