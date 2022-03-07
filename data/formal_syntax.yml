@@ -26,8 +26,8 @@
   || <box> || <box>"
 "<bg-position>": "[ [ left | center | right | top | bottom | <length-percentage> ]
   | [ left | center | right | <length-percentage> ] [ top | center | bottom | <length-percentage>
-  ] | [ center | [ left | right ] <length-percentage>? ] && [ center | [ top | bottom
-  ] <length-percentage>? ] ]"
+  ] | [ [ center | [ left | right ] <length-percentage>? ] && [ center | [ top | bottom
+  ] <length-percentage>? ] ] ]"
 "<bg-size>": "[ <length-percentage> | auto ]{1,2} | cover | contain"
 "<blur()>": blur( <length> )
 "<blend-mode>": normal | multiply | screen | overlay | darken | lighten | color-dodge
@@ -993,3 +993,7 @@ src: "[ <url> [ format( <string># ) ]? | local( <family-name> ) ]#"
 -epub-line-break: "auto | loose | normal | strict"
 -epub-text-align-last: "auto | start | end | left | right | center | justify"
 -epub-word-break: "normal | keep-all | break-all"
+
+--shorthand-background: "<'background-image'> || <'background-repeat'> || <'background-attachment'> || <'background-position'> [ / <'background-size'>]? || <'background-color'>"
+--shorthand-font: "[[<'font-style'> || <'font-variant'> || <'font-weight'>]? <'font-size'> [ / <'line-height'>]? <'font-family'>] | caption | icon | menu | message-box | small-caption | status-bar"
+--shorthand-list-style: "<'list-style-type'> || <'list-style-position'> || <'list-style-image'>"

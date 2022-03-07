@@ -91,8 +91,11 @@ class TestMisc < Minitest::Test
     refute_decl_match("background-image: url('img.png') 50% 50% no-repeat;")
     refute_decl_match("border-size: 1px;")
 
-    # should match
-    #assert_decl_match("background-position: top;", true)
+    assert_decl_match("background-position: top;")
+    assert_decl_match("background-position: top left;")
+    assert_decl_match("background-position: 20px 50px;")
+    assert_decl_match("background-position: 75% 80%;")
+    assert_decl_match("background-position: top left, 75% 80%;")
   end
 
   private

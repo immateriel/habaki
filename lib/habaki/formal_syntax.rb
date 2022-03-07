@@ -112,7 +112,7 @@ module Habaki
           begin
             @properties[k] = Tree.parse(v)
           rescue FormalSyntaxError => e
-            # STDERR.puts("#{k}: #{e}")
+            #STDERR.puts("#{k}: #{e}")
           end
         end
         #flatten!
@@ -204,8 +204,17 @@ module Habaki
           when scanner.scan(/\#/)
             # one or more comma separated
             prev_node = current_node.children.last
-            prev_node.push_children(Node.new(:token, ","))
-            prev_node.occurence = 1..n
+            # embed :type in :or
+            if prev_node.type == :type
+              emb_node = Node.new(:or)
+              emb_node.children << prev_node
+              emb_node.push_children(Node.new(:token, ","))
+              emb_node.occurence = 1..n
+              current_node.children[-1] = emb_node
+            else
+              prev_node.push_children(Node.new(:token, ","))
+              prev_node.occurence = 1..n
+            end
           when scanner.scan(/\{(\d)\}/)
             prev_node = current_node.children.last
             prev_node.occurence = (scanner[1].to_i)..(scanner[1].to_i)
@@ -284,9 +293,9 @@ module Habaki
       attr_accessor :debug
 
       # @param [Declaration] declaration
-      def initialize(declaration)
+      def initialize(declaration, tree = Tree.tree)
         @declaration = declaration
-        @tree = Tree.tree
+        @tree = tree
         @reference = nil
         @matches = []
         @debug = false
@@ -299,7 +308,6 @@ module Habaki
         node = @tree.properties[@declaration.property]
         return false unless node
 
-        #puts "MAX #{node} #{node.occurence} -> #{calc_occurence(node)}"
         puts "MATCH #{node} (#{node.type}) #{node.occurence} WITH #{@declaration.to_s}" if @debug
         @reference = @declaration.property
         # always add inherit keyword
@@ -381,11 +389,11 @@ module Habaki
 
         if node.type == :ref
           @reference = node.value
-          resolved_node = @tree.properties[node.value]
+          ref_node = @tree.properties[node.value]
+          resolved_node = ref_node if ref_node
         end
 
         if node.type == :type
-          @reference = "font-variant" if node.value.start_with?("font-variant") # FIXME: dirty hack
           alias_node = @tree.properties["<#{node.value}>"]
           resolved_node = alias_node if alias_node
         end

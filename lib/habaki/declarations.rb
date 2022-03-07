@@ -3,7 +3,6 @@ module Habaki
   module Shorthand
     BORDER_PROPERTIES = %w[border border-left border-right border-top border-bottom].freeze
     BORDER_STYLES = %[none hidden dotted dashed solid double groove ridge inset outset].freeze
-
     NUMBER_OF_DIMENSIONS = 4
 
     DIMENSIONS = [
@@ -20,17 +19,8 @@ module Habaki
       expand_border_shorthand!
       expand_dimensions_shorthand!
       expand_font_shorthand!
-      # expand_background_shorthand!
+      expand_background_shorthand!
       expand_list_style_shorthand!
-    end
-
-    # Convert shorthand background declarations (e.g. <tt>background: url("chess.png") gray 50% repeat fixed;</tt>)
-    # into their constituent parts.
-    #
-    # See http://www.w3.org/TR/CSS21/colors.html#propdef-background
-    # TODO
-    def expand_background_shorthand! # :nodoc:
-      expand_shorthand_properties!("background")
     end
 
     # Split shorthand border declarations (e.g. <tt>border: 1px red;</tt>)
@@ -97,6 +87,14 @@ module Habaki
       end
     end
 
+    # Convert shorthand background declarations (e.g. <tt>background: url("chess.png") gray 50% repeat fixed;</tt>)
+    # into their constituent parts.
+    #
+    # See http://www.w3.org/TR/CSS21/colors.html#propdef-background
+    def expand_background_shorthand! # :nodoc:
+      expand_shorthand_properties!("background")
+    end
+
     # Convert shorthand font declarations (e.g. <tt>font: 300 italic 11px/14px verdana, helvetica, sans-serif;</tt>)
     # into their constituent parts.
     def expand_font_shorthand! # :nodoc:
@@ -114,7 +112,9 @@ module Habaki
     def expand_shorthand_properties!(property)
       return unless (declaration = find_by_property(property))
 
-      matcher = FormalSyntax::Matcher.new(declaration)
+      tmp_decl = Declaration.new("--shorthand-"+declaration.property, declaration.important)
+      tmp_decl.values = declaration.values
+      matcher = FormalSyntax::Matcher.new(tmp_decl)
       return unless matcher.match?
 
       props = {}
@@ -134,60 +134,12 @@ module Habaki
 
     # Create shorthand declarations (e.g. +margin+ or +font+) whenever possible.
     def create_shorthand!
-      # create_background_shorthand!
+      create_background_shorthand!
       create_dimensions_shorthand!
       # border must be shortened after dimensions
       create_border_shorthand!
       create_font_shorthand!
       create_list_style_shorthand!
-    end
-
-    # Combine several properties into a shorthand one
-    def create_shorthand_properties!(shorthand_property, need_all = false)
-      properties_to_delete = []
-
-      new_values = []
-      FormalSyntax::Tree.tree.property(shorthand_property).traverse do |node|
-        case node.type
-        when :ref
-          decl = find_by_property(node.value)
-          if decl
-            properties_to_delete << decl.property
-            new_values += decl.values
-          else
-            return if need_all
-          end
-        when :token
-          new_values << Operator.new(node.value) unless new_values.empty?
-        end
-      end
-
-      return if new_values.empty?
-
-      first_position = find_by_property(properties_to_delete.first)&.position
-      properties_to_delete.each do |property|
-        remove_by_property(property)
-      end
-
-      new_decl = add_by_property(shorthand_property, new_values)
-      new_decl.position = first_position
-    end
-
-    # Looks for long format CSS background properties (e.g. <tt>background-color</tt>) and
-    # converts them into a shorthand CSS <tt>background</tt> property.
-    #
-    # Leaves properties declared !important alone.
-    def create_background_shorthand! # :nodoc:
-      # When we have a background-size property we must separate it and distinguish it from
-      # background-position by preceding it with a backslash. In this case we also need to
-      # have a background-position property, so we set it if it's missing.
-      # http://www.w3schools.com/cssref/css3_pr_background.asp
-      if (declaration = find_by_property('background-size')) && !declaration.important
-        add_by_property('background-position', Values.new([Percentage.new(0), Percentage.new(0)]))
-        declaration.values = Values.new([Operator.new('/'), declaration.value])
-      end
-
-      create_shorthand_properties! 'background'
     end
 
     # Combine border-color, border-style and border-width into border
@@ -217,28 +169,27 @@ module Habaki
       new_decl.position = first_position
     end
 
+    # Looks for long format CSS background properties (e.g. <tt>background-color</tt>) and
+    # converts them into a shorthand CSS <tt>background</tt> property.
+    #
+    # Leaves properties declared !important alone.
+    def create_background_shorthand! # :nodoc:
+      # When we have a background-size property we must separate it and distinguish it from
+      # background-position by preceding it with a backslash. In this case we also need to
+      # have a background-position property, so we set it if it's missing.
+      # http://www.w3schools.com/cssref/css3_pr_background.asp
+      if (declaration = find_by_property('background-size')) && !declaration.important
+        add_by_property('background-position', Values.new([Percentage.new(0), Percentage.new(0)]))
+      end
+
+      create_shorthand_properties! 'background'
+    end
+
     # Looks for long format CSS font properties (e.g. <tt>font-weight</tt>) and
     # tries to convert them into a shorthand CSS <tt>font</tt> property.  All
     # font properties must be present in order to create a shorthand declaration.
     def create_font_shorthand! # :nodoc:
-      #create_shorthand_properties!("font", true)
-      properties = %w[font-style font-variant font-weight font-size line-height font-family]
-
-      values = []
-      properties.each do |prop|
-        decl = find_by_property(prop)
-        return unless decl
-
-        values << Habaki::Operator.new("/") if prop == "line-height"
-        values += decl.values
-      end
-
-      first_position = find_by_property(properties.first)&.position
-      properties.each do |property|
-        remove_by_property(property)
-      end
-      new_decl = add_by_property("font", values)
-      new_decl.position = first_position
+      create_shorthand_properties!("font", true)
     end
 
     # Looks for long format CSS list-style properties (e.g. <tt>list-style-type</tt>) and
@@ -247,6 +198,38 @@ module Habaki
     # Leaves properties declared !important alone.
     def create_list_style_shorthand! # :nodoc:
       create_shorthand_properties! 'list-style'
+    end
+
+    # Combine several properties into a shorthand one
+    def create_shorthand_properties!(shorthand_property, need_all = false)
+      properties_to_delete = []
+
+      new_values = []
+      FormalSyntax::Tree.tree.property("--shorthand-"+shorthand_property).traverse do |node|
+        case node.type
+        when :ref
+          decl = find_by_property(node.value)
+          if decl
+            properties_to_delete << decl.property
+            new_values += decl.values
+          else
+            return if need_all
+          end
+        when :token
+          # only if next node property is present (line-height, background-size)
+          new_values << Operator.new(node.value) if node.parent&.children&.last&.value && find_by_property(node.parent.children.last.value)
+        end
+      end
+
+      return if new_values.empty?
+
+      first_position = find_by_property(properties_to_delete.first)&.position
+      properties_to_delete.each do |property|
+        remove_by_property(property)
+      end
+
+      new_decl = add_by_property(shorthand_property, new_values)
+      new_decl.position = first_position
     end
 
     # Looks for long format CSS dimensional properties (margin, padding, border-color, border-style and border-width)

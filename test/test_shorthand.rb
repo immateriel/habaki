@@ -27,8 +27,12 @@ class TestShorthand < Minitest::Test
       font-family: Police,sans-serif; line-height: 18px;
       font-style: oblique; font-variant: small-caps;}, "font: oblique small-caps 300 12pt/18px Police,sans-serif;")
 
-    # assert_shorthand_created(%{background-image: url('chess.png'); background-color: gray; background-position: center -10.2%; background-attachment: fixed; background-repeat: no-repeat;},
-    #                         "background: url(chess.png) no-repeat fixed center -10.2% gray;")
+
+    assert_shorthand_created(%{background-image: linear-gradient(blue,red); background-size: 25px 50px;},
+                             "background: linear-gradient(blue,red) 0% 0%/25px 50px;")
+
+    assert_shorthand_created(%{background-image: url('chess.png'); background-color: gray; background-position: center -10.2%; background-attachment: fixed; background-repeat: no-repeat;},
+                            "background: url(chess.png) no-repeat fixed center -10.2% gray;")
 
   end
 
@@ -46,8 +50,8 @@ border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border
     assert_shorthand_expanded("font: oblique small-caps 300 12pt/18px Police,sans-serif;", %{font-style: oblique; font-variant: small-caps; font-weight: 300; font-size: 12pt;
 line-height: 18px; font-family: Police,sans-serif;}.gsub(/\n/, " "))
 
-    # assert_shorthand_expanded(%{background: url(starsolid.gif) repeat-y fixed #99f;},
-    #                          "background-image: url(starsolid.gif); background-repeat: repeat-y; background-attachment: fixed; background-color: #99f;")
+    assert_shorthand_expanded(%{background: url(starsolid.gif) repeat-y fixed #99f;},
+                              "background-image: url(starsolid.gif); background-repeat: repeat-y; background-attachment: fixed; background-color: #99f;")
   end
 
   def test_margin_shorthand
