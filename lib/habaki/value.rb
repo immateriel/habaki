@@ -271,7 +271,7 @@ module Habaki
     # @param [Formatter::Base] format
     # @return [String]
     def string(format = Formatter::Base.new)
-      "#{@data}(#{@args.string})"
+      "#{@data}(#{@args.string(format)})"
     end
 
     # @api private

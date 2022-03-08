@@ -3,8 +3,8 @@ module Habaki
   class Specificity
     attr_accessor :score
 
-    def initialize(score = 0)
-      @score = score
+    def initialize
+      @score = 0
     end
   end
 
@@ -35,10 +35,28 @@ module Habaki
       @match.to_s.start_with?("attribute_")
     end
 
+    # does sub selector match {Visitor::Element} ?
+    # @param [Visitor::Element] element
+    # @param [Specificity, nil] specificity
     # @return [Boolean]
-    def match_with_specificity(comp, specificity, value)
-      specificity.score += value if specificity && comp
-      comp
+    def element_match?(element, specificity = nil)
+      case @match
+      when :tag
+        tag_match?(element.tag_name, specificity)
+      when :class
+        class_match?(element.class_name, specificity)
+      when :id
+        id_match?(element.id_name, specificity)
+      when :pseudo_class
+        pseudo_match?(element, specificity)
+      else
+        if attribute_selector?
+          element_attr = element.attr(@attribute.local)
+          (element_attr ? attribute_value_match?(element_attr, specificity) : false)
+        else
+          false
+        end
+      end
     end
 
     # does selector match tag ?
@@ -46,7 +64,6 @@ module Habaki
     # @param [Specificity, nil] specificity
     # @return [Boolean]
     def tag_match?(name, specificity = nil)
-      return nil unless @match == :tag
       match_with_specificity(@tag.local == name, specificity, 1) || @tag.local == "*"
     end
 
@@ -55,7 +72,6 @@ module Habaki
     # @param [Specificity, nil] specificity
     # @return [Boolean]
     def class_match?(name, specificity = nil)
-      return nil unless @match == :class
       match_with_specificity(@value == name, specificity, 10)
     end
 
@@ -64,7 +80,6 @@ module Habaki
     # @param [Specificity, nil] specificity
     # @return [Boolean]
     def id_match?(name, specificity = nil)
-      return nil unless @match == :id
       match_with_specificity(@value == name, specificity, 100)
     end
 
@@ -73,7 +88,6 @@ module Habaki
     # @param [Specificity, nil] specificity
     # @return [Boolean]
     def attribute_value_match?(val, specificity = nil)
-      return nil unless attribute_selector?
       match_with_specificity(
         case @match
         when :attribute_exact
@@ -209,5 +223,17 @@ module Habaki
 
       @position = SourcePosition.new(sel.position.line, sel.position.column)
     end
+
+    private
+
+    # @param [Boolean] comp
+    # @param [Specificity, nil] specificity
+    # @param [Integer] score
+    # @return [Boolean]
+    def match_with_specificity(comp, specificity, score)
+      specificity.score += score if specificity && comp
+      comp
+    end
+
   end
 end
