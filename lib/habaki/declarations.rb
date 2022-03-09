@@ -27,31 +27,7 @@ module Habaki
     # Additional splitting happens in expand_dimensions_shorthand!
     def expand_border_shorthand! # :nodoc:
       BORDER_PROPERTIES.each do |k|
-        next unless (declaration = find_by_property(k))
-
-        shorted = true
-        case declaration.values.length
-        when 1
-          add_by_property("#{k}-style", declaration.values[0], declaration.important)
-        when 2
-          if BORDER_STYLES.include?(declaration.values[0].to_s)
-            add_by_property("#{k}-style", declaration.values[0])
-            add_by_property("#{k}-color", declaration.values[1])
-          else
-            if BORDER_STYLES.include?(declaration.values[1].to_s)
-              add_by_property("#{k}-width", declaration.values[0])
-              add_by_property("#{k}-style", declaration.values[1])
-            else
-              shorted = false
-            end
-          end
-        when 3
-          add_by_property("#{k}-width", declaration.values[0])
-          add_by_property("#{k}-style", declaration.values[1])
-          add_by_property("#{k}-color", declaration.values[2])
-        end
-
-        remove_by_property(k) if shorted
+        expand_shorthand_properties!(k)
       end
     end
 
@@ -148,25 +124,12 @@ module Habaki
     # TODO: this is extremely similar to create_background_shorthand! and should be combined
     def create_border_shorthand! # :nodoc:
       border_style_properties = %w[border-width border-style border-color]
-      values = Values.new(border_style_properties.map do |property|
-        next unless (declaration = find_by_property(property))
-        next if declaration.important
-        # can't merge if any value contains a space (i.e. has multiple values)
-        # we temporarily remove any spaces after commas for the check (inside rgba, etc...)
-        next if declaration.values.length > 1
 
-        declaration.value
-      end.compact)
-
-      return if values.length != border_style_properties.length
-
-      first_position = find_by_property(border_style_properties.first)&.position
-      border_style_properties.each do |property|
-        remove_by_property(property)
+      border_style_properties.each do |prop|
+        create_shorthand_properties! prop unless find_by_property(prop)
       end
 
-      new_decl = add_by_property('border', values)
-      new_decl.position = first_position
+      create_shorthand_properties! 'border' if border_style_properties.map{|prop| find_by_property(prop)}.all?
     end
 
     # Looks for long format CSS background properties (e.g. <tt>background-color</tt>) and
@@ -262,7 +225,7 @@ module Habaki
 
     def compute_dimensions_shorthand(values)
       # All four sides are equal, returning single value
-      return [:top] if values.values.uniq.count == 1
+      return [:top] if values.values.uniq{|v| v.to_s}.count == 1
 
       # `/* top | right | bottom | left */`
       return [:top, :right, :bottom, :left] if values[:left] != values[:right]

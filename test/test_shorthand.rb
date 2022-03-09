@@ -62,7 +62,7 @@ line-height: 18px; font-family: Police,sans-serif;}.gsub(/\n/, " "))
                               "margin-top: 1px; margin-right: 1px; margin-bottom: 1px; margin-left: 1px;")
 
     assert_shorthand_created("margin-top: 1px; margin-right: 1px; margin-bottom: 1px; margin-left: 1px;",
-                             "margin: 1px 1px;")
+                             "margin: 1px;")
 
     assert_shorthand_expanded("margin: 1px 2px;",
                               "margin-top: 1px; margin-right: 2px; margin-bottom: 1px; margin-left: 2px;")
@@ -81,6 +81,13 @@ line-height: 18px; font-family: Police,sans-serif;}.gsub(/\n/, " "))
 
     assert_shorthand_created("margin-top: 1px; margin-right: 2px; margin-bottom: 3px; margin-left: 4px;",
                              "margin: 1px 2px 3px 4px;")
+  end
+
+  def test_border_shorthand
+    assert_shorthand_expanded(%{border: 1px #000 solid},
+                              "border-top-color: #000; border-right-color: #000; border-bottom-color: #000; border-left-color: #000; border-top-style: solid; border-right-style: solid; border-bottom-style: solid; border-left-style: solid; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px;")
+    assert_shorthand_created(%{border-top-color: #000; border-right-color: #000; border-bottom-color: #000; border-left-color: #000; border-top-style: solid; border-right-style: solid; border-bottom-style: solid; border-left-style: solid; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px;},
+                             "border: 1px solid #000;")
   end
 
   private
