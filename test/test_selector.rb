@@ -314,7 +314,9 @@ class TestSelector < Minitest::Test
 div.bl {color: blue;}
 p {font-size:12px}
 a {text-decoration: underline}
+.kl {font-style: underline}
 span.kl {font-weight: bold}
+div.kl {font-weight: bolder}
 p span {color: red;}
 span {font-size: 11px; color: green !important}
 }
@@ -333,10 +335,11 @@ span {font-size: 11px; color: green !important}
     assert_equal 1, stylesheet.find_matching_rules(Habaki::Visitor::NokogiriElement.new(el)).length
     el = doc.root.search("span")[1]
     found_rules = stylesheet.find_matching_rules(Habaki::Visitor::NokogiriElement.new(el))
-    assert_equal 3, found_rules.length
+    assert_equal 4, found_rules.length
     assert_equal "span {font-size: 11px; color: green !important;}", found_rules[0].to_s
     assert_equal "p span {color: red;}", found_rules[1].to_s
-    assert_equal "span.kl {font-weight: bold;}", found_rules[2].to_s
+    assert_equal ".kl {font-style: underline;}", found_rules[2].to_s
+    assert_equal "span.kl {font-weight: bold;}", found_rules[3].to_s
 
     decls = stylesheet.find_matching_declarations(Habaki::Visitor::NokogiriElement.new(el))
     assert_equal Habaki::Ident.new("green"), decls.find_by_property("color")&.value

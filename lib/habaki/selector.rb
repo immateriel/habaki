@@ -1,6 +1,7 @@
 module Habaki
   # CSS selector
   class Selector < Node
+    # Array of {SubSelectors} group
     # @return [Array<SubSelectors>]
     attr_accessor :sub_selectors
 

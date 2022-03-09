@@ -1,6 +1,51 @@
 module Habaki
   # selector matcher helper
   module SelectorMatcher
+    # small hash index on tag, class and id
+    def index_selectors!(*args)
+      @hash_tree[args] = {}
+
+      each_rule(*args) do |rule|
+        rule.each_selector do |selector|
+          sub_sels = selector.sub_selectors.last
+          tag_name = nil
+          class_name = nil
+          id_name = nil
+          sub_sels.each do |sub_sel|
+            case sub_sel.match
+            when :tag
+              tag_name = sub_sel.tag.local
+            when :class
+              class_name = sub_sel.value
+            when :id
+              id_name = sub_sel.value
+            end
+          end
+
+          key = "#{tag_name || "*"}#{class_name ? ".#{class_name}" : ""}#{id_name ? "##{id_name}" : ""}"
+          @hash_tree[args][key] ||= []
+          @hash_tree[args][key] << rule
+        end
+      end
+      @hash_tree[args].each do |k, rules|
+        rules.uniq!
+      end
+    end
+
+    def lookup_rules(args, tag_name, class_name, id_name, &block)
+      wild_key = "*#{class_name ? ".#{class_name}" : ""}#{id_name ? "##{id_name}" : ""}"
+      key = "#{tag_name}#{class_name ? ".#{class_name}" : ""}#{id_name ? "##{id_name}" : ""}"
+      @hash_tree[args][tag_name]&.each do |rule|
+        block.call rule
+      end
+      @hash_tree[args][wild_key]&.each do |rule|
+        block.call rule
+      end
+      @hash_tree[args][key]&.each do |rule|
+        block.call rule
+      end
+    end
+
     # traverse rules matching with {Visitor::Element}
     # @param [Visitor::Element] element
     # @yieldparam [Rule] rule
@@ -8,7 +53,11 @@ module Habaki
     # @yieldparam [Specificity] specificity
     # @return [void]
     def each_match(element, *args, &block)
-      each_rule(*args) do |rule|
+      @hash_tree ||= {}
+      index_selectors!(*args) unless @hash_tree[args]
+
+      #each_rule(*args) do |rule|
+      lookup_rules(args, element.tag_name, element.class_name, element.id_name) do |rule|
         rule.each_selector do |selector|
           specificity = Specificity.new
           if selector.element_match?(element, specificity)

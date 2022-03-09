@@ -162,7 +162,6 @@ module Habaki
     # @return [String]
     def string(format = Formatter::Base.new)
       str = ""
-
       if attribute_selector?
         str += "[#{@attribute.string(format)}"
         case @match
