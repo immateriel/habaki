@@ -23,18 +23,16 @@ module Habaki
           end
 
           key = "#{tag_name || "*"}#{class_name ? ".#{class_name}" : ""}#{id_name ? "##{id_name}" : ""}"
-          @hash_tree[args][key] ||= []
+          @hash_tree[args][key] ||= Set.new
           @hash_tree[args][key] << rule
         end
-      end
-      @hash_tree[args].each do |k, rules|
-        rules.uniq!
       end
     end
 
     def lookup_rules(args, tag_name, class_name, id_name, &block)
-      wild_key = "*#{class_name ? ".#{class_name}" : ""}#{id_name ? "##{id_name}" : ""}"
-      key = "#{tag_name}#{class_name ? ".#{class_name}" : ""}#{id_name ? "##{id_name}" : ""}"
+      class_or_id = "#{class_name ? ".#{class_name}" : ""}#{id_name ? "##{id_name}" : ""}"
+      wild_key = "*#{class_or_id}"
+      key = "#{tag_name}#{class_or_id}"
       @hash_tree[args][tag_name]&.each do |rule|
         block.call rule
       end

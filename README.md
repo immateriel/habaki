@@ -97,6 +97,11 @@ rules.length
 # => 2
 rules.map(&:to_s)
 # => ["p span {color: black; }", "span.tiny {font-size: 0.8em; }"]
+
+# get matching declarations for elements
+declarations = stylesheet.find_matching_declarations(Habaki::Visitor::NokogiriElement.new(doc.root.search("//span")[1]))
+declarations.to_s
+# => color: black; font-size: 0.8em;
 ```
 
 # TODO

@@ -2,8 +2,6 @@ module Habaki
   # partially adapted from css_parser https://github.com/premailer/css_parser/blob/master/lib/css_parser/rule_set.rb
   module Shorthand
     BORDER_PROPERTIES = %w[border border-left border-right border-top border-bottom].freeze
-    BORDER_STYLES = %[none hidden dotted dashed solid double groove ridge inset outset].freeze
-    NUMBER_OF_DIMENSIONS = 4
 
     DIMENSIONS = [
       ['margin', %w[margin-top margin-right margin-bottom margin-left]],
@@ -120,8 +118,6 @@ module Habaki
 
     # Combine border-color, border-style and border-width into border
     # Should be run after create_dimensions_shorthand!
-    #
-    # TODO: this is extremely similar to create_background_shorthand! and should be combined
     def create_border_shorthand! # :nodoc:
       border_style_properties = %w[border-width border-style border-color]
 
@@ -198,7 +194,7 @@ module Habaki
     # Looks for long format CSS dimensional properties (margin, padding, border-color, border-style and border-width)
     # and converts them into shorthand CSS properties.
     def create_dimensions_shorthand! # :nodoc:
-      return if length < NUMBER_OF_DIMENSIONS
+      return if length < 4
 
       DIMENSIONS.each do |property, dimensions|
         values = [:top, :right, :bottom, :left].each_with_index.with_object({}) do |(side, index), result|
@@ -225,7 +221,7 @@ module Habaki
 
     def compute_dimensions_shorthand(values)
       # All four sides are equal, returning single value
-      return [:top] if values.values.uniq{|v| v.to_s}.count == 1
+      return [:top] if values.values.uniq.count == 1
 
       # `/* top | right | bottom | left */`
       return [:top, :right, :bottom, :left] if values[:left] != values[:right]

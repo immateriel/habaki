@@ -1,3 +1,4 @@
+require 'set'
 require 'katana/katana'
 
 require 'habaki/formal_syntax'

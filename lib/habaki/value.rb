@@ -12,6 +12,14 @@ module Habaki
       to_s == other.to_s
     end
 
+    def eql?(other)
+      to_s.eql?(other.to_s)
+    end
+
+    def hash
+      to_s.hash
+    end
+
     # @param [Formatter::Base] format
     # @return [String]
     def string(format = Formatter::Base.new)
@@ -73,6 +81,7 @@ module Habaki
         (@data * 12.0) / (72.0 / ppi)
       else
         # relative
+        raise TypeError, "cannot convert relative #{to_s} to px"
       end
     end
 
@@ -83,9 +92,10 @@ module Habaki
       if absolute?
         to_px / default_px
       else
-        case @unit
-        when :em
+        if @unit == :em
           @data
+        else
+          raise TypeError, "cannot convert #{to_s} to em"
         end
       end
     end
@@ -123,7 +133,7 @@ module Habaki
       when Integer, Float
         Length.new((@data * other).round(3), @unit)
       when Percentage
-        Length.new((@data * other.data/100.0).round(3), @unit)
+        Length.new((@data * other.data / 100.0).round(3), @unit)
       else
         raise ArgumentError, "cannot multiply #{self.class} with #{other.class}"
       end

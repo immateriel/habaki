@@ -11,7 +11,10 @@ class TestMisc < Minitest::Test
     assert_equal 8.0, Habaki::Length.new(0.0833, :in).to_px.round
     assert_equal 8.0, Habaki::Length.new(0.2116, :cm).to_px.round
     assert_equal 8.0, Habaki::Length.new(2.116, :mm).to_px.round
-    assert_nil Habaki::Length.new(1, :em).to_px
+    assert_raises(TypeError) do
+      # relative
+      Habaki::Length.new(1, :em).to_px
+    end
 
     # to_em
     assert_equal 0.5, Habaki::Length.new(8, :px).to_em.round(1)
