@@ -115,7 +115,6 @@ module Habaki
             #STDERR.puts("#{k}: #{e}")
           end
         end
-        #flatten!
         self
       end
 
@@ -129,39 +128,6 @@ module Habaki
 
       def property(prop)
         @properties[prop]
-      end
-
-      def flatten!
-        @properties.each do |prop, v|
-          next unless v.children.length == 1
-          child = v.children.first
-          next unless child.occurence != (1..1)
-          v.children = child.children
-          v.type = child.type
-          v.value = child.value
-        end
-      end
-
-      def debug
-        @properties.each do |k, root|
-          if root.to_s != "[#{root.orig}]"
-            puts "DIFF #{k}: "
-            puts " [#{root.orig}]"
-            puts " #{root}"
-          end
-        end
-      end
-
-      def expanded(property)
-        node = @properties[property].dup
-        node.traverse do |child|
-          if child.type == :ref
-            parent = child.parent
-            idx = parent.children.index(child)
-            parent.children[idx] = @properties[child.value]
-          end
-        end
-        node
       end
 
       def self.n

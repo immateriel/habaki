@@ -102,7 +102,7 @@ module Habaki
         when :attribute_contain
           val.include?(@value)
         when :attribute_hyphen
-          val == @value || val == "#{@value}-"
+          val.start_with?("#{@value}-")
         else
           false
         end, specificity, 10)
@@ -187,8 +187,6 @@ module Habaki
           str += ".#{@value}"
         when :id
           str += "##{@value}"
-        when :attribute_contain
-          str += "*="
         when :pseudo_class, :pseudo_page_class
           str += ":#{@value}"
           case @pseudo

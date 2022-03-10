@@ -27,12 +27,11 @@ class TestShorthand < Minitest::Test
       font-family: Police,sans-serif; line-height: 18px;
       font-style: oblique; font-variant: small-caps;}, "font: oblique small-caps 300 12pt/18px Police,sans-serif;")
 
-
     assert_shorthand_created(%{background-image: linear-gradient(blue,red); background-size: 25px 50px;},
                              "background: linear-gradient(blue,red) 0% 0%/25px 50px;")
 
     assert_shorthand_created(%{background-image: url('chess.png'); background-color: gray; background-position: center -10.2%; background-attachment: fixed; background-repeat: no-repeat;},
-                            "background: gray url(chess.png) no-repeat fixed center -10.2%;")
+                             "background: gray url(chess.png) no-repeat fixed center -10.2%;")
 
   end
 
@@ -84,10 +83,25 @@ line-height: 18px; font-family: Police,sans-serif;}.gsub(/\n/, " "))
   end
 
   def test_border_shorthand
-    assert_shorthand_expanded(%{border: 1px #000 solid},
+    assert_shorthand_expanded("border: 1px #000 solid",
                               "border-top-color: #000; border-right-color: #000; border-bottom-color: #000; border-left-color: #000; border-top-style: solid; border-right-style: solid; border-bottom-style: solid; border-left-style: solid; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px;")
-    assert_shorthand_created(%{border-top-color: #000; border-right-color: #000; border-bottom-color: #000; border-left-color: #000; border-top-style: solid; border-right-style: solid; border-bottom-style: solid; border-left-style: solid; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px;},
+    assert_shorthand_created("border-top-color: #000; border-right-color: #000; border-bottom-color: #000; border-left-color: #000; border-top-style: solid; border-right-style: solid; border-bottom-style: solid; border-left-style: solid; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px;",
                              "border: 1px solid #000;")
+
+    assert_shorthand_expanded("border-color: #000",
+                              "border-top-color: #000; border-right-color: #000; border-bottom-color: #000; border-left-color: #000;")
+    assert_shorthand_created("border-top-color: #000; border-right-color: #000; border-bottom-color: #000; border-left-color: #000;",
+                             "border-color: #000;")
+
+    assert_shorthand_expanded("border-width: 1px;",
+                              "border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px;")
+    assert_shorthand_created("border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px;",
+                             "border-width: 1px;")
+
+    assert_shorthand_expanded("border-style: solid",
+                              "border-top-style: solid; border-right-style: solid; border-bottom-style: solid; border-left-style: solid;")
+    assert_shorthand_created("border-top-style: solid; border-right-style: solid; border-bottom-style: solid; border-left-style: solid;",
+                             "border-style: solid;")
   end
 
   private

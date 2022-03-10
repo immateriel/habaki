@@ -204,6 +204,61 @@ class TestSelector < Minitest::Test
     assert_selector_found(css, html, "blue text")
   end
 
+  def test_html_attr_hyphen
+    css = %{div[data-c|="blue"] {color: blue;}}
+    html = %{<html><body>
+    <div data-c="blue-stuff">blue text</div>
+    <div data-c="red">red text</div>
+    <div>other text</div>
+    </body></html>}
+
+    assert_selector_found(css, html, "blue text")
+  end
+
+  def test_html_pseudo_root
+    css = %{:root {background: blue;}}
+    html = %{<html><body><div><p>blue text</p></div></body></html>}
+
+    assert_selector_found(css, html, "blue text")
+  end
+
+  def test_html_pseudo_first_child
+    css = %{div p:first-child {color: blue;}}
+    html = %{<html><body>
+    <div>
+    <p>blue text</p>
+    <p>other text</p>
+    <p>other text</p>
+    </div>
+    </body></html>}
+
+    assert_selector_found(css, html, "blue text")
+  end
+
+  def test_html_pseudo_empty
+    css = %{div#e:empty {color: blue;}}
+    html = %{<html><body>
+    <div id="e"></div>
+    <div>
+    <p>other text</p>
+    <p>other text</p>
+    </div>
+    </body></html>}
+
+    assert_selector_found(css, html, "")
+  end
+
+  def test_html_pseudo_not
+    css = %{.c:not(p) {color: blue;}}
+    html = %{<html><body>
+    <p class="c">other text</p>
+    <p class="c">other text</p>
+    <div class="c">blue text</div>
+    </body></html>}
+
+    assert_selector_found(css, html, "blue text")
+  end
+
   def test_html_pseudo_last_child
     css = %{div p:last-child {color: blue;}}
     html = %{<html><body>
@@ -239,6 +294,15 @@ class TestSelector < Minitest::Test
     <p>other text</p>
     <p>blue text</p>
     <p>other text</p>
+    </div>
+    </body></html>}
+
+    assert_selector_found(css, html, "blue text")
+
+    css = %{div p:nth-child(n) {color: blue;}}
+    html = %{<html><body>
+    <div>
+    <p>blue text</p>
     </div>
     </body></html>}
 

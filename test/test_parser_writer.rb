@@ -23,6 +23,17 @@ class TestParserWriter < Minitest::Test
     assert_equal "font-size: invalid", decl.to_s
   end
 
+  def test_indented
+    css = %{a {color: blue; text-decoration: underline; font-size: 16px;}}
+    stylesheet = Habaki::Stylesheet.parse(css)
+    assert_equal %{a {
+ color: blue;
+ text-decoration: underline;
+ font-size: 16px;
+}}, stylesheet.string(Habaki::Formatter::Indented.new)
+
+  end
+
   def test_decl
     css = %{
     a {color: blue; text-decoration: underline; font-size: 16px;}
@@ -103,10 +114,11 @@ class TestParserWriter < Minitest::Test
 
   def test_attr
     assert_identical_css(%{input[value="M"] {color: blue;}})
-  end
-
-  def test_mul_attr
     assert_identical_css(%{input[name="A"][value="M"] {color: blue;}})
+    assert_identical_css(%{input[name~="hello"] {color: blue;}})
+    assert_identical_css(%{input[name|="hello"] {color: blue;}})
+    assert_identical_css(%{input[name$="hello"] {color: blue;}})
+    assert_identical_css(%{input[name*="hello"] {color: blue;}})
   end
 
   def test_import
@@ -197,6 +209,10 @@ a {color: black;}
     assert_identical_css(%{a:hover {color: blue;}
 p.nt:nth-of-type(3n) {color: red;}
 li:nth-last-child(3n+2) {color: green;}})
+    assert_identical_css(":root {color: blue;}")
+    assert_identical_css("div:empty {margin: 1px;}")
+    assert_identical_css("div:first-child {text-indent: 2em;}")
+    assert_identical_css("p::first-line {text-indent: 2em;}")
   end
 
   def test_charset
@@ -254,6 +270,12 @@ div {color: green;}
     assert_equal 16, stylesheet.errors[1].column
     assert_equal %{div {color: green;}
 .inv {}}, stylesheet.to_s
+  end
+
+  def test_error2
+    assert_equal "", Habaki::Stylesheet.parse("{border: 1px").to_s
+    assert_equal "", Habaki::Declarations.parse("{border: 1px").to_s
+    assert_equal "", Habaki::Selectors.parse("{border: 1px").to_s
   end
 
   private
