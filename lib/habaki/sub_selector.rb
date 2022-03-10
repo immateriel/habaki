@@ -48,7 +48,10 @@ module Habaki
       when :id
         id_match?(element.id_name, specificity)
       when :pseudo_class
-        pseudo_match?(element, specificity)
+        pseudo_class_match?(element, specificity)
+      when :pseudo_element
+        # TODO
+        false
       else
         if attribute_selector?
           element_attr = element.attr(@attribute.local)
@@ -105,57 +108,52 @@ module Habaki
         end, specificity, 10)
     end
 
+    # does selector pseudo class match {Visitor::Element} ?
     # @param [Visitor::Element] element
     # @param [Specificity, nil] specificity
     # @return [Boolean]
-    def pseudo_match?(element, specificity = nil)
-      match_with_specificity(pseudo_class_match?(element), specificity, 10)
-    end
-
-    # does selector pseudo class match {Visitor::Element} ?
-    # @param [Visitor::Element] element
-    # @return [Boolean]
-    def pseudo_class_match?(element)
-      case @pseudo
-      when :root
-        return false unless element.tag_name == "html"
-      when :empty
-        return false unless element.children.empty?
-      when :first_child
-        parent_element = element.parent
-        return false unless parent_element&.children.first == element
-      when :last_child
-        parent_element = element.parent
-        return false unless parent_element&.children.last == element
-      when :only_child
-        parent_element = element.parent
-        return false unless parent_element&.children.length == 1 && parent_element&.children.first == element
-      when :nth_child
-        parent_element = element.parent
-        arg = @argument.split("+")
-        case arg[0]
-        when "odd"
-          return false unless ((parent_element&.children.index(element) + 1) % 2 == 1)
-        when "even"
-          return false unless ((parent_element&.children.index(element) + 1) % 2 == 0)
-        when /^\d+$/
-          return false unless parent_element&.children[@argument.to_i - 1] == element
-        when "n"
-          return false unless ((parent_element&.children.index(element) + 1) % 1) == (arg[1]&.to_i || 0)
-        when /n$/
-          return false unless ((parent_element&.children.index(element) + 1) % arg[0].sub("n", "").to_i) == (arg[1]&.to_i || 0)
+    def pseudo_class_match?(element, specificity = nil)
+      match_with_specificity(
+        case @pseudo
+        when :root
+          element.tag_name == "html"
+        when :empty
+          element.children.empty?
+        when :first_child
+          parent_element = element.parent
+          parent_element&.children.first == element
+        when :last_child
+          parent_element = element.parent
+          parent_element&.children.last == element
+        when :only_child
+          parent_element = element.parent
+          parent_element&.children.length == 1 && parent_element&.children.first == element
+        when :nth_child
+          parent_element = element.parent
+          arg = @argument.split("+")
+          case arg[0]
+          when "odd"
+            ((parent_element&.children.index(element) + 1) % 2 == 1)
+          when "even"
+            ((parent_element&.children.index(element) + 1) % 2 == 0)
+          when /^\d+$/
+            parent_element&.children[@argument.to_i - 1] == element
+          when "n"
+            ((parent_element&.children.index(element) + 1) % 1) == (arg[1]&.to_i || 0)
+          when /n$/
+            ((parent_element&.children.index(element) + 1) % arg[0].sub("n", "").to_i) == (arg[1]&.to_i || 0)
+          else
+            # TODO "of type"
+            false
+          end
+        when :not
+          !@selectors.element_match?(element)
+        when :not_parsed, :unknown
+          true
         else
-          # TODO "of type"
-          return false
-        end
-      when :not
-        return false unless !@selectors.element_match?(element)
-      when :not_parsed, :unknown
-      else
-        # STDERR.puts "unsupported pseudo #{sub_sel.pseudo}"
-        return false
-      end
-      true
+          # STDERR.puts "unsupported pseudo #{sub_sel.pseudo}"
+          false
+        end, specificity, 10)
     end
 
     # @param [Formatter::Base] format

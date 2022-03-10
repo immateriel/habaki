@@ -237,6 +237,11 @@ module Habaki
   class Declarations < NodeArray
     include Shorthand
 
+    def initialize(*args)
+      super(*args)
+      @hash = {}
+    end
+
     # Parse inline declarations
     # @param [String] data
     # @return [Declarations]
@@ -244,6 +249,11 @@ module Habaki
       decls = self.new
       decls.parse!(data)
       decls
+    end
+
+    def push_declaration(decl)
+      @hash[decl.property] = decl
+      push decl
     end
 
     # Parse inline declarations and append to current declarations
@@ -262,13 +272,14 @@ module Habaki
     # @param [String] property
     # @return [Declaration]
     def find_by_property(property)
-      find { |decl| decl.property == property }
+      @hash[property]
     end
 
     # Remove declaration with property
     # @param [String] property
     # @return [void]
     def remove_by_property(property)
+      @hash.delete(property)
       reject! { |decl| decl.property == property }
     end
 
@@ -280,7 +291,7 @@ module Habaki
     def add_by_property(property, value = [], important = false)
       decl = Habaki::Declaration.new(property, important)
       decl.values = Values.new([value].flatten)
-      push decl
+      push_declaration decl
       decl
     end
 
@@ -293,10 +304,10 @@ module Habaki
         if decl.important || !previous_decl.important
           #remove_by_property(decl.property)
           delete(previous_decl)
-          push decl
+          push_declaration decl
         end
       else
-        push decl
+        push_declaration decl
       end
       decl
     end
@@ -328,7 +339,7 @@ module Habaki
     # @return [void]
     def read_from_katana(decls)
       decls.each do |decl|
-        push Declaration.read_from_katana(decl)
+        push_declaration Declaration.read_from_katana(decl)
       end
     end
   end

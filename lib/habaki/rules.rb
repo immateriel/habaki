@@ -22,24 +22,31 @@ module Habaki
             end
           end
 
-          key = "#{tag_name || "*"}#{class_name ? ".#{class_name}" : ""}#{id_name ? "##{id_name}" : ""}"
-          @hash_tree[args][key] ||= Set.new
-          @hash_tree[args][key] << rule
+          class_or_id = nil
+          class_or_id = ".#{class_name}" if class_name
+          class_or_id = "##{id_name}" if id_name
+
+          @hash_tree[args][tag_name||"*"] ||= {}
+          @hash_tree[args][tag_name||"*"][class_or_id] ||= Set.new
+          @hash_tree[args][tag_name||"*"][class_or_id] << rule
         end
       end
     end
 
     def lookup_rules(args, tag_name, class_name, id_name, &block)
-      class_or_id = "#{class_name ? ".#{class_name}" : ""}#{id_name ? "##{id_name}" : ""}"
-      wild_key = "*#{class_or_id}"
-      key = "#{tag_name}#{class_or_id}"
-      @hash_tree[args][tag_name]&.each do |rule|
+      class_or_id = nil
+      class_or_id = ".#{class_name}" if class_name
+      class_or_id = "##{id_name}" if id_name
+
+      @hash_tree[args].dig(tag_name, nil)&.each do |rule|
         block.call rule
       end
-      @hash_tree[args][wild_key]&.each do |rule|
+
+      @hash_tree[args].dig("*", class_or_id)&.each do |rule|
         block.call rule
       end
-      @hash_tree[args][key]&.each do |rule|
+
+      @hash_tree[args].dig(tag_name, class_or_id)&.each do |rule|
         block.call rule
       end
     end
@@ -54,7 +61,6 @@ module Habaki
       @hash_tree ||= {}
       index_selectors!(*args) unless @hash_tree[args]
 
-      #each_rule(*args) do |rule|
       lookup_rules(args, element.tag_name, element.class_name, element.id_name) do |rule|
         rule.each_selector do |selector|
           specificity = Specificity.new
