@@ -1,9 +1,9 @@
 spec = Gem::Specification.new do |s|
-  s.name    = "habaki"
-  s.version = "0.5.0"
+  s.name = "habaki"
+  s.version = "0.5.1"
   s.summary = "CSS parser/writer"
   s.description = "Fast and full featured CSS parser/writer for ruby"
-  s.author  = "Julien Boulnois"
+  s.author = "Julien Boulnois"
   s.license = "MIT"
   s.homepage = "https://github.com/immateriel/habaki"
 
@@ -11,8 +11,9 @@ spec = Gem::Specification.new do |s|
   s.required_ruby_version = ">= 2.4"
 
   s.files = ["Gemfile"] +
-            Dir.glob("ext/**/*.{c,h,rb}") +
-            Dir.glob("lib/**/*.{rb}")
+    Dir.glob("ext/**/*.{c,h,rb}") +
+    Dir.glob("lib/**/*.{rb}") +
+    Dir.glob("data/**/*.yml")
 
   s.require_paths = ["lib"]
 
