@@ -1,6 +1,6 @@
 spec = Gem::Specification.new do |s|
   s.name = "habaki"
-  s.version = "0.5.1"
+  s.version = "0.5.2"
   s.summary = "CSS parser/writer"
   s.description = "Fast and full featured CSS parser/writer for ruby"
   s.author = "Julien Boulnois"
@@ -19,8 +19,8 @@ spec = Gem::Specification.new do |s|
 
   s.add_development_dependency "nokogiri"
 
-  s.add_development_dependency "bundler", "~> 1.14"
-  s.add_development_dependency "rake", "~> 10.0"
+  s.add_development_dependency "bundler"
+  s.add_development_dependency "rake"
   s.add_development_dependency "minitest", "~> 5.0"
   s.add_development_dependency "simplecov"
   s.add_development_dependency "rake-compiler"

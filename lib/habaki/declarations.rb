@@ -98,8 +98,8 @@ module Habaki
         props[match.reference] << match.value
       end
 
-      props.each do |k, v|
-        new_decl = add_by_property(k, Values.new([v].flatten))
+      props.each do |prop, values|
+        new_decl = add_by_property(prop, values)
         new_decl.position = declaration.position
       end
 
@@ -122,10 +122,10 @@ module Habaki
       border_style_properties = %w[border-width border-style border-color]
 
       border_style_properties.each do |prop|
-        create_shorthand_properties! prop unless find_by_property(prop)
+        create_shorthand_properties! prop unless has_property?(prop)
       end
 
-      create_shorthand_properties! 'border' if border_style_properties.map{|prop| find_by_property(prop)}.all?
+      create_shorthand_properties! 'border' if border_style_properties.map{|prop| has_property?(prop)}.all?
     end
 
     # Looks for long format CSS background properties (e.g. <tt>background-color</tt>) and
@@ -159,15 +159,37 @@ module Habaki
       create_shorthand_properties! 'list-style'
     end
 
+    def self.shorthand_properties(shorthand_property)
+      nodes = []
+      FormalSyntax::Tree.tree.property("--shorthand-"+shorthand_property).traverse do |node|
+        nodes << {type: node.type, value: node.value, next_value: node.parent&.children&.last&.value} if [:ref, :token].include?(node.type)
+      end
+      nodes
+    end
+
+    PRECOMPUTED_SHORTHAND_PROPS = {
+      "background" => shorthand_properties("background"),
+      "font" => shorthand_properties("font"),
+      "list-style" => shorthand_properties("list-style"),
+      "border" => shorthand_properties("border"),
+      "border-top" => shorthand_properties("border-top"),
+      "border-bottom" => shorthand_properties("border-bottom"),
+      "border-left" => shorthand_properties("border-left"),
+      "border-right" => shorthand_properties("border-right"),
+      "border-width" => shorthand_properties("border-width"),
+      "border-style" => shorthand_properties("border-style"),
+      "border-color" => shorthand_properties("border-color"),
+    }
+
     # Combine several properties into a shorthand one
     def create_shorthand_properties!(shorthand_property, need_all = false)
       properties_to_delete = []
-
       new_values = []
-      FormalSyntax::Tree.tree.property("--shorthand-"+shorthand_property).traverse do |node|
-        case node.type
+
+      PRECOMPUTED_SHORTHAND_PROPS[shorthand_property].each do |node|
+        case node[:type]
         when :ref
-          decl = find_by_property(node.value)
+          decl = find_by_property(node[:value])
           if decl
             properties_to_delete << decl.property
             new_values += decl.values
@@ -176,7 +198,7 @@ module Habaki
           end
         when :token
           # only if next node property is present (line-height, background-size)
-          new_values << Operator.new(node.value) if node.parent&.children&.last&.value && find_by_property(node.parent.children.last.value)
+          new_values << Operator.new(node[:value]) if node[:next_value] && has_property?(node[:next_value])
         end
       end
 
@@ -251,11 +273,6 @@ module Habaki
       decls
     end
 
-    def push_declaration(decl)
-      @hash[decl.property] = decl
-      push decl
-    end
-
     # Parse inline declarations and append to current declarations
     # @param [String] data
     # @return [void]
@@ -266,6 +283,12 @@ module Habaki
       if out.declarations
         read_from_katana(out.declarations)
       end
+    end
+
+    # Does declaration with property present ?
+    # @return [Boolean]
+    def has_property?(property)
+      @hash.has_key?(property)
     end
 
     # Find declaration with property
@@ -342,5 +365,13 @@ module Habaki
         push_declaration Declaration.read_from_katana(decl)
       end
     end
+
+    private
+
+    def push_declaration(decl)
+      @hash[decl.property] = decl
+      push decl
+    end
+
   end
 end

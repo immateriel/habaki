@@ -67,7 +67,7 @@ module Habaki
         when :token
           str += @value
         when :ref
-          str += "'#{@value}'"
+          str += "<'#{@value}'>"
         when :type
           str += "<#{@value}>"
         else
