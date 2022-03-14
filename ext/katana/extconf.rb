@@ -10,7 +10,7 @@ src/katana-parser/parser.c src/katana-parser/selector.c src/katana-parser/tokeni
 src/rb_katana_array.c src/rb_katana_selector.c src/rb_katana_declaration.c src/rb_katana_rule.c src/rb_katana.c
 }
 
-$INCFLAGS << " -I$(srcdir)/src"
+$INCFLAGS << " -std=c99 -I$(srcdir)/src"
 
 # add folder, where compiler can search source files
 $VPATH << "$(srcdir)/src"
