@@ -13,7 +13,7 @@ VALUE rb_declaration_prop(VALUE self)
     KatanaDeclaration *c_decl;
     Data_Get_Struct(self, KatanaDeclaration, c_decl);
     if (c_decl->property)
-        return rb_str_new2(c_decl->property);
+        return UTF8_STR_NEW(c_decl->property);
     else
         Qnil;
 }
@@ -286,10 +286,10 @@ VALUE rb_value_value(VALUE self)
         val = rb_float_new(c_val->fValue);
         break;
     case KATANA_VALUE_IDENT:
-        val = rb_str_new2(c_val->string);
+        val = UTF8_STR_NEW(c_val->string);
         break;
     case KATANA_VALUE_STRING:
-        val = rb_str_new2(c_val->string);
+        val = UTF8_STR_NEW(c_val->string);
         break;
     case KATANA_VALUE_PARSER_FUNCTION:
     {
@@ -304,19 +304,19 @@ VALUE rb_value_value(VALUE self)
         // return katana_stringify_value_list(parser, value->list);
         break;
     case KATANA_VALUE_PARSER_HEXCOLOR:
-        val = rb_str_new2(c_val->string);
+        val = UTF8_STR_NEW(c_val->string);
         break;
     case KATANA_VALUE_URI:
-        val = rb_str_new2(c_val->string);
+        val = UTF8_STR_NEW(c_val->string);
         break;
     case KATANA_VALUE_UNICODE_RANGE:
-        val = rb_str_new2(c_val->string);
+        val = UTF8_STR_NEW(c_val->string);
         break;
     case KATANA_VALUE_DIMENSION:
-        val = rb_str_new2(c_val->string);
+        val = UTF8_STR_NEW(c_val->string);
         break;
     case KATANA_VALUE_UNKNOWN:
-        val = rb_str_new2(c_val->string);
+        val = UTF8_STR_NEW(c_val->string);
         break;
     default:
         fprintf(stderr, "KATANA: unsupported value unit %d (%s)\n", c_val->unit, c_val->string);
@@ -370,12 +370,6 @@ void init_katana_declaration()
     rb_define_method(rb_Declaration, "values", rb_declaration_values, 0);
 
     rb_define_method(rb_Declaration, "position", rb_declaration_position, 0);
-
-    // Declaration
-    rb_Declaration = rb_define_class_under(rb_Katana, "Declaration", rb_cObject);
-    rb_define_method(rb_Declaration, "property", rb_declaration_prop, 0);
-    rb_define_method(rb_Declaration, "important", rb_declaration_important, 0);
-    rb_define_method(rb_Declaration, "values", rb_declaration_values, 0);
 
     // Value
     rb_Value = rb_define_class_under(rb_Katana, "Value", rb_cObject);

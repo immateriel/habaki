@@ -4,6 +4,12 @@ module Habaki
     # @return [Symbol]
     attr_accessor :relation
 
+    def initialize(*args)
+      super(*args)
+
+      @relation = nil
+    end
+
     # does every sub selectors match {Visitor::Element} ?
     # @param [Visitor::Element] element
     # @param [Specificity, nil] specificity

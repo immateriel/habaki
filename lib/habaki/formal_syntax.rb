@@ -28,7 +28,7 @@ module Habaki
       def traverse(&block)
         block.call self
         @children.each do |child|
-          child.traverse &block
+          child.traverse(&block)
         end
       end
 
@@ -111,7 +111,7 @@ module Habaki
         data.each do |k, v|
           begin
             @properties[k] = Tree.parse(v)
-          rescue FormalSyntaxError => e
+          rescue FormalSyntaxError #=> e
             #STDERR.puts("#{k}: #{e}")
           end
         end

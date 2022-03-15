@@ -179,7 +179,7 @@ module Habaki
     end
 
     def each_rule(&block)
-      each &block
+      each(&block)
     end
 
     # @param [Formatter::Base] format

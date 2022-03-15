@@ -180,13 +180,15 @@ a {color: black;}
 }})
   end
 
-  def test_supports_not
-    css = %{@supports (display: grid) and (not (display: inline-grid)) {
+  if false
+    def test_supports_not
+      css = %{@supports (display: grid) and (not (display: inline-grid)) {
 a {color: black;}
 }}
-    stylesheet = Habaki::Stylesheet.parse(css)
-    # TODO: fix double parentheses problem
-    # assert_equal css, stylesheet.to_s
+      stylesheet = Habaki::Stylesheet.parse(css)
+      # TODO: fix double parentheses problem
+      assert_equal css, stylesheet.to_s
+    end
   end
 
   def test_supports_or
@@ -196,8 +198,8 @@ a {color: black;}
   end
 
   def test_font_face
-      assert_identical_css(%{@font-face {src: url(font.ttf);}})
-    end
+    assert_identical_css(%{@font-face {src: url(font.ttf);}})
+  end
 
   def test_page
     assert_identical_css(%{@page {margin: 1cm;}})

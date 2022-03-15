@@ -477,7 +477,7 @@ VALUE rb_selector_data_value(VALUE self)
   if (c_sel->value)
   {
     // force UTF-8
-    return rb_enc_associate_index(rb_str_new2(c_sel->value), rb_enc_find_index("UTF-8"));
+    return UTF8_STR_NEW(c_sel->value);
   }
   else
     return Qnil;

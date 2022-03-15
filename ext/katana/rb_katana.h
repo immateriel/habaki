@@ -16,6 +16,8 @@
 #include "src/katana.h"
 #include "src/selector.h"
 
+#define UTF8_STR_NEW(val) rb_enc_associate_index(rb_str_new2(val), rb_enc_find_index("UTF-8"))
+
 /* Array */
 
 VALUE rb_array_length(VALUE array);

@@ -6,7 +6,7 @@ module Habaki
 
     # @param [String] encoding
     def initialize(encoding = nil)
-      @encoding
+      @encoding = encoding
     end
 
     # @param [Formatter::Base] format
