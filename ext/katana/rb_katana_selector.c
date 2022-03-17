@@ -13,7 +13,7 @@ VALUE rb_name_local(VALUE self)
   KatanaQualifiedName *c_name;
   Data_Get_Struct(self, KatanaQualifiedName, c_name);
   if (c_name->local)
-    return rb_str_new2(c_name->local);
+    return UTF8_STR_NEW(c_name->local);
   else
     return Qnil;
 }
@@ -26,7 +26,7 @@ VALUE rb_name_prefix(VALUE self)
   KatanaQualifiedName *c_name;
   Data_Get_Struct(self, KatanaQualifiedName, c_name);
   if (c_name->prefix)
-    return rb_str_new2(c_name->prefix);
+    return UTF8_STR_NEW(c_name->prefix);
   else
     return Qnil;
 }
@@ -39,7 +39,7 @@ VALUE rb_name_uri(VALUE self)
   KatanaQualifiedName *c_name;
   Data_Get_Struct(self, KatanaQualifiedName, c_name);
   if (c_name->uri)
-    return rb_str_new2(c_name->uri);
+    return UTF8_STR_NEW(c_name->uri);
   else
     return Qnil;
 }
@@ -475,10 +475,7 @@ VALUE rb_selector_data_value(VALUE self)
   KatanaSelectorRareData *c_sel;
   Data_Get_Struct(self, KatanaSelectorRareData, c_sel);
   if (c_sel->value)
-  {
-    // force UTF-8
     return UTF8_STR_NEW(c_sel->value);
-  }
   else
     return Qnil;
 }
@@ -504,7 +501,7 @@ VALUE rb_selector_data_argument(VALUE self)
   KatanaSelectorRareData *c_sel;
   Data_Get_Struct(self, KatanaSelectorRareData, c_sel);
   if (c_sel->argument)
-    return rb_str_new2(c_sel->argument);
+    return UTF8_STR_NEW(c_sel->argument);
   else
     return Qnil;
 }

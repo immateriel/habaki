@@ -336,7 +336,7 @@ VALUE rb_value_function_name(VALUE self)
     KatanaValueFunction *c_val;
     Data_Get_Struct(self, KatanaValueFunction, c_val);
     if (c_val->name)
-        return rb_str_new2(c_val->name);
+        return UTF8_STR_NEW(c_val->name);
     else
         return Qnil;
 }

@@ -165,7 +165,7 @@ VALUE rb_error_message(VALUE self)
 {
   KatanaError *c_err;
   Data_Get_Struct(self, KatanaError, c_err);
-  return rb_str_new2(c_err->message);
+  return UTF8_STR_NEW(c_err->message);
 }
 
 /*

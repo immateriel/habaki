@@ -104,7 +104,7 @@ VALUE rb_namespace_rule_prefix(VALUE self)
   KatanaNamespaceRule *c_rule;
   Data_Get_Struct(self, KatanaNamespaceRule, c_rule);
   if (c_rule->prefix)
-    return rb_str_new2(c_rule->prefix);
+    return UTF8_STR_NEW(c_rule->prefix);
   else
     return Qnil;
 }
@@ -117,7 +117,7 @@ VALUE rb_namespace_rule_uri(VALUE self)
   KatanaNamespaceRule *c_rule;
   Data_Get_Struct(self, KatanaNamespaceRule, c_rule);
   if (c_rule->prefix)
-    return rb_str_new2(c_rule->uri);
+    return UTF8_STR_NEW(c_rule->uri);
   else
     return Qnil;
 }
