@@ -104,6 +104,12 @@ line-height: 18px; font-family: Police,sans-serif;}.gsub(/\n/, " "))
                              "border-style: solid;")
   end
 
+  def test_invalid
+    decls = Habaki::Declarations.parse("margin: 3em 1em 2,1em;")
+    decls.expand_dimensions_shorthand!
+    assert_equal "margin: 3em 1em 2,1em;", decls.to_s
+  end
+
   private
 
   def assert_shorthand_expanded(from, to)

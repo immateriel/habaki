@@ -46,7 +46,8 @@ module Habaki
         when 4
           values = declaration.values
         else
-          raise ArgumentError, "Cannot parse #{declaration.values}"
+          # "Habaki error: Cannot parse #{property}: #{declaration.values} (#{declaration.values.length} values)"
+          next
         end
 
         replacement = [top, right, bottom, left].zip(values).to_h
