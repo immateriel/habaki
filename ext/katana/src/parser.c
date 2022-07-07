@@ -1516,6 +1516,7 @@ static const char* katana_stringify_value(KatanaParser* parser, KatanaValue* val
         case KATANA_VALUE_VH:
         case KATANA_VALUE_VMIN:
         case KATANA_VALUE_VMAX:
+        case KATANA_VALUE_FR:
             snprintf(str, sizeof(str), "%s", value->raw);
             break;
         case KATANA_VALUE_IDENT:

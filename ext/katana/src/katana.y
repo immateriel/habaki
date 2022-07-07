@@ -1596,9 +1596,7 @@ unary_term:
   | KATANA_CSS_EMS { $$ = katana_new_dimension_value(parser, &$1, KATANA_VALUE_EMS); }
   | KATANA_CSS_QEMS { $$ = katana_new_dimension_value(parser, &$1, KATANA_VALUE_PARSER_Q_EMS); }
   | KATANA_CSS_EXS { $$ = katana_new_dimension_value(parser, &$1, KATANA_VALUE_EXS); }
-  | KATANA_CSS_REMS {
-      $$ = katana_new_dimension_value(parser, &$1, KATANA_VALUE_REMS);
-  }
+  | KATANA_CSS_REMS { $$ = katana_new_dimension_value(parser, &$1, KATANA_VALUE_REMS); }
   | KATANA_CSS_CHS { $$ = katana_new_dimension_value(parser, &$1, KATANA_VALUE_CHS); }
   | KATANA_CSS_VW { $$ = katana_new_dimension_value(parser, &$1, KATANA_VALUE_VW); }
   | KATANA_CSS_VH { $$ = katana_new_dimension_value(parser, &$1, KATANA_VALUE_VH); }

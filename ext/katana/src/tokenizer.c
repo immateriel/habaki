@@ -146,6 +146,7 @@ int katana_tokenize(KATANASTYPE* lval , KATANALTYPE* loc, yyscan_t scanner, Kata
         case KATANA_CSS_VH:
         case KATANA_CSS_VMIN:
         case KATANA_CSS_VMAX:
+        case KATANA_CSS_FR:
             length--;
         case KATANA_CSS_SECS:
         case KATANA_CSS_PERCENTAGE:

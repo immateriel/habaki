@@ -281,8 +281,7 @@ VALUE rb_value_value(VALUE self)
     case KATANA_VALUE_VH:
     case KATANA_VALUE_VMIN:
     case KATANA_VALUE_VMAX:
-        // printf("KATANA: %s %d %f\n", c_val->raw, c_val->iValue, c_val->fValue);
-        // val = rb_str_new2(c_val->raw);
+    case KATANA_VALUE_FR:
         val = rb_float_new(c_val->fValue);
         break;
     case KATANA_VALUE_IDENT:

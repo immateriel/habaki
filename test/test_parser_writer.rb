@@ -260,6 +260,10 @@ a {color: blue}
     assert_equal 16, stylesheet.rules[2].declarations.first.position.column
   end
 
+  def test_grid_fr
+    assert_identical_css %{.wrapper {grid-template-columns: repeat(2,1fr);}}
+  end
+
   def test_error
     css = %{a,{ }
 div {color: green;}
