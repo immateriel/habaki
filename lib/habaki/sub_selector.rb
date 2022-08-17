@@ -44,7 +44,8 @@ module Habaki
       when :tag
         tag_match?(element.tag_name, specificity)
       when :class
-        class_match?(element.class_name, specificity)
+        classes_names = element.class_name ? element.class_name.split(" ") : [nil]
+        classes_names.map{|p_class_name| class_match?(p_class_name, specificity)}.any?
       when :id
         id_match?(element.id_name, specificity)
       when :pseudo_class

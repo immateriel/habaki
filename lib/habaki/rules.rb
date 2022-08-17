@@ -34,20 +34,25 @@ module Habaki
     end
 
     def lookup_rules(args, tag_name, class_name, id_name, &block)
-      class_or_id = nil
-      class_or_id = ".#{class_name}" if class_name
-      class_or_id = "##{id_name}" if id_name
-
       @hash_tree[args].dig(tag_name, nil)&.each do |rule|
         block.call rule
       end
 
-      @hash_tree[args].dig("*", class_or_id)&.each do |rule|
-        block.call rule
-      end
+      classes_names = [nil]
+      classes_names = class_name.split(" ") if class_name
 
-      @hash_tree[args].dig(tag_name, class_or_id)&.each do |rule|
-        block.call rule
+      classes_names.each do |p_class_name|
+        class_or_id = nil
+        class_or_id = ".#{p_class_name}" if p_class_name
+        class_or_id = "##{id_name}" if id_name
+
+        @hash_tree[args].dig("*", class_or_id)&.each do |rule|
+          block.call rule
+        end
+
+        @hash_tree[args].dig(tag_name, class_or_id)&.each do |rule|
+          block.call rule
+        end
       end
     end
 
