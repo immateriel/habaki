@@ -12,12 +12,12 @@ module Habaki
   class SubSelector < Node
     # @return [Symbol]
     attr_accessor :match
-    # @return [String]
+    # @return [QualifiedName]
     attr_accessor :tag
     # @return [Symbol]
     attr_accessor :pseudo
 
-    # @return [String]
+    # @return [QualifiedName]
     attr_accessor :attribute
     # @return [String]
     attr_accessor :value
@@ -44,8 +44,7 @@ module Habaki
       when :tag
         tag_match?(element.tag_name, specificity)
       when :class
-        classes_names = element.class_name ? element.class_name.split(" ") : [nil]
-        classes_names.map{|p_class_name| class_match?(p_class_name, specificity)}.any?
+        element.class_names.any?{|p_class_name| class_match?(p_class_name, specificity)}
       when :id
         id_match?(element.id_name, specificity)
       when :pseudo_class
@@ -152,7 +151,8 @@ module Habaki
         when :not_parsed, :unknown
           true
         else
-          # STDERR.puts "unsupported pseudo #{sub_sel.pseudo}"
+          # TODO
+          # STDERR.puts "Habaki: unsupported pseudo #{@pseudo}"
           false
         end, specificity, 10)
     end

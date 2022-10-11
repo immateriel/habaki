@@ -15,6 +15,10 @@ module Habaki
         @element["class"]
       end
 
+      def class_names
+        @element.classes
+      end
+
       def id_name
         @element["id"]
       end
@@ -37,13 +41,13 @@ module Habaki
 
       def children
         @element.children.map do |child|
-          child.is_a?(Nokogiri::XML::Element) ? Visitor::NokogiriElement.new(child) : nil
+          child.element? ? Visitor::NokogiriElement.new(child) : nil
         end.compact
       end
 
       def traverse &block
         @element.traverse do |el|
-          next unless el.is_a?(Nokogiri::XML::Element)
+          next unless el.element?
           block.call Visitor::NokogiriElement.new(el)
         end
       end

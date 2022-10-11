@@ -12,6 +12,12 @@ module Habaki
       def class_name
       end
 
+      # element class names array
+      # @return [Array<String>]
+      def class_names
+        []
+      end
+
       # element id name
       # @return [String]
       def id_name

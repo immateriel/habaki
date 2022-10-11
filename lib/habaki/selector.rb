@@ -47,7 +47,7 @@ module Habaki
             end
             return false unless sub_match
           else
-            # STDERR.puts "unknown relation #{current_sub_selector.relation}"
+            # STDERR.puts "Habaki: unknown relation #{current_sub_selector.relation}"
             return false
           end
         else
