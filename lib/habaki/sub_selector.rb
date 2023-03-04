@@ -150,6 +150,10 @@ module Habaki
           !@selectors.element_match?(element)
         when :not_parsed, :unknown
           true
+        when :link
+          # All a elements that have an href attribute must match one of :link and :visited.
+          # for now, always match :link
+          true
         else
           # TODO
           # STDERR.puts "Habaki: unsupported pseudo #{@pseudo}"

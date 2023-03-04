@@ -215,6 +215,21 @@ class TestSelector < Minitest::Test
     assert_selector_found(css, html, "blue text")
   end
 
+
+  def test_html_pseudo_a_link
+    css = %{a:link {background: blue;}}
+    html = %{<html><body><div><a>blue text</a></div></body></html>}
+
+    assert_selector_found(css, html, "blue text")
+
+    css = %{
+    a {background: blue;}
+    a:visited {background: red;
+}}
+    html = %{<html><body><div><a>blue text</a></div></body></html>}
+    assert_selector_found(css, html, "blue text")
+  end
+
   def test_html_pseudo_root
     css = %{:root {background: blue;}}
     html = %{<html><body><div><p>blue text</p></div></body></html>}
